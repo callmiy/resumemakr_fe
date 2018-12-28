@@ -4,7 +4,7 @@ import { ApolloProvider } from "react-apollo";
 import "semantic-ui-css-offline";
 
 import "./index.scss";
-import App from "./App/app-x";
+import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import setUp from "./State/apollo-setup";
 

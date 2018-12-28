@@ -1,10 +1,25 @@
-import React, { Component } from "react";
+import React, { Component, Suspense, lazy } from "react";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 
-import logger from "../logger";
-import logo from "./logo.svg";
 import "./app.scss";
+import logger from "../logger";
+import Loading from "../Loading";
+import { RESUME_PATH } from "../routing";
 
-class App extends Component<{ persistCache: () => void }> {
+function Root() {
+  return (
+    <div className="app-container">
+      <div className="app-main">
+        {/* <Header title="" /> */}
+        <Loading />
+      </div>
+    </div>
+  );
+}
+
+const Resume = lazy(() => import("../Resume"));
+
+export class App extends Component<{ persistCache: () => void }> {
   state: { cacheLoaded: boolean } = { cacheLoaded: false };
 
   async componentDidMount() {
@@ -17,23 +32,26 @@ class App extends Component<{ persistCache: () => void }> {
   }
 
   render() {
+    const { cacheLoaded } = this.state;
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <BrowserRouter>
+        <Suspense fallback={<Root />}>
+          {cacheLoaded ? (
+            <Switch>
+              <Route
+                exact={true}
+                path={RESUME_PATH}
+                render={function renderCV(childProps) {
+                  return <Resume {...childProps} />;
+                }}
+              />
+            </Switch>
+          ) : (
+            <Root />
+          )}
+        </Suspense>
+      </BrowserRouter>
     );
   }
 }
