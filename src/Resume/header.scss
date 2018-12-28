@@ -1,0 +1,7 @@
+@import "../styles/extensions";
+
+.Resume {
+  .header {
+    @extend %app-header;
+  }
+}

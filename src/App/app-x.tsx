@@ -1,15 +1,15 @@
 import React, { Component, Suspense, lazy } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
-import "./app.scss";
 import logger from "../logger";
 import Loading from "../Loading";
 import { RESUME_PATH } from "../routing";
+import { FIRST_LEVEL_CLASS, SECOND_LEVEL_CLASS } from "../constants";
 
 function Root() {
   return (
-    <div className="app-container">
-      <div className="app-main">
+    <div className={FIRST_LEVEL_CLASS}>
+      <div className={SECOND_LEVEL_CLASS}>
         {/* <Header title="" /> */}
         <Loading />
       </div>
