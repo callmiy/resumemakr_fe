@@ -4,6 +4,7 @@ import "react-testing-library/cleanup-after-each";
 import { render, wait, fireEvent } from "react-testing-library";
 
 import PhotoField from ".";
+import { createFile, uploadFile } from "../test_utils";
 
 it("behaves correctly", async () => {
   // tslint:disable-next-line:no-any
@@ -90,36 +91,3 @@ it("does not set field value if no file selected", async () => {
   uploadFile(getByTestId(`photo-input-${name}`));
   await wait(() => expect(mockSetFieldValue).not.toBeCalled());
 });
-
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-////////////////////////// HELPER FUNCTIONS ///////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-/**
- * ## Example
- *  createFile('dog.jpg', 1234, 'image/jpeg')
- * @param fileName
- * @param size
- * @param type
- */
-function createFile(fileName: string, size: number, type: string) {
-  const file = new File([], fileName, { type });
-
-  Object.defineProperty(file, "size", {
-    get() {
-      return size;
-    }
-  });
-
-  return file;
-}
-
-function uploadFile($input: HTMLElement, file?: File) {
-  Object.defineProperty($input, "files", {
-    value: (file && [file]) || []
-  });
-
-  fireEvent.change($input);
-}
