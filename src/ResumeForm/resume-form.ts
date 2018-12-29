@@ -6,7 +6,7 @@ export interface FormValues {
   address: string;
   email: string;
   date_of_birth: string;
-  experience: Experience[];
+  experiences: Experience[];
 }
 
 export interface Experience {
@@ -25,7 +25,7 @@ export const initialFormValues: FormValues = {
   address: "",
   email: "",
   date_of_birth: "",
-  experience: [
+  experiences: [
     {
       line1: "IT Manager",
       line2: "Apple, New York City, NY",

@@ -56,9 +56,9 @@ export class ResumeForm extends React.Component {
         <SectionLabel label="Experience" ico={<Icon name="won" />} />
 
         <FieldArray
-          name="experience"
+          name="experiences"
           render={arrayHelper =>
-            values.experience.map((exp, index) => (
+            values.experiences.map((exp, index) => (
               <Company
                 key={index}
                 index={index}
@@ -79,16 +79,26 @@ export class ResumeForm extends React.Component {
 
 export default ResumeForm;
 
+interface RegularFieldProps extends FieldProps<FormValues> {
+  label: string | JSX.Element;
+  // tslint:disable-next-line:no-any
+  comp?: React.ComponentClass<any>;
+}
+
 function RegularField({
   field,
   label,
   comp: Component = Input
-}: { label: string; comp?: React.ComponentClass } & FieldProps<FormValues>) {
+}: RegularFieldProps) {
   return (
     <Form.Field>
-      <label htmlFor={field.name}>{label}</label>
+      {"string" === typeof label ? (
+        <label htmlFor={field.name}>{label}</label>
+      ) : (
+        label
+      )}
 
-      <Component {...field} />
+      <Component {...field} id={field.name} />
     </Form.Field>
   );
 }
@@ -127,56 +137,35 @@ function BioData() {
 
 function FirstColumn() {
   return (
-    <>
-      <Card>
-        <Card.Content>
-          <Card.Header>1st column</Card.Header>
-        </Card.Content>
+    <Card>
+      <Card.Content>
+        <Card.Header>1st column</Card.Header>
+      </Card.Content>
 
-        <Card.Content>
-          <FastField
-            name="address"
-            label="Address"
-            comp={TextArea}
-            component={RegularField}
-          />
+      <Card.Content>
+        <FastField
+          name="address"
+          label="Address"
+          comp={TextArea}
+          component={RegularField}
+        />
 
-          <FastField name="phone" label="Phone" component={RegularField} />
+        <FastField name="phone" label="Phone" component={RegularField} />
 
-          <FastField
-            name="email"
-            label="Email"
-            type="email"
-            component={RegularField}
-          />
+        <FastField
+          name="email"
+          label="Email"
+          type="email"
+          component={RegularField}
+        />
 
-          <FastField
-            name="date_of_birth"
-            label="Date of birth yyyy-mm-dd"
-            component={RegularField}
-          />
-        </Card.Content>
-      </Card>
-    </>
-  );
-}
-
-interface SectionLabelProps extends React.Props<{}> {
-  ico: JSX.Element;
-  label: string;
-}
-
-function SectionLabel({ children, label, ico }: SectionLabelProps) {
-  return (
-    <Segment raised={true} className="section-heading">
-      <Label as="div" ribbon={true} className="segment-label">
-        <div className="icon-container">{ico}</div>
-
-        <div className="label-text">{label}</div>
-      </Label>
-
-      {children}
-    </Segment>
+        <FastField
+          name="date_of_birth"
+          label="Date of birth yyyy-mm-dd"
+          component={RegularField}
+        />
+      </Card.Content>
+    </Card>
   );
 }
 
@@ -261,10 +250,19 @@ function ExperienceText({
   text,
   expFieldName
 }: ExperienceTextProps) {
+  const fieldName = `${expFieldName}[${textIndex}]`;
   return (
     <FastField
-      name={`${expFieldName}[${textIndex}]`}
-      label={`# ${textIndex + 1}`}
+      name={fieldName}
+      label={
+        <div>
+          {`# ${textIndex + 1}`}
+
+          <label style={{ display: "none" }} htmlFor={fieldName}>
+            Experience {textIndex + 1} text
+          </label>
+        </div>
+      }
       defaultValue={text}
       comp={TextArea}
       component={RegularField}
@@ -272,6 +270,25 @@ function ExperienceText({
   );
 }
 
+interface SectionLabelProps extends React.Props<{}> {
+  ico: JSX.Element;
+  label: string;
+}
+
+function SectionLabel({ children, label, ico }: SectionLabelProps) {
+  return (
+    <Segment raised={true} className="section-heading">
+      <Label as="div" ribbon={true} className="segment-label">
+        <div className="icon-container">{ico}</div>
+
+        <div className="label-text">{label}</div>
+      </Label>
+
+      {children}
+    </Segment>
+  );
+}
+
 function makeExpFieldName(index: number, key: keyof Experience) {
-  return `experience[${index}].${key}`;
+  return `experiences[${index}].${key}`;
 }
