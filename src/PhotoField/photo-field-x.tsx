@@ -7,15 +7,25 @@ import classnames from "classnames";
 import "./photo-field.scss";
 import { FormValues } from "../ResumeForm/resume-form";
 
-interface Props extends FieldProps<FormValues> {}
+interface Props extends FieldProps<FormValues> {
+  removeFilePreview?: (file?: Preview) => void;
+}
+
+interface Preview extends File {
+  preview: string;
+}
 
 interface State {
-  file?: File & { preview: string };
+  file?: Preview;
   touched?: boolean;
 }
 
 export class PhotoField extends React.Component<Props, State> {
   state: State = {};
+
+  componentWillUnmount() {
+    (this.props.removeFilePreview || this.removeFilePreview)(this.state.file);
+  }
 
   render() {
     const { file: photoFile } = this.state;
@@ -38,17 +48,26 @@ export class PhotoField extends React.Component<Props, State> {
         className={classnames("photo-field", {
           touched: photoTouched
         })}
+        data-testid="photo-preview"
         onMouseEnter={this.touch}
         onClick={this.touch}
         onMouseLeave={this.unTouch}
       >
-        {photoTouched && <div className="photo-field_overlay" />}
+        {photoTouched && (
+          <div
+            className="photo-field_overlay"
+            data-testid="photo-field_overlay"
+          />
+        )}
 
         <div className="photo-field_inner">
           <img className="photo-field_img" src={preview} alt={name} />
 
           {photoTouched && (
-            <div className="photo-field_edit-btns">
+            <div
+              className="photo-field_edit-btns"
+              data-testid="photo-field_edit-btns"
+            >
               <Button type="button">
                 <Icon name="upload" /> Change photo
               </Button>
@@ -67,18 +86,30 @@ export class PhotoField extends React.Component<Props, State> {
   };
 
   private renderFileChooser = () => {
-    const { field } = this.props;
+    const {
+      field: { name }
+    } = this.props;
 
     return (
-      <Dropzone onDrop={this.onDrop} disableClick={true} accept="image/*">
+      /**
+       * if we do not set disableClick to true, then when we click, Dropzone
+       * will call open and then our button too will call open causing two
+       * file chooser dialogs
+       */
+      <Dropzone onDrop={this.onDrop(name)} disableClick={true} accept="image/*">
         {({ getRootProps, getInputProps, isDragActive, open }) => {
           return (
-            <div {...getRootProps()} className="photo-field file-select">
+            <div
+              {...getRootProps()}
+              className="photo-field select"
+              data-testid="photo-select"
+            >
               <input
                 {...getInputProps({
-                  name: field.name,
+                  name,
                   multiple: false
                 })}
+                data-testid={`photo-input-${name}`}
               />
 
               <>
@@ -87,12 +118,7 @@ export class PhotoField extends React.Component<Props, State> {
                 </div>
 
                 <div className="photo-field_label">
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      open();
-                    }}
-                  >
+                  <Button type="button" onClick={open}>
                     <Icon name="upload" />
                     Upload photo
                   </Button>
@@ -114,17 +140,26 @@ export class PhotoField extends React.Component<Props, State> {
     this.setState({ touched: false });
   };
 
-  private onDrop = (acceptedFiles: File[]) => {
+  private onDrop = (fieldName: string) => (acceptedFiles: File[]) => {
     // do nothing if no files
     const file = acceptedFiles[0];
     if (!file) {
       return;
     }
 
-    this.props.form.setFieldValue("photo", file);
+    this.props.form.setFieldValue(fieldName, file);
+
     this.setState({
       file: { ...file, preview: URL.createObjectURL(file) }
     });
+  };
+
+  private removeFilePreview = (file?: Preview) => {
+    if (!file) {
+      return;
+    }
+
+    URL.revokeObjectURL(file.preview);
   };
 }
 
