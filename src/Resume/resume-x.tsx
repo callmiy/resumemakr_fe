@@ -5,6 +5,7 @@ import { Label, Icon, Segment } from "semantic-ui-react";
 import "./resume.scss";
 import "./header.scss";
 import { FIRST_LEVEL_CLASS, SECOND_LEVEL_CLASS } from "../constants";
+import ResumeForm from "../ResumeForm";
 
 interface Props extends RouteComponentProps<{}> {}
 
@@ -19,6 +20,8 @@ export class Resume extends React.Component<Props> {
           <div className="main-container">
             <div className="main">
               <PersonalInfo />
+
+              <ResumeForm />
             </div>
           </div>
         </div>

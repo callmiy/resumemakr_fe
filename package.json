@@ -9,12 +9,14 @@
     "apollo-link-error": "^1.1.5",
     "apollo-link-http": "^1.5.9",
     "apollo-link-state": "^0.4.2",
+    "classnames": "^2.2.6",
     "formik": "^1.4.1",
     "graphql": "^14.0.2",
     "graphql-tag": "^2.10.0",
     "react": "^16.7.0",
     "react-apollo": "^2.3.3",
     "react-dom": "^16.7.0",
+    "react-dropzone": "^8.0.3",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.2",
     "semantic-ui-css-offline": "^1.0.4-2.4.2",
@@ -38,6 +40,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "@types/classnames": "^2.2.6",
     "@types/graphql": "^14.0.3",
     "@types/jest": "^23.3.10",
     "@types/node": "^10.12.18",

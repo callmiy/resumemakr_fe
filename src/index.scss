@@ -20,3 +20,31 @@ body,
   font-size: 1em;
   color: white;
 }
+
+.ui.form input:not([type]),
+.ui.form input[type="date"],
+.ui.form input[type="datetime-local"],
+.ui.form input[type="email"],
+.ui.form input[type="file"],
+.ui.form input[type="number"],
+.ui.form input[type="password"],
+.ui.form input[type="search"],
+.ui.form input[type="tel"],
+.ui.form input[type="text"],
+.ui.form input[type="time"],
+.ui.form input[type="url"] {
+  background-color: #eff1f2;
+  transition: background 0.5s linear, border-color 0.5s linear;
+  vertical-align: middle;
+  border: 0;
+  border-top: 2px solid #e3e7eb;
+  position: relative;
+  font-size: 1.2rem;
+  line-height: 20px;
+  padding: 10px 16px;
+  border-radius: 3px;
+
+  &:focus {
+    background-color: #eff1f2;
+  }
+}

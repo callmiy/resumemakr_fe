@@ -1,0 +1,34 @@
+.ResumeForm {
+  form {
+    width: 100%;
+  }
+
+  .card {
+    width: 100%;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .names {
+    display: flex;
+    margin-bottom: 5px;
+
+    & > div {
+      width: 48%;
+
+      &:first-of-type {
+        margin-right: 4%;
+      }
+    }
+  }
+
+  .icon-wrapper {
+    color: #e3e7eb;
+    font-size: 3.2rem;
+    margin: 10px auto;
+    text-align: center;
+    display: block;
+    overflow: hidden;
+    height: 50px;
+  }
+}
