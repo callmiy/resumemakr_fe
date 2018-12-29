@@ -74,7 +74,10 @@ export class PhotoField extends React.Component<Props, State> {
 
               <Button
                 type="button"
-                onClick={() => this.setState({ file: undefined })}
+                onClick={evt => {
+                  evt.stopPropagation();
+                  this.setState({ touched: false, file: undefined });
+                }}
               >
                 <Icon name="delete" /> Remove
               </Button>
