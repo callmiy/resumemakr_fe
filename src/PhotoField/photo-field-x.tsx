@@ -107,12 +107,15 @@ export class PhotoField extends React.Component<Props, State> {
               className="photo-field select"
               data-testid="photo-select"
             >
+              <label style={{ display: "none" }} htmlFor={name}>
+                Upload Photo
+              </label>
               <input
                 {...getInputProps({
                   name,
                   multiple: false
                 })}
-                data-testid={`photo-input-${name}`}
+                id={name}
               />
 
               <>

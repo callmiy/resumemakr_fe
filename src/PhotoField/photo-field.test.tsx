@@ -14,7 +14,13 @@ it("behaves correctly", async () => {
   const mockSetFieldValue = jest.fn();
   const mockRemoveFilePreview = jest.fn();
 
-  const { getByTestId, queryByTestId, getByText, unmount } = render(
+  const {
+    getByTestId,
+    queryByTestId,
+    getByText,
+    unmount,
+    getByLabelText
+  } = render(
     <PhotoField1
       field={{ name }}
       form={{
@@ -27,7 +33,7 @@ it("behaves correctly", async () => {
   expect(getByTestId("photo-select")).toBeInTheDocument();
   expect(queryByTestId("photo-preview")).not.toBeInTheDocument();
 
-  uploadFile(getByTestId(`photo-input-${name}`), file);
+  uploadFile(getByLabelText("Upload Photo"), file);
 
   await wait(() => expect(mockSetFieldValue).toBeCalledWith(name, file));
   expect(queryByTestId("photo-select")).not.toBeInTheDocument();
@@ -63,7 +69,7 @@ it("behaves correctly", async () => {
   expect(queryByTestId("photo-preview")).not.toBeInTheDocument();
 
   // WE RE UPLOAD THE FILE TO TEST componentWillUnmount
-  uploadFile(getByTestId(`photo-input-${name}`), file);
+  uploadFile(getByLabelText("Upload Photo"), file);
   await wait(() => expect(unmount()).toBe(true));
   const [calledFile] = mockRemoveFilePreview.mock.calls[0];
   expect(file).not.toHaveProperty("preview");
@@ -76,7 +82,7 @@ it("does not set field value if no file selected", async () => {
   const name = "photo";
   const mockSetFieldValue = jest.fn();
 
-  const { getByTestId, queryByTestId } = render(
+  const { getByTestId, queryByTestId, getByLabelText } = render(
     <PhotoField1
       field={{ name }}
       form={{
@@ -88,6 +94,6 @@ it("does not set field value if no file selected", async () => {
   expect(getByTestId("photo-select")).toBeInTheDocument();
   expect(queryByTestId("photo-preview")).not.toBeInTheDocument();
 
-  uploadFile(getByTestId(`photo-input-${name}`));
+  uploadFile(getByLabelText("Upload Photo"));
   await wait(() => expect(mockSetFieldValue).not.toBeCalled());
 });

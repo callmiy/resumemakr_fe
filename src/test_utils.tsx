@@ -76,3 +76,30 @@ export function fillField(element: Element, value: string) {
     target: { value }
   });
 }
+
+/**
+ * ## Example
+ *  createFile('dog.jpg', 1234, 'image/jpeg')
+ * @param fileName
+ * @param size
+ * @param type
+ */
+export function createFile(fileName: string, size: number, type: string) {
+  const file = new File([], fileName, { type });
+
+  Object.defineProperty(file, "size", {
+    get() {
+      return size;
+    }
+  });
+
+  return file;
+}
+
+export function uploadFile($input: HTMLElement, file?: File) {
+  Object.defineProperty($input, "files", {
+    value: (file && [file]) || []
+  });
+
+  fireEvent.change($input);
+}
