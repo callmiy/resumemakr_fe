@@ -1,6 +1,5 @@
 import React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Label, Icon, Segment } from "semantic-ui-react";
 
 import "./resume.scss";
 import "./header.scss";
@@ -19,8 +18,6 @@ export class Resume extends React.Component<Props> {
 
           <div className="main-container">
             <div className="main">
-              <PersonalInfo />
-
               <ResumeForm />
             </div>
           </div>
@@ -32,20 +29,6 @@ export class Resume extends React.Component<Props> {
 
 export default Resume;
 
-function PersonalInfo() {
-  return (
-    <Segment raised={true} className="section-heading">
-      <Label as="div" ribbon={true} className="segment-label">
-        <div className="icon-container">
-          <Icon name="user outline" />
-        </div>
-
-        <div className="label-text">Personal Information</div>
-      </Label>
-    </Segment>
-  );
-}
-
 function Header() {
-  return <div className="header">Header</div>;
+  return <div className="resume-header">Header</div>;
 }

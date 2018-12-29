@@ -32,7 +32,8 @@ body,
 .ui.form input[type="tel"],
 .ui.form input[type="text"],
 .ui.form input[type="time"],
-.ui.form input[type="url"] {
+.ui.form input[type="url"],
+.ui.form textarea {
   background-color: #eff1f2;
   transition: background 0.5s linear, border-color 0.5s linear;
   vertical-align: middle;

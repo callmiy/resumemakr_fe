@@ -1,7 +1,7 @@
 @import "../styles/extensions";
 
 .Resume {
-  .header {
+  .resume-header {
     @extend %app-header;
   }
 }
