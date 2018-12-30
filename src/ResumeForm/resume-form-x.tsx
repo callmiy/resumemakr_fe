@@ -311,3 +311,17 @@ function SectionLabel({ children, label, ico }: SectionLabelProps) {
 function makeExpFieldName(index: number, key: keyof Experience) {
   return `experiences[${index}].${key}`;
 }
+
+interface PreviewProps {
+  values: FormValues;
+}
+
+function Preview({ values }: PreviewProps) {
+  return (
+    <div className="preview">
+      <div className="left">1</div>
+
+      <div className="right">Skills Summary</div>
+    </div>
+  );
+}
