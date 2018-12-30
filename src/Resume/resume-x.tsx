@@ -5,11 +5,28 @@ import "./resume.scss";
 import "./header.scss";
 import { FIRST_LEVEL_CLASS, SECOND_LEVEL_CLASS } from "../constants";
 import ResumeForm from "../ResumeForm";
+import { FormValues } from "../ResumeForm/resume-form";
 
 interface Props extends RouteComponentProps<{}> {}
 
-export class Resume extends React.Component<Props> {
+enum Action {
+  EDITING = "EDITING",
+  PREVIEWING = "PREVIEWING"
+}
+
+interface State {
+  action: Action;
+  values?: FormValues;
+}
+
+export class Resume extends React.Component<Props, State> {
+  state: State = {
+    action: Action.EDITING
+  };
+
   render() {
+    const { action, values } = this.state;
+
     return (
       <div className={`${FIRST_LEVEL_CLASS} Resume`}>
         <Header />
@@ -18,13 +35,19 @@ export class Resume extends React.Component<Props> {
 
           <div className="main-container">
             <div className="main">
-              <ResumeForm />
+              {action === Action.EDITING && (
+                <ResumeForm initialValues={values} onPreview={this.onPreview} />
+              )}
             </div>
           </div>
         </div>
       </div>
     );
   }
+
+  private onPreview = (values: FormValues) => {
+    this.setState({ action: Action.PREVIEWING, values });
+  };
 }
 
 export default Resume;

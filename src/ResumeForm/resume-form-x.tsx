@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Button,
   Card,
   Input,
   Form,
@@ -15,8 +14,8 @@ import {
   FieldProps,
   FormikProps,
   FieldArray,
-  FieldArrayRenderProps,
-  FormikActions
+  FieldArrayRenderProps
+  // FormikActions
 } from "formik";
 
 import "./resume-form.scss";
@@ -29,13 +28,37 @@ import {
 } from "./resume-form";
 import PhotoField from "../PhotoField";
 import { noOp } from "../utils";
+import {
+  PreViewButton,
+  PreViewButtonIcon,
+  EditBtn,
+  ToolTip,
+  LeftArrow,
+  ActionContainer
+} from "./resume-form-styles";
 
-export class ResumeForm extends React.Component {
+enum Action {
+  editing = "editing",
+  previewing = "previewing"
+}
+
+interface State {
+  action: Action;
+}
+
+interface Props {
+  onPreview: (values: FormValues) => void;
+  initialValues?: FormValues;
+}
+
+export class ResumeForm extends React.Component<Props, State> {
+  state: State = { action: Action.editing };
+
   render() {
     return (
       <div className="ResumeForm">
         <Formik
-          initialValues={initialFormValues}
+          initialValues={this.props.initialValues || initialFormValues}
           onSubmit={noOp}
           render={this.renderForm}
           validationSchema={validationSchema}
@@ -45,58 +68,73 @@ export class ResumeForm extends React.Component {
     );
   }
 
-  private onSubmit = (
-    values: FormValues,
-    actions: FormikActions<FormValues>
-  ) => {
-    // tslint:disable-next-line:no-console
-    console.log(
-      "\n\t\tLogging start\n\n\n\n values\n",
-      values,
-      "\n\n\n\n\t\tLogging ends\n"
-    );
-  };
-
   private renderForm = ({ values, ...props }: FormikProps<FormValues>) => {
+    const { action } = this.state;
+
     return (
       <Form>
-        <SectionLabel
-          label="Personal Information"
-          ico={<Icon name="user outline" />}
-        />
-        <BioData />
+        {action === Action.editing && <Edit values={values} />}
 
-        <FirstColumn />
+        <ActionContainer>
+          {action === Action.previewing && (
+            <EditBtn onClick={() => this.setState({ action: Action.editing })}>
+              <ToolTip>Want to edit your resume?</ToolTip>
+              <LeftArrow />
+              <span>Back to Editor</span>
+            </EditBtn>
+          )}
 
-        <SectionLabel label="Experience" ico={<Icon name="won" />} />
-
-        <FieldArray
-          name="experiences"
-          render={arrayHelper =>
-            values.experiences.map((exp, index) => (
-              <Company
-                key={index}
-                index={index}
-                exp={exp}
-                arrayHelper={arrayHelper}
-              />
-            ))
-          }
-        />
-
-        <Button
-          type="submit"
-          name="resume-form-submit"
-          onClick={() => this.onSubmit(values, props)}
-        >
-          Submit
-        </Button>
+          {action === Action.editing && (
+            <PreViewButton
+              onClick={() => {
+                this.setState({ action: Action.previewing });
+              }}
+            >
+              <PreViewButtonIcon />
+              <span>Preview</span>
+            </PreViewButton>
+          )}
+        </ActionContainer>
       </Form>
     );
   };
 }
 
 export default ResumeForm;
+
+interface EditProps {
+  values: FormValues;
+}
+
+function Edit({ values }: EditProps) {
+  return (
+    <>
+      <SectionLabel
+        label="Personal Information"
+        ico={<Icon name="user outline" />}
+      />
+      <BioData />
+
+      <FirstColumn />
+
+      <SectionLabel label="Experience" ico={<Icon name="won" />} />
+
+      <FieldArray
+        name="experiences"
+        render={arrayHelper =>
+          values.experiences.map((exp, index) => (
+            <Company
+              key={index}
+              index={index}
+              exp={exp}
+              arrayHelper={arrayHelper}
+            />
+          ))
+        }
+      />
+    </>
+  );
+}
 
 interface RegularFieldProps extends FieldProps<FormValues> {
   label: string | JSX.Element;
@@ -310,18 +348,4 @@ function SectionLabel({ children, label, ico }: SectionLabelProps) {
 
 function makeExpFieldName(index: number, key: keyof Experience) {
   return `experiences[${index}].${key}`;
-}
-
-interface PreviewProps {
-  values: FormValues;
-}
-
-function Preview({ values }: PreviewProps) {
-  return (
-    <div className="preview">
-      <div className="left">1</div>
-
-      <div className="right">Skills Summary</div>
-    </div>
-  );
 }
