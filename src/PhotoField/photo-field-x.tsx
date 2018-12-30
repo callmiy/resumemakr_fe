@@ -1,14 +1,12 @@
-import React from "react";
+import React, { createRef } from "react";
 import { FieldProps } from "formik";
-import Dropzone from "react-dropzone";
 import { Icon, Button } from "semantic-ui-react";
 import classnames from "classnames";
 
 import "./photo-field.scss";
 import { FormValues } from "../ResumeForm/resume-form";
-
 interface Props extends FieldProps<FormValues> {
-  removeFilePreview?: (file?: Preview) => void;
+  removeFilePreview?: () => void;
 }
 
 interface Preview extends File {
@@ -22,9 +20,10 @@ interface State {
 
 export class PhotoField extends React.Component<Props, State> {
   state: State = {};
+  inputRef = createRef<HTMLInputElement>();
 
   componentWillUnmount() {
-    (this.props.removeFilePreview || this.removeFilePreview)(this.state.file);
+    this.removeFilePreview();
   }
 
   render() {
@@ -68,14 +67,13 @@ export class PhotoField extends React.Component<Props, State> {
               className="photo-field_edit-btns"
               data-testid="photo-field_edit-btns"
             >
-              <Button type="button">
-                <Icon name="upload" /> Change photo
-              </Button>
+              {this.renderFileInput("Change photo")}
 
               <Button
                 type="button"
                 onClick={evt => {
                   evt.stopPropagation();
+                  this.removeFilePreview();
                   this.setState({ touched: false, file: undefined });
                 }}
               >
@@ -89,52 +87,41 @@ export class PhotoField extends React.Component<Props, State> {
   };
 
   private renderFileChooser = () => {
+    return (
+      <div className="photo-field select" data-testid="photo-select">
+        <>
+          <div className="icon-wrapper">
+            <Icon name="camera" />
+          </div>
+
+          <div className="photo-field_label">
+            {this.renderFileInput("Upload Photo")}
+          </div>
+        </>
+      </div>
+    );
+  };
+
+  private renderFileInput = (label: string) => {
     const {
-      field: { name }
+      field: { name: fieldName }
     } = this.props;
 
     return (
-      /**
-       * if we do not set disableClick to true, then when we click, Dropzone
-       * will call open and then our button too will call open causing two
-       * file chooser dialogs
-       */
-      <Dropzone onDrop={this.onDrop(name)} disableClick={true} accept="image/*">
-        {({ getRootProps, getInputProps, isDragActive, open }) => {
-          return (
-            <div
-              {...getRootProps()}
-              className="photo-field select"
-              data-testid="photo-select"
-            >
-              <label style={{ display: "none" }} htmlFor={name}>
-                Upload Photo
-              </label>
-              <input
-                {...getInputProps({
-                  name,
-                  multiple: false
-                })}
-                id={name}
-              />
-
-              <>
-                <div className="icon-wrapper">
-                  <Icon name="camera" />
-                </div>
-
-                <div className="photo-field_label">
-                  <Button type="button" onClick={open}>
-                    <Icon name="upload" />
-                    Upload photo
-                  </Button>
-                  or drag and drop photo here
-                </div>
-              </>
-            </div>
-          );
-        }}
-      </Dropzone>
+      <>
+        <label htmlFor={fieldName}>
+          <Icon name="upload" /> {label}
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          className="visually-hidden"
+          ref={this.inputRef}
+          name={fieldName}
+          id={fieldName}
+          onChange={this.handleFileUpload}
+        />
+      </>
     );
   };
 
@@ -146,21 +133,26 @@ export class PhotoField extends React.Component<Props, State> {
     this.setState({ touched: false });
   };
 
-  private onDrop = (fieldName: string) => (acceptedFiles: File[]) => {
-    // do nothing if no files
-    const file = acceptedFiles[0];
+  private handleFileUpload = (evt: React.SyntheticEvent<HTMLInputElement>) => {
+    const file = (evt.currentTarget.files || [])[0];
     if (!file) {
       return;
     }
 
-    this.props.form.setFieldValue(fieldName, file);
+    this.removeFilePreview();
+
+    this.props.form.setFieldValue(this.props.field.name, file);
 
     this.setState({
       file: { ...file, preview: URL.createObjectURL(file) }
     });
   };
 
-  private removeFilePreview = (file?: Preview) => {
+  private removeFilePreview = () => {
+    (this.props.removeFilePreview || noOp)();
+
+    const { file } = this.state;
+
     if (!file) {
       return;
     }
@@ -170,3 +162,7 @@ export class PhotoField extends React.Component<Props, State> {
 }
 
 export default PhotoField;
+
+function noOp() {
+  return null;
+}
