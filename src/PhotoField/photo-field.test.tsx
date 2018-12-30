@@ -2,23 +2,33 @@ import React from "react";
 import "jest-dom/extend-expect";
 import "react-testing-library/cleanup-after-each";
 import { render, wait, fireEvent } from "react-testing-library";
+import "jest-styled-components";
 
 import PhotoField from ".";
 import { createFile, uploadFile } from "../test_utils";
 
 it("changes to preview on file select", async () => {
   const { ui } = setUp();
-  const { getByLabelText, getByTestId, queryByTestId } = render(ui);
+  const {
+    getByLabelText,
+    queryByTestId,
+    queryByLabelText,
+    getByTestId
+  } = render(ui);
 
-  expect(getByTestId("photo-select")).toBeInTheDocument();
   expect(queryByTestId("photo-preview")).not.toBeInTheDocument();
 
   uploadFile(
-    getByLabelText("Upload Photo"),
+    getByLabelText(/Upload Photo/),
     createFile("dog.jpg", 1234, "image/jpeg")
   );
 
-  expect(queryByTestId("photo-select")).not.toBeInTheDocument();
+  expect(queryByLabelText(/Upload Photo/)).not.toBeInTheDocument();
+
+  expect(getByTestId("photo-preview")).toHaveStyleRule(
+    "background-image",
+    /url/
+  );
 });
 
 it("toggles edit buttons on mouse move on preview", () => {
@@ -30,23 +40,16 @@ it("toggles edit buttons on mouse move on preview", () => {
     createFile("dog.jpg", 1234, "image/jpeg")
   );
 
-  expect(queryByTestId("photo-field_overlay")).not.toBeInTheDocument();
-  expect(queryByTestId("photo-field_edit-btns")).not.toBeInTheDocument();
-
   const $preview = getByTestId("photo-preview");
-  expect($preview.classList).not.toContain("touched");
+  expect(queryByTestId("edit-btns")).not.toBeInTheDocument();
 
   // MOUSE ENTER
   fireEvent.mouseEnter($preview);
-  expect($preview.classList).toContain("touched");
-  expect(getByTestId("photo-field_overlay")).toBeInTheDocument();
-  expect(getByTestId("photo-field_edit-btns")).toBeInTheDocument();
+  expect(getByTestId("edit-btns")).toBeInTheDocument();
 
   // MOUSE LEAVE
   fireEvent.mouseLeave($preview);
-  expect($preview.classList).not.toContain("touched");
-  expect(queryByTestId("photo-field_overlay")).not.toBeInTheDocument();
-  expect(queryByTestId("photo-field_edit-btns")).not.toBeInTheDocument();
+  expect(queryByTestId("edit-btns")).not.toBeInTheDocument();
 });
 
 it("shows edit buttons when preview clicked", () => {
@@ -58,16 +61,12 @@ it("shows edit buttons when preview clicked", () => {
     createFile("dog.jpg", 1234, "image/jpeg")
   );
 
-  expect(queryByTestId("photo-field_overlay")).not.toBeInTheDocument();
-  expect(queryByTestId("photo-field_edit-btns")).not.toBeInTheDocument();
+  expect(queryByTestId("edit-btns")).not.toBeInTheDocument();
 
   const $preview = getByTestId("photo-preview");
-  expect($preview.classList).not.toContain("touched");
 
   fireEvent.click($preview);
-  expect($preview.classList).toContain("touched");
-  expect(getByTestId("photo-field_overlay")).toBeInTheDocument();
-  expect(getByTestId("photo-field_edit-btns")).toBeInTheDocument();
+  expect(getByTestId("edit-btns")).toBeInTheDocument();
 });
 
 it("deletes photo", () => {

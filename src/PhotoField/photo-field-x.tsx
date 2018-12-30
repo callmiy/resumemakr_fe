@@ -1,105 +1,152 @@
 import React, { createRef } from "react";
 import { FieldProps } from "formik";
-import { Icon, Button } from "semantic-ui-react";
-import classnames from "classnames";
+import { Icon } from "semantic-ui-react";
+import styled, { css } from "styled-components";
 
-import "./photo-field.scss";
 import { FormValues } from "../ResumeForm/resume-form";
 import { noOp } from "../utils";
 interface Props extends FieldProps<FormValues> {
   removeFilePreview?: () => void;
 }
-
-interface Preview extends File {
-  preview: string;
-}
-
 interface State {
-  file?: Preview;
-  touched?: boolean;
+  file?: File;
+  url?: string;
+  fileState: FileState;
 }
+
+enum FileState {
+  previewing = "previewing",
+  clean = "clean",
+  touched = "touched",
+  deleted = "deleted"
+}
+
+const Main = styled.div`
+  width: 170px;
+  height: 170px;
+  margin: 0 auto;
+`;
+
+const FileChooser = styled(Main)`
+  border: 4px dashed #d2d2d2;
+`;
+
+const Thumb = styled(Main)`
+  background-image: ${({ url }: { url: string }) => `url(${url})`};
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+`;
+
+const EditorContainer = styled.div`
+  opacity: 1;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: opacity 0.2s linear;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 1.5rem;
+  display: flex;
+`;
+
+const BtnPhoto = css`
+  cursor: pointer;
+  width: 150px;
+  margin: 0 auto;
+  border: 2px solid #fff;
+  border-radius: 2px;
+  box-sizing: border-box;
+  text-align: center;
+  padding: 6px 12px;
+  transition: border-color 0.2s linear;
+  background-color: rgba(0, 0, 0, 0.5);
+  font-size: 1.5rem;
+  color: #fff;
+`;
+
+const ChangePhoto = styled.label`
+  ${BtnPhoto}
+  display: block;
+  margin-bottom: 10px;
+`;
 
 export class PhotoField extends React.Component<Props, State> {
-  state: State = {};
+  state: State = {
+    fileState: FileState.clean
+  };
+
   inputRef = createRef<HTMLInputElement>();
 
+  componentDidMount() {
+    this.setPreview(this.props.field.value);
+  }
+
+  componentDidUpdate() {
+    this.setInitialFile();
+  }
+
   componentWillUnmount() {
-    this.removeFilePreview();
+    this.removePreview();
   }
 
   render() {
-    const { file: photoFile } = this.state;
+    const { fileState } = this.state;
 
-    return <>{(photoFile && this.renderThumb()) || this.renderFileChooser()}</>;
+    return (
+      <>
+        {(fileState === FileState.previewing ||
+          fileState === FileState.touched) &&
+          this.renderThumb()}
+
+        {(fileState === FileState.clean || fileState === FileState.deleted) && (
+          <FileChooser>
+            <div className="icon-wrapper">
+              <Icon name="camera" />
+            </div>
+
+            {this.renderFileInput("Upload Photo")}
+          </FileChooser>
+        )}
+      </>
+    );
   }
 
   renderThumb = () => {
-    const { file: photoFile, touched: photoTouched } = this.state;
+    const { file, fileState, url } = this.state;
 
-    if (!photoFile) {
+    if (!(file && url)) {
       return null;
     }
 
-    const { name, preview } = photoFile;
-
     return (
-      <div
-        key={name}
-        className={classnames("photo-field", {
-          touched: photoTouched
-        })}
+      <Thumb
+        url={url}
+        key={file.name}
         data-testid="photo-preview"
-        onMouseEnter={this.touch}
         onClick={this.touch}
         onMouseLeave={this.unTouch}
+        onMouseEnter={this.touch}
       >
-        {photoTouched && (
-          <div
-            className="photo-field_overlay"
-            data-testid="photo-field_overlay"
-          />
-        )}
+        {fileState === FileState.touched && (
+          <EditorContainer data-testid="edit-btns">
+            {this.renderFileInput("Change photo")}
 
-        <div className="photo-field_inner">
-          <img className="photo-field_img" src={preview} alt={name} />
-
-          {photoTouched && (
-            <div
-              className="photo-field_edit-btns"
-              data-testid="photo-field_edit-btns"
+            <ChangePhoto
+              onClick={evt => {
+                evt.stopPropagation();
+                this.setState({ fileState: FileState.deleted });
+                this.removePreview();
+              }}
             >
-              {this.renderFileInput("Change photo")}
-
-              <Button
-                type="button"
-                onClick={evt => {
-                  evt.stopPropagation();
-                  this.removeFilePreview();
-                  this.setState({ touched: false, file: undefined });
-                }}
-              >
-                <Icon name="delete" /> Remove
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  private renderFileChooser = () => {
-    return (
-      <div className="photo-field select" data-testid="photo-select">
-        <>
-          <div className="icon-wrapper">
-            <Icon name="camera" />
-          </div>
-
-          <div className="photo-field_label">
-            {this.renderFileInput("Upload Photo")}
-          </div>
-        </>
-      </div>
+              <Icon name="delete" /> Remove
+            </ChangePhoto>
+          </EditorContainer>
+        )}
+      </Thumb>
     );
   };
 
@@ -110,9 +157,10 @@ export class PhotoField extends React.Component<Props, State> {
 
     return (
       <>
-        <label htmlFor={fieldName}>
+        <ChangePhoto htmlFor={fieldName}>
           <Icon name="upload" /> {label}
-        </label>
+        </ChangePhoto>
+
         <input
           type="file"
           accept="image/*"
@@ -127,11 +175,11 @@ export class PhotoField extends React.Component<Props, State> {
   };
 
   private touch = () => {
-    this.setState({ touched: true });
+    this.setState({ fileState: FileState.touched });
   };
 
   private unTouch = () => {
-    this.setState({ touched: false });
+    this.setState({ fileState: FileState.previewing });
   };
 
   private handleFileUpload = (evt: React.SyntheticEvent<HTMLInputElement>) => {
@@ -140,25 +188,58 @@ export class PhotoField extends React.Component<Props, State> {
       return;
     }
 
-    this.removeFilePreview();
-
+    this.removePreview();
+    this.setPreview(file);
     this.props.form.setFieldValue(this.props.field.name, file);
-
-    this.setState({
-      file: { ...file, preview: URL.createObjectURL(file) }
-    });
   };
 
-  private removeFilePreview = () => {
-    (this.props.removeFilePreview || noOp)();
-
-    const { file } = this.state;
-
+  private setPreview = (file: File | null) => {
     if (!file) {
       return;
     }
 
-    URL.revokeObjectURL(file.preview);
+    this.setState({
+      file,
+      url: URL.createObjectURL(file),
+      fileState: FileState.previewing
+    });
+  };
+
+  private removePreview = () => {
+    (this.props.removeFilePreview || noOp)();
+    const { url } = this.state;
+
+    this.setState({
+      file: undefined,
+      url: undefined
+    });
+
+    if (!url) {
+      return;
+    }
+
+    URL.revokeObjectURL(url);
+  };
+
+  private setInitialFile = () => {
+    const { fileState } = this.state;
+
+    if (fileState !== FileState.clean) {
+      return;
+    }
+
+    const value = this.props.field.value as File | null;
+    if (!value) {
+      return;
+    }
+
+    const { file } = this.state;
+
+    if (file === value) {
+      return;
+    }
+
+    this.setPreview(value);
   };
 }
 
