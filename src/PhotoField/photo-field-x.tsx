@@ -5,6 +5,7 @@ import classnames from "classnames";
 
 import "./photo-field.scss";
 import { FormValues } from "../ResumeForm/resume-form";
+import { noOp } from "../utils";
 interface Props extends FieldProps<FormValues> {
   removeFilePreview?: () => void;
 }
@@ -162,7 +163,3 @@ export class PhotoField extends React.Component<Props, State> {
 }
 
 export default PhotoField;
-
-function noOp() {
-  return null;
-}

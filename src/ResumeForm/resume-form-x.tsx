@@ -15,7 +15,8 @@ import {
   FieldProps,
   FormikProps,
   FieldArray,
-  FieldArrayRenderProps
+  FieldArrayRenderProps,
+  FormikActions
 } from "formik";
 
 import "./resume-form.scss";
@@ -23,9 +24,11 @@ import {
   FormValues,
   initialFormValues,
   Experience,
-  emptyExperience
+  emptyExperience,
+  validationSchema
 } from "./resume-form";
 import PhotoField from "../PhotoField";
+import { noOp } from "../utils";
 
 export class ResumeForm extends React.Component {
   render() {
@@ -33,16 +36,28 @@ export class ResumeForm extends React.Component {
       <div className="ResumeForm">
         <Formik
           initialValues={initialFormValues}
-          onSubmit={() => null}
+          onSubmit={noOp}
           render={this.renderForm}
-          // validationSchema={ValidationSchema}
+          validationSchema={validationSchema}
           validateOnChange={false}
         />
       </div>
     );
   }
 
-  private renderForm = ({ values }: FormikProps<FormValues>) => {
+  private onSubmit = (
+    values: FormValues,
+    actions: FormikActions<FormValues>
+  ) => {
+    // tslint:disable-next-line:no-console
+    console.log(
+      "\n\t\tLogging start\n\n\n\n values\n",
+      values,
+      "\n\n\n\n\t\tLogging ends\n"
+    );
+  };
+
+  private renderForm = ({ values, ...props }: FormikProps<FormValues>) => {
     return (
       <Form>
         <SectionLabel
@@ -69,7 +84,11 @@ export class ResumeForm extends React.Component {
           }
         />
 
-        <Button type="submit" name="resume-form-submit">
+        <Button
+          type="submit"
+          name="resume-form-submit"
+          onClick={() => this.onSubmit(values, props)}
+        >
           Submit
         </Button>
       </Form>
@@ -219,7 +238,7 @@ function Company({
           name={makeExpFieldName(index, "texts")}
           render={helper => (
             <div>
-              <div>Experience Texts</div>
+              <div>Experiences</div>
 
               {exp.texts.map((text, ind) => (
                 <ExperienceText
@@ -258,7 +277,7 @@ function ExperienceText({
         <div>
           {`# ${textIndex + 1}`}
 
-          <label style={{ display: "none" }} htmlFor={fieldName}>
+          <label className="visually-hidden" htmlFor={fieldName}>
             Experience {textIndex + 1} text
           </label>
         </div>

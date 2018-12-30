@@ -1,8 +1,11 @@
+import * as Yup from "yup";
+
 export interface FormValues {
   first_name: string;
   last_name: string;
   profession: string;
-  photo: File | null;
+  phone: string;
+  photo?: File | null;
   address: string;
   email: string;
   date_of_birth: string;
@@ -21,6 +24,7 @@ export const initialFormValues: FormValues = {
   first_name: "",
   last_name: "",
   profession: "",
+  phone: "",
   photo: null,
   address: "",
   email: "",
@@ -49,3 +53,47 @@ export const emptyExperience = {
   to_date: "",
   texts: []
 };
+
+export const validationSchema = Yup.object<FormValues>().shape({
+  phone: Yup.string()
+    .required()
+    .min(2),
+  first_name: Yup.string()
+    .required()
+    .min(2),
+  last_name: Yup.string()
+    .required()
+    .min(2),
+  profession: Yup.string()
+    .required()
+    .min(2),
+  address: Yup.string()
+    .required()
+    .min(2),
+  email: Yup.string()
+    .email()
+    .required()
+    .min(2),
+  date_of_birth: Yup.string()
+    .required()
+    .min(2),
+  experiences: Yup.array<Experience>().of<Experience>(
+    Yup.object<Experience>().shape({
+      line1: Yup.string()
+        .required()
+        .min(2),
+      line2: Yup.string()
+        .required()
+        .min(2),
+      from_date: Yup.string()
+        .required()
+        .min(2),
+      to_date: Yup.string()
+        .required()
+        .min(2),
+      texts: Yup.array<string>()
+        .required()
+        .min(1)
+    })
+  )
+});

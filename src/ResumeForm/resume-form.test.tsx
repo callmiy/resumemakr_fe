@@ -7,7 +7,7 @@ import ResumeForm from ".";
 import { FormValues, Experience } from "./resume-form";
 import { fillField, createFile, uploadFile } from "../test_utils";
 
-it("renders ", () => {
+it("filling the form", () => {
   const file = createFile("dog.jpg", 1234, "image/jpeg");
 
   const experiences: Experience[] = [
@@ -21,6 +21,7 @@ it("renders ", () => {
   ];
 
   const values: FormValues = {
+    phone: "01348999",
     first_name: "First",
     last_name: "Last",
     date_of_birth: "1995-01-30",
