@@ -45,15 +45,28 @@ it("navigates", () => {
   expect(queryByTestId("experiences-section")).not.toBeInTheDocument();
   expect(queryByText(/Previous resume section /)).not.toBeInTheDocument();
 
-  // NAVIGATE FORWARD
-  const $next = getByText(/Next resume section experiences/i);
+  // NAVIGATE FORWARD 1
+  let $next = getByText(/Next resume section experiences/i);
   fireEvent.click($next);
 
   expect(queryByTestId("personal-info-section")).not.toBeInTheDocument();
+  expect(queryByTestId("education-section")).not.toBeInTheDocument();
   expect(getByTestId("experiences-section")).toBeInTheDocument();
   expect(
     getByText(/Previous resume section personal information/i)
   ).toBeInTheDocument();
+
+  // NAVIGATE FORWARD 2
+  $next = getByText(/Next resume section education/i);
+  fireEvent.click($next);
+
+  expect(queryByTestId("personal-info-section")).not.toBeInTheDocument();
+  expect(queryByTestId("experiences-section")).not.toBeInTheDocument();
+  expect(getByTestId("education-section")).toBeInTheDocument();
+  expect(
+    queryByText(/Previous resume section personal information/i)
+  ).not.toBeInTheDocument();
+  expect(getByText(/Previous resume section experiences/i)).toBeInTheDocument();
 });
 
 ///////////////////////////////////////////////////////////////////////////////

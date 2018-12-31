@@ -26,6 +26,7 @@ import {
 import Preview from "./Preview";
 import PersonalInfo from "./PersonalInfo";
 import Experiences from "./Experiences";
+import Education from "./Education";
 
 enum Action {
   editing = "editing",
@@ -73,6 +74,10 @@ export class ResumeForm extends React.Component<Props, State> {
 
         {action === Action.editing && section === Section.experiences && (
           <Experiences values={values.experiences} label={section} />
+        )}
+
+        {action === Action.editing && section === Section.education && (
+          <Education label={section} />
         )}
 
         {action === Action.previewing && <Preview values={values} />}

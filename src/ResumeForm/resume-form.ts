@@ -30,7 +30,8 @@ export const validationSchema = Yup.object<FormValues>().shape({
 // sections by string key
 export enum Section {
   personalInfo = "Personal Information",
-  experiences = "Experiences"
+  experiences = "Experiences",
+  education = "Education"
 }
 
 export const [sectionsList, sectionsLen]: [Section[], number] = (function() {
