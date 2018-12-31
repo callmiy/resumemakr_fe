@@ -36,6 +36,7 @@ import {
   LeftArrow,
   ActionContainer
 } from "./resume-form-styles";
+import Preview from "../Preview";
 
 enum Action {
   editing = "editing",
@@ -74,6 +75,8 @@ export class ResumeForm extends React.Component<Props, State> {
     return (
       <Form>
         {action === Action.editing && <Edit values={values} />}
+
+        {action === Action.previewing && <Preview values={values} />}
 
         <ActionContainer>
           {action === Action.previewing && (

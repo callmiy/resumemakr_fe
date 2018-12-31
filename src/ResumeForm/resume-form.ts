@@ -21,13 +21,15 @@ export interface Experience {
 }
 
 export const initialFormValues: FormValues = {
-  first_name: "",
-  last_name: "",
-  profession: "",
-  phone: "",
+  first_name: "Christian",
+  last_name: "Hybrid",
+  profession: "IT Manager",
+  phone: "202-555-0177",
   photo: null,
-  address: "",
-  email: "",
+  address: `970 Drummond Street
+  Newark, NJ 07102
+  USA`,
+  email: "christian.w.hybrid@gmail.com",
   date_of_birth: "",
   experiences: [
     {
