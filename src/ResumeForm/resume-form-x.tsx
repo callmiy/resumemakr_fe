@@ -28,6 +28,7 @@ import PersonalInfo from "./PersonalInfo";
 import Experiences from "./Experiences";
 import Education from "./Education";
 import AdditionalSkills from "./AdditionalSkills";
+import Languages from "./Languages";
 
 enum Action {
   editing = "editing",
@@ -63,30 +64,45 @@ export class ResumeForm extends React.Component<Props, State> {
     );
   }
 
+  private renderCurrEditingSection = (values: FormValues) => {
+    const { action, section } = this.state;
+
+    if (action !== Action.editing) {
+      return null;
+    }
+
+    if (section === Section.personalInfo) {
+      return <PersonalInfo values={values.personalInfo} label={section} />;
+    }
+
+    if (section === Section.experiences) {
+      return <Experiences values={values.experiences} label={section} />;
+    }
+
+    if (section === Section.education) {
+      return <Education label={section} />;
+    }
+
+    if (section === Section.addSkills) {
+      return <AdditionalSkills label={section} />;
+    }
+
+    if (section === Section.langs) {
+      return <Languages label={section} />;
+    }
+
+    return null;
+  };
+
   private renderForm = ({ values, ...props }: FormikProps<FormValues>) => {
     const { action, section } = this.state;
     const sectionIndex = sectionsList.indexOf(section);
 
     return (
       <Form>
-        {action === Action.editing && section === Section.personalInfo && (
-          <PersonalInfo values={values.personalInfo} label={section} />
-        )}
-
-        {action === Action.editing && section === Section.experiences && (
-          <Experiences values={values.experiences} label={section} />
-        )}
-
-        {action === Action.editing && section === Section.education && (
-          <Education label={section} />
-        )}
-
-        {action === Action.editing && section === Section.addSkills && (
-          <AdditionalSkills label={section} />
-        )}
+        {this.renderCurrEditingSection(values)}
 
         {action === Action.previewing && <Preview values={values} />}
-
         <BottomNavs>
           {action === Action.editing && (
             <>

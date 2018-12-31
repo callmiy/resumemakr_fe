@@ -153,6 +153,42 @@ it("navigates", () => {
    * And that the previous button now points to education section
    */
   expect(getByText(/Previous resume section education/i)).toBeInTheDocument();
+
+  /**
+   * And that next button points to languages section
+   */
+
+  $next = getByText(/Next resume section languages/i);
+
+  /**
+   * When she clicks on the next button
+   */
+  fireEvent.click($next);
+
+  /**
+   * She sees that additional skills section is gone from page
+   */
+  expect(queryByTestId("additional-skills-section")).not.toBeInTheDocument();
+
+  /**
+   * And that languages section is now loaded unto the page
+   */
+
+  expect(getByTestId("languages-section")).toBeInTheDocument();
+
+  /**
+   * And that the previous button no longer points education sections
+   */
+  expect(
+    queryByText(/Previous resume section education/i)
+  ).not.toBeInTheDocument();
+
+  /**
+   * And that the previous button now points to additional skills section
+   */
+  expect(
+    getByText(/Previous resume section additional skills/i)
+  ).toBeInTheDocument();
 });
 
 ///////////////////////////////////////////////////////////////////////////////
