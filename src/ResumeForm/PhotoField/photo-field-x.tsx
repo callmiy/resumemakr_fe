@@ -2,8 +2,7 @@ import React, { createRef } from "react";
 import { FieldProps } from "formik";
 import { Icon } from "semantic-ui-react";
 
-import { FormValues } from "../ResumeForm/resume-form";
-import { noOp } from "../utils";
+import { noOp } from "../../utils";
 import {
   FileChooser,
   Thumb,
@@ -11,7 +10,7 @@ import {
   ChangePhoto,
   UploadPhotoIconWrap
 } from "./photo-field-styles";
-interface Props extends FieldProps<FormValues> {
+interface Props<Values> extends FieldProps<Values> {
   removeFilePreview?: () => void;
 }
 interface State {
@@ -27,7 +26,7 @@ enum FileState {
   deleted = "deleted"
 }
 
-export class PhotoField extends React.Component<Props, State> {
+export class PhotoField<Values> extends React.Component<Props<Values>, State> {
   state: State = {
     fileState: FileState.clean
   };

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { FormValues } from "../ResumeForm/resume-form";
+import { FormValues } from "../resume-form";
 import {
   Container,
   Left,
@@ -29,7 +29,9 @@ export class Preview extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      values: { photo }
+      values: {
+        personalInfo: { photo }
+      }
     } = this.props;
 
     if (!photo) {
@@ -51,8 +53,13 @@ export class Preview extends React.Component<Props, State> {
 
   render() {
     const {
-      values: { first_name, last_name, profession, address, phone, email }
-    } = this.props;
+      first_name,
+      last_name,
+      profession,
+      address,
+      phone,
+      email
+    } = this.props.values.personalInfo;
 
     const { src } = this.state;
 
