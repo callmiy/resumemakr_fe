@@ -30,13 +30,15 @@ export const ToolTip = styled.span`
 `;
 
 const NavBtn = styled.div.attrs({
-  tabIndex: 0
+  tabIndex: 0,
+  "aria-haspopup": "true"
 })`
   ${btnMixin}
   position: relative;
 
   /* &:focus, */
-  &:hover {
+  &:hover,
+  &:active {
     ${ToolTip} {
       ${btnMixin}
       vertical-align: middle;
