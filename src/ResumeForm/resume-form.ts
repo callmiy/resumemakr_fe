@@ -33,7 +33,9 @@ export enum Section {
   experiences = "Experiences",
   education = "Education",
   addSkills = "Additional Skills",
-  langs = "Languages"
+  langs = "Languages",
+  hobbies = "Hobbies",
+  skills = "Skills Summary"
 }
 
 export const [sectionsList, sectionsLen]: [Section[], number] = (function() {

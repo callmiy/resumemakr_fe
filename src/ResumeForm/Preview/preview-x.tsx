@@ -67,11 +67,12 @@ export class Preview extends React.Component<Props, State> {
     console.log(
       "\n\t\tLogging start\n\n\n\n this.props\n",
       this.props.values,
+      src,
       "\n\n\n\n\t\tLogging ends\n"
     );
 
     return (
-      <Container>
+      <Container data-testid="preview-resume-section">
         <Left>
           <Section>
             <NamePos>

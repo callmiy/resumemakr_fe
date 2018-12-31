@@ -29,6 +29,8 @@ import Experiences from "./Experiences";
 import Education from "./Education";
 import AdditionalSkills from "./AdditionalSkills";
 import Languages from "./Languages";
+import Hobbies from "./Hobbies";
+import Skills from "./Skills";
 
 enum Action {
   editing = "editing",
@@ -64,36 +66,6 @@ export class ResumeForm extends React.Component<Props, State> {
     );
   }
 
-  private renderCurrEditingSection = (values: FormValues) => {
-    const { action, section } = this.state;
-
-    if (action !== Action.editing) {
-      return null;
-    }
-
-    if (section === Section.personalInfo) {
-      return <PersonalInfo values={values.personalInfo} label={section} />;
-    }
-
-    if (section === Section.experiences) {
-      return <Experiences values={values.experiences} label={section} />;
-    }
-
-    if (section === Section.education) {
-      return <Education label={section} />;
-    }
-
-    if (section === Section.addSkills) {
-      return <AdditionalSkills label={section} />;
-    }
-
-    if (section === Section.langs) {
-      return <Languages label={section} />;
-    }
-
-    return null;
-  };
-
   private renderForm = ({ values, ...props }: FormikProps<FormValues>) => {
     const { action, section } = this.state;
     const sectionIndex = sectionsList.indexOf(section);
@@ -106,17 +78,7 @@ export class ResumeForm extends React.Component<Props, State> {
         <BottomNavs>
           {action === Action.editing && (
             <>
-              <PreviewBtn
-                onClick={() => {
-                  this.setState({ action: Action.previewing });
-                }}
-              >
-                <ToolTip>Preview your resume</ToolTip>
-
-                <PreviewBtnIcon />
-
-                <span>Preview</span>
-              </PreviewBtn>
+              {this.renderPreviewPartialBtn(sectionIndex)}
 
               {sectionIndex > 0 && (
                 <EditBtn
@@ -155,6 +117,8 @@ export class ResumeForm extends React.Component<Props, State> {
                   <NextBtnIcon />
                 </NextBtn>
               )}
+
+              {this.renderPreviewFinalBtn(sectionIndex)}
             </>
           )}
 
@@ -170,6 +134,83 @@ export class ResumeForm extends React.Component<Props, State> {
         </BottomNavs>
       </Form>
     );
+  };
+  private renderPreviewFinalBtn = (sectionIndex: number) => {
+    if (sectionIndex === lastSectionIndex) {
+      return (
+        <NextBtn
+          onClick={() => {
+            this.setState({ action: Action.previewing });
+          }}
+        >
+          <ToolTip>End: preview your resume</ToolTip>
+
+          <span>Preview Your resume</span>
+
+          <NextBtnIcon />
+        </NextBtn>
+      );
+    }
+
+    return null;
+  };
+
+  private renderCurrEditingSection = (values: FormValues) => {
+    const { action, section } = this.state;
+
+    if (action !== Action.editing) {
+      return null;
+    }
+
+    if (section === Section.personalInfo) {
+      return <PersonalInfo values={values.personalInfo} label={section} />;
+    }
+
+    if (section === Section.experiences) {
+      return <Experiences values={values.experiences} label={section} />;
+    }
+
+    if (section === Section.education) {
+      return <Education label={section} />;
+    }
+
+    if (section === Section.addSkills) {
+      return <AdditionalSkills label={section} />;
+    }
+
+    if (section === Section.langs) {
+      return <Languages label={section} />;
+    }
+
+    if (section === Section.hobbies) {
+      return <Hobbies label={section} />;
+    }
+
+    if (section === Section.skills) {
+      return <Skills label={section} />;
+    }
+
+    return null;
+  };
+
+  private renderPreviewPartialBtn = (sectionIndex: number) => {
+    if (sectionIndex !== lastSectionIndex) {
+      return (
+        <PreviewBtn
+          onClick={() => {
+            this.setState({ action: Action.previewing });
+          }}
+        >
+          <ToolTip>Partial: preview your resume</ToolTip>
+
+          <PreviewBtnIcon />
+
+          <span>Preview</span>
+        </PreviewBtn>
+      );
+    }
+
+    return null;
   };
 }
 
