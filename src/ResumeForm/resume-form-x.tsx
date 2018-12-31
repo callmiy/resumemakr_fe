@@ -27,6 +27,7 @@ import Preview from "./Preview";
 import PersonalInfo from "./PersonalInfo";
 import Experiences from "./Experiences";
 import Education from "./Education";
+import AdditionalSkills from "./AdditionalSkills";
 
 enum Action {
   editing = "editing",
@@ -80,6 +81,10 @@ export class ResumeForm extends React.Component<Props, State> {
           <Education label={section} />
         )}
 
+        {action === Action.editing && section === Section.addSkills && (
+          <AdditionalSkills label={section} />
+        )}
+
         {action === Action.previewing && <Preview values={values} />}
 
         <BottomNavs>
@@ -90,7 +95,7 @@ export class ResumeForm extends React.Component<Props, State> {
                   this.setState({ action: Action.previewing });
                 }}
               >
-                <ToolTip>Show resume preview</ToolTip>
+                <ToolTip>Preview your resume</ToolTip>
 
                 <PreviewBtnIcon />
 

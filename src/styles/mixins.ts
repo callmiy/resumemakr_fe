@@ -8,3 +8,12 @@ export const VisuallyHidden = css`
   overflow: hidden;
   clip: rect(1px, 1px, 1px, 1px);
 `;
+
+export const resetVisuallyHidden = css`
+  /* https://snook.ca/archives/html_and_css/hiding-content-for-accessibility  */
+  position: absolute !important;
+  height: initial;
+  width: initial;
+  overflow: visible;
+  clip: initial;
+`;

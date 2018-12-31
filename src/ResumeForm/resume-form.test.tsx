@@ -37,7 +37,7 @@ it("navigates", () => {
     personalInfo
   };
 
-  const { getByTestId, queryByTestId, getByText, queryByText } = render(
+  const { debug, getByTestId, queryByTestId, getByText, queryByText } = render(
     <ResumeForm initialValues={values} />
   );
 
@@ -45,28 +45,114 @@ it("navigates", () => {
   expect(queryByTestId("experiences-section")).not.toBeInTheDocument();
   expect(queryByText(/Previous resume section /)).not.toBeInTheDocument();
 
-  // NAVIGATE FORWARD 1
+  /**
+   * NAVIGATION
+   * 0. Personal Info
+   * 1. Experiences
+   * 2. Education
+   * 3. Additional Skills
+   */
+
+  /**
+   * When she clicks on the next button
+   */
   let $next = getByText(/Next resume section experiences/i);
   fireEvent.click($next);
 
+  /**
+   * She sees that the personal info section is gone from page
+   */
   expect(queryByTestId("personal-info-section")).not.toBeInTheDocument();
+
+  /**
+   * And education section is gone from page
+   */
   expect(queryByTestId("education-section")).not.toBeInTheDocument();
+
+  /**
+   * And experience section is loaded
+   */
   expect(getByTestId("experiences-section")).toBeInTheDocument();
+
+  /**
+   * And she sees the previous button which when hovered points to
+   * personal info section
+   */
+
   expect(
     getByText(/Previous resume section personal information/i)
   ).toBeInTheDocument();
 
-  // NAVIGATE FORWARD 2
+  /**
+   * And that additional skills section has not been loaded
+   */
+  expect(queryByTestId("additional-skills-section")).not.toBeInTheDocument();
+
+  /**
+   * And the next button when hovered points to education section
+   */
   $next = getByText(/Next resume section education/i);
+
+  /**
+   * When she clicks on next button
+   */
   fireEvent.click($next);
 
-  expect(queryByTestId("personal-info-section")).not.toBeInTheDocument();
+  /**
+   * She sees that the experience section is gone from page
+   */
   expect(queryByTestId("experiences-section")).not.toBeInTheDocument();
+
+  /**
+   * And education section is loaded
+   */
   expect(getByTestId("education-section")).toBeInTheDocument();
+
+  /**
+   * And the previous button no longer points to personal information section
+   */
   expect(
     queryByText(/Previous resume section personal information/i)
   ).not.toBeInTheDocument();
+
+  /**
+   * And that the previous button now points to experiences section
+   */
   expect(getByText(/Previous resume section experiences/i)).toBeInTheDocument();
+
+  /**
+   * And that next button points to additional skills section
+   */
+
+  $next = getByText(/Next resume section additional skills/i);
+
+  /**
+   * When she clicks on the next button
+   */
+  fireEvent.click($next);
+
+  /**
+   * She sees that education section is gone from page
+   */
+  expect(queryByTestId("education-section")).not.toBeInTheDocument();
+
+  /**
+   * And that additional skills section is now loaded unto the page
+   */
+
+  expect(getByTestId("additional-skills-section")).toBeInTheDocument();
+
+  /**
+   * And that the previous button no longer points experiences sections
+   */
+  expect(
+    queryByText(/Previous resume section experiences/i)
+  ).not.toBeInTheDocument();
+
+  /**
+   * And that the previous button now points to education section
+   */
+  expect(getByText(/Previous resume section education/i)).toBeInTheDocument();
 });
 
 ///////////////////////////////////////////////////////////////////////////////

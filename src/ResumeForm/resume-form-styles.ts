@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 
-import { VisuallyHidden } from "../styles/mixins";
+import { VisuallyHidden, resetVisuallyHidden } from "../styles/mixins";
 
 const btnMixin = css`
   transition: background 0.4s ease-in-out, border-color 0.4s ease-in-out,
@@ -24,8 +24,49 @@ const btnMixin = css`
   line-height: 36px;
 `;
 
-export const PreviewBtn = styled.div`
+export const ToolTip = styled.span`
+  ${VisuallyHidden}
+  color: #ffffff;
+`;
+
+const NavBtn = styled.div.attrs({
+  tabIndex: 0
+})`
   ${btnMixin}
+  position: relative;
+
+  &:hover,
+  &:focus {
+    ${ToolTip} {
+      ${btnMixin}
+      vertical-align: middle;
+      left: 50%;
+      top: -54px;
+      transform: translateX(-50%);
+      font-size: 1.2rem;
+      background: #09f;
+      line-height: 1.5rem;
+      padding: 12px;
+      border-radius: 4px;
+      ${resetVisuallyHidden}
+
+      &:before {
+        position: absolute;
+        left: 50%;
+        bottom: -7px;
+        margin-left: -10px;
+        content: "";
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 10px 10px 0 10px;
+        border-color: #09f transparent transparent transparent;
+      }
+    }
+  }
+`;
+
+export const PreviewBtn = styled(NavBtn)`
   padding: 0 1em;
   color: #09f !important;
   border-width: 2px;
@@ -33,8 +74,7 @@ export const PreviewBtn = styled.div`
   border-color: currentColor;
 `;
 
-export const NextBtn = styled.div`
-  ${btnMixin}
+export const NextBtn = styled(NavBtn)`
   box-shadow: 0 2px 0 #007cce;
   margin-left: 10px;
   border-width: 2px 2px 0 2px;
@@ -45,8 +85,7 @@ export const NextBtn = styled.div`
   border-color: transparent;
 `;
 
-export const EditBtn = styled.div`
-  ${btnMixin}
+export const EditBtn = styled(NavBtn)`
   box-shadow: 0 2px 0 #d75c57;
   border-width: 2px 2px 0 2px;
   margin-bottom: 2px;
@@ -56,37 +95,6 @@ export const EditBtn = styled.div`
   border-radius: 3px;
   border-color: transparent;
   margin-left: 10px;
-`;
-
-export const ToolTip = styled.span`
-  ${VisuallyHidden}
-
-  &.visible {
-    ${btnMixin}
-    vertical-align: middle;
-    position: absolute;
-    left: 50%;
-    top: -54px;
-    transform: translateX(-50%);
-    font-size: 1.2rem;
-    background: #09f;
-    line-height: 1.5rem;
-    padding: 12px;
-    border-radius: 4px;
-
-    &:before {
-      position: absolute;
-      left: 50%;
-      bottom: -7px;
-      margin-left: -10px;
-      content: "";
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 10px 10px 0 10px;
-      border-color: #09f transparent transparent transparent;
-    }
-  }
 `;
 
 const eoIconMixin = css`
