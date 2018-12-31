@@ -14,10 +14,43 @@
 @font-face {
   font-family: "Open Sans";
   font-style: normal;
+  font-weight: 300;
+  src: url("./styles/fonts/open-sans/open-sans-v15-latin-ext_cyrillic-ext_vietnamese_greek_greek-ext_cyrillic_latin-300.woff")
+    format("woff");
+}
+
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 300;
+  src: url("./styles/fonts/open-sans/open-sans-v15-latin-ext_cyrillic-ext_vietnamese_greek_greek-ext_cyrillic_latin-300italic.woff")
+    format("woff");
+}
+
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 700;
+  src: url("./styles/fonts/open-sans/open-sans-v15-latin-ext_cyrillic-ext_vietnamese_greek_greek-ext_cyrillic_latin-700italic.woff")
+    format("woff");
+}
+
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 800;
+  src: url("./styles/fonts/open-sans/open-sans-v15-latin-ext_cyrillic-ext_vietnamese_greek_greek-ext_cyrillic_latin-800.woff")
+    format("woff");
+}
+
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
   font-weight: 400;
   src: url("./styles/fonts/open-sans/open-sans-v15-latin-ext_cyrillic-ext_vietnamese_greek_greek-ext_cyrillic_latin-regular.woff")
     format("woff");
 }
+
 @font-face {
   font-family: "Open Sans";
   font-style: italic;
@@ -25,6 +58,7 @@
   src: url("./styles/fonts/open-sans/open-sans-v15-latin-ext_cyrillic-ext_vietnamese_greek_greek-ext_cyrillic_latin-italic.woff")
     format("woff");
 }
+
 @font-face {
   font-family: "Open Sans";
   font-style: normal;
