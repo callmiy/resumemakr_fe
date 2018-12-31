@@ -26,3 +26,30 @@ export const validationSchema = Yup.object<FormValues>().shape({
   personalInfo: piSchema,
   experiences: Yup.array<Experience>().of<Experience>(expSchema)
 });
+
+// sections by string key
+export enum Section {
+  personalInfo = "Personal Information",
+  experiences = "Experiences"
+}
+
+export const [sectionsList, sectionsLen]: [Section[], number] = (function() {
+  const keys = Object.values(Section);
+
+  return [keys, keys.length] as [Section[], number];
+})();
+
+export const toSection = (current: Section, to: "next" | "prev") => {
+  const currentIndex = sectionsList.indexOf(current);
+  let lift = 0;
+
+  if (to === "next") {
+    lift = 1;
+  } else if (to === "prev") {
+    lift = currentIndex > 0 ? -1 : 0;
+  }
+
+  return sectionsList[(currentIndex + lift) % sectionsLen];
+};
+
+export const lastSectionIndex = sectionsLen - 1;

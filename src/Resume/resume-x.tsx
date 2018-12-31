@@ -36,7 +36,7 @@ export class Resume extends React.Component<Props, State> {
           <div className="main-container">
             <div className="main">
               {action === Action.EDITING && (
-                <ResumeForm initialValues={values} onPreview={this.onPreview} />
+                <ResumeForm initialValues={values} />
               )}
             </div>
           </div>
@@ -44,10 +44,6 @@ export class Resume extends React.Component<Props, State> {
       </div>
     );
   }
-
-  private onPreview = (values: FormValues) => {
-    this.setState({ action: Action.PREVIEWING, values });
-  };
 }
 
 export default Resume;

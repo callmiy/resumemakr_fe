@@ -8,7 +8,8 @@ import {
   Thumb,
   EditorContainer,
   ChangePhoto,
-  UploadPhotoIconWrap
+  UploadPhotoIconWrap,
+  InputFile
 } from "./photo-field-styles";
 interface Props<Values> extends FieldProps<Values> {
   removeFilePreview?: () => void;
@@ -113,10 +114,7 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
           <Icon name="upload" /> {label}
         </ChangePhoto>
 
-        <input
-          type="file"
-          accept="image/*"
-          className="visually-hidden"
+        <InputFile
           ref={this.inputRef}
           name={fieldName}
           id={fieldName}

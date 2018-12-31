@@ -5,18 +5,24 @@ import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 import { Experience, defaultVal } from "./experiences";
 import RegularField from "../RegularField";
 import SectionLabel from "../SectionLabel";
+import { Section } from "../resume-form";
 
 interface Props {
   values: Experience[];
+  label: Section;
 }
 
 export class Experiences extends React.Component<Props, {}> {
   render() {
-    const { values } = this.props;
+    const { values, label } = this.props;
 
     return (
       <>
-        <SectionLabel label="Experience" ico={<Icon name="won" />} />
+        <SectionLabel
+          label={label}
+          ico={<Icon name="won" />}
+          data-testid="experiences-section"
+        />
 
         <FieldArray
           name="experiences"

@@ -7,9 +7,9 @@ interface Props extends React.Props<{}> {
   label: string;
 }
 
-export function SectionLabel({ children, label, ico }: Props) {
+export function SectionLabel({ children, label, ico, ...props }: Props) {
   return (
-    <Segment raised={true} className="section-heading">
+    <Segment {...props} raised={true} className="section-heading">
       <Label as="div" ribbon={true} className="segment-label">
         <div className="icon-container">{ico}</div>
 

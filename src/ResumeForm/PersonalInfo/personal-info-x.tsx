@@ -6,19 +6,25 @@ import { PersonalInfo as PI } from "./personal-info";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
 import PhotoField from "../PhotoField";
+import { Section } from "../resume-form";
 
 interface Props {
   values: PI;
+  label: Section;
 }
 
 export class PersonalInfo extends React.Component<Props, {}> {
   render() {
+    const { label } = this.props;
+
     return (
       <>
         <SectionLabel
-          label="Personal Information"
+          label={label}
           ico={<Icon name="user outline" />}
+          data-testid="personal-info-section"
         />
+
         <BioData />
 
         <FirstColumn />

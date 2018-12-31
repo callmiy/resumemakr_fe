@@ -1,5 +1,7 @@
 import styled, { css } from "styled-components";
 
+import { VisuallyHidden } from "../../styles/mixins";
+
 const Main = styled.div`
   width: 170px;
   height: 170px;
@@ -61,4 +63,11 @@ export const UploadPhotoIconWrap = styled.div`
   display: block;
   overflow: hidden;
   height: 50px;
+`;
+
+export const InputFile = styled.input.attrs({
+  type: "file",
+  accept: "image/*"
+})`
+  ${VisuallyHidden}
 `;

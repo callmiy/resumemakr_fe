@@ -1,13 +1,15 @@
 import React from "react";
 import "jest-dom/extend-expect";
 import "react-testing-library/cleanup-after-each";
-import { render } from "react-testing-library";
+import { render, fireEvent } from "react-testing-library";
 
 import ResumeForm from ".";
-import { FormValues, Experience } from "./resume-form";
-import { fillField, createFile, uploadFile } from "../test_utils";
+import { FormValues } from "./resume-form";
+import { PersonalInfo } from "./PersonalInfo/personal-info";
+import { Experience } from "./Experiences/experiences";
+import { createFile } from "../test_utils";
 
-it("filling the form", () => {
+it("navigates", () => {
   const file = createFile("dog.jpg", 1234, "image/jpeg");
 
   const experiences: Experience[] = [
@@ -19,40 +21,39 @@ it("filling the form", () => {
       texts: ["Exp 1 text 1"]
     }
   ];
-
-  const values: FormValues = {
+  const personalInfo: PersonalInfo = {
     phone: "01348999",
     first_name: "First",
     last_name: "Last",
     date_of_birth: "1995-01-30",
     address: "Employee 1 address",
     email: "employee1@agency.com",
-    experiences,
     profession: "Employee 1 profession",
-    photo: null
+    photo: file
   };
 
-  const { debug, getByLabelText } = render(<ResumeForm />);
+  const values: FormValues = {
+    experiences,
+    personalInfo
+  };
 
-  uploadFile(getByLabelText("Upload Photo"), file);
-  fillField(getByLabelText("First name"), values.first_name);
-  fillField(getByLabelText("Last name"), values.last_name);
-  fillField(getByLabelText(/Date of birth/), values.date_of_birth);
-  fillField(getByLabelText("Profession"), values.profession);
-  fillField(getByLabelText("Address"), values.address);
-  fillField(getByLabelText("Email"), values.email);
-
-  fillField(getByLabelText(/Line 1/), values.experiences[0].line1);
-  fillField(getByLabelText(/Line 2/), values.experiences[0].line2);
-  fillField(getByLabelText("Date from"), values.experiences[0].from_date);
-  fillField(getByLabelText(/Date to/), values.experiences[0].to_date as string);
-
-  fillField(
-    getByLabelText("Experience 1 text"),
-    values.experiences[0].texts[0]
+  const { getByTestId, queryByTestId, getByText, queryByText } = render(
+    <ResumeForm initialValues={values} />
   );
 
-  // debug();
+  expect(getByTestId("personal-info-section")).toBeInTheDocument();
+  expect(queryByTestId("experiences-section")).not.toBeInTheDocument();
+  expect(queryByText(/Previous resume section /)).not.toBeInTheDocument();
+
+  // NAVIGATE FORWARD
+  const $next = getByText(/Next resume section experiences/i);
+  fireEvent.click($next);
+
+  expect(queryByTestId("personal-info-section")).not.toBeInTheDocument();
+  expect(getByTestId("experiences-section")).toBeInTheDocument();
+  expect(
+    getByText(/Previous resume section personal information/i)
+  ).toBeInTheDocument();
 });
 
 ///////////////////////////////////////////////////////////////////////////////

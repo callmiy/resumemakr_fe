@@ -3,15 +3,25 @@ import { Form } from "semantic-ui-react";
 import { Formik, FormikProps } from "formik";
 
 import "./resume-form.scss";
-import { FormValues, initialFormValues, validationSchema } from "./resume-form";
+import {
+  FormValues,
+  initialFormValues,
+  validationSchema,
+  Section,
+  toSection,
+  sectionsList,
+  lastSectionIndex
+} from "./resume-form";
 import { noOp } from "../utils";
 import {
-  PreViewButton,
-  PreViewButtonIcon,
+  PreviewBtn,
+  PreviewBtnIcon,
   EditBtn,
   ToolTip,
-  LeftArrow,
-  ActionContainer
+  PrevBtnIcon,
+  BottomNavs,
+  NextBtn,
+  NextBtnIcon
 } from "./resume-form-styles";
 import Preview from "./Preview";
 import PersonalInfo from "./PersonalInfo";
@@ -22,18 +32,12 @@ enum Action {
   previewing = "previewing"
 }
 
-enum Section {
-  personalInfo,
-  experiences
-}
-
 interface State {
   action: Action;
   section: Section;
 }
 
 interface Props {
-  onPreview: (values: FormValues) => void;
   initialValues?: FormValues;
 }
 
@@ -59,39 +63,85 @@ export class ResumeForm extends React.Component<Props, State> {
 
   private renderForm = ({ values, ...props }: FormikProps<FormValues>) => {
     const { action, section } = this.state;
+    const sectionIndex = sectionsList.indexOf(section);
 
     return (
       <Form>
         {action === Action.editing && section === Section.personalInfo && (
-          <PersonalInfo values={values.personalInfo} />
+          <PersonalInfo values={values.personalInfo} label={section} />
         )}
 
         {action === Action.editing && section === Section.experiences && (
-          <Experiences values={values.experiences} />
+          <Experiences values={values.experiences} label={section} />
         )}
 
         {action === Action.previewing && <Preview values={values} />}
 
-        <ActionContainer>
+        <BottomNavs>
+          {action === Action.editing && (
+            <>
+              <PreviewBtn
+                onClick={() => {
+                  this.setState({ action: Action.previewing });
+                }}
+              >
+                <ToolTip>Show resume preview</ToolTip>
+
+                <PreviewBtnIcon />
+
+                <span>Preview</span>
+              </PreviewBtn>
+
+              {sectionIndex > 0 && (
+                <EditBtn
+                  onClick={() =>
+                    this.setState({ section: toSection(section, "prev") })
+                  }
+                >
+                  <ToolTip>
+                    {`Previous resume section ${toSection(
+                      section,
+                      "prev"
+                    ).toLowerCase()}`}
+                  </ToolTip>
+
+                  <PrevBtnIcon />
+
+                  <span>Previous</span>
+                </EditBtn>
+              )}
+
+              {sectionIndex < lastSectionIndex && (
+                <NextBtn
+                  onClick={() =>
+                    this.setState({ section: toSection(section, "next") })
+                  }
+                >
+                  <ToolTip>
+                    {`Next resume section ${toSection(
+                      section,
+                      "next"
+                    ).toLowerCase()}`}
+                  </ToolTip>
+
+                  <span>Next</span>
+
+                  <NextBtnIcon />
+                </NextBtn>
+              )}
+            </>
+          )}
+
           {action === Action.previewing && (
             <EditBtn onClick={() => this.setState({ action: Action.editing })}>
-              <ToolTip>Want to edit your resume?</ToolTip>
-              <LeftArrow />
+              <ToolTip>Show resume editor</ToolTip>
+
+              <PrevBtnIcon />
+
               <span>Back to Editor</span>
             </EditBtn>
           )}
-
-          {action === Action.editing && (
-            <PreViewButton
-              onClick={() => {
-                this.setState({ action: Action.previewing });
-              }}
-            >
-              <PreViewButtonIcon />
-              <span>Preview</span>
-            </PreViewButton>
-          )}
-        </ActionContainer>
+        </BottomNavs>
       </Form>
     );
   };
