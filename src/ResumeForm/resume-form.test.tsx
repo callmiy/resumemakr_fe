@@ -9,39 +9,12 @@ import { PersonalInfo } from "./PersonalInfo/personal-info";
 import { Experience } from "./Experiences/experiences";
 import { createFile } from "../test_utils";
 
-it("navigates", () => {
-  const file = createFile("dog.jpg", 1234, "image/jpeg");
-
-  const experiences: Experience[] = [
-    {
-      line1: "Exp 1 line1",
-      line2: "Exp 1 line2",
-      from_date: "2015-01-01",
-      to_date: "2016-02-02",
-      texts: ["Exp 1 text 1"]
-    }
-  ];
-  const personalInfo: PersonalInfo = {
-    phone: "01348999",
-    first_name: "First",
-    last_name: "Last",
-    date_of_birth: "1995-01-30",
-    address: "Employee 1 address",
-    email: "employee1@agency.com",
-    profession: "Employee 1 profession",
-    photo: file
-  };
-
-  const values: FormValues = {
-    experiences,
-    personalInfo
-  };
-
+it("navigates forward", () => {
   /**
    * Given she is on the resume builder page
    */
   const { getByTestId, queryByTestId, getByText, queryByText } = render(
-    <ResumeForm initialValues={values} />
+    <ResumeForm />
   );
 
   /**
@@ -112,14 +85,6 @@ it("navigates", () => {
    * And that preview resume section is gone from the page
    */
   expect(queryByTestId("preview-resume-section")).not.toBeInTheDocument();
-
-  /**
-   * NAVIGATION
-   * 0. Personal Info
-   * 1. Experiences
-   * 2. Education
-   * 3. Additional Skills
-   */
 
   /**
    * When she clicks on the next button
