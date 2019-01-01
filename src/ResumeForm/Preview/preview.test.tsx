@@ -10,6 +10,9 @@ import { EducationVal } from "../Education/education";
 import { FormValues } from "../resume-form";
 import { SkillVal } from "../Skills/skills";
 import { createFile } from "../../test_utils";
+import { AdditionalSkillVal } from "../AdditionalSkills/additional-skills";
+import { HobbyVal } from "../Hobbies/hobbies";
+import { LanguageVal } from "../Languages/languages";
 
 it("renders form preview", () => {
   const photo = createFile("kanmii.jpg", 12345, "image/jpeg");
@@ -19,7 +22,7 @@ it("renders form preview", () => {
     last_name: "Ademii",
     email: "a@b.com",
     phone: "010388736633",
-    address: "67 Williams Butler street\nKings Plaza",
+    address: "67 Williams Butler street Kings Plaza",
     date_of_birth: "2015-06-12",
     profession: "IT manager"
   };
@@ -32,8 +35,8 @@ it("renders form preview", () => {
   const expOthers = {
     position: "Account Manager",
     companyName: "Union Bank PLC",
-    from_date: "2014-03-03",
-    to_date: "2015-04-25"
+    from_date: "03/2014",
+    to_date: "04/2015"
   };
 
   const experience: ExperienceVal = {
@@ -54,11 +57,25 @@ it("renders form preview", () => {
     achievements: ["Built 1000 apps", "Saved my company money"]
   };
 
+  const additionalSkill: AdditionalSkillVal = {
+    description: "Adobe photoshop"
+  };
+
+  const hobbies: HobbyVal[] = ["Singing", "Swimming", "dancing"];
+
+  const language: LanguageVal = {
+    description: "English",
+    ratingDescription: "fluent"
+  };
+
   const values: FormValues = {
     personalInfo,
     experiences: [experience],
     education: [education],
-    skills: [skill]
+    skills: [skill],
+    additionalSkills: [additionalSkill],
+    hobbies,
+    languages: [language]
   };
 
   const { debug, getByText, getByAltText } = render(
@@ -70,15 +87,18 @@ it("renders form preview", () => {
   ).toBeInTheDocument();
 
   for (const exp of Object.values(expOthers)
+    .concat(Object.values(language))
+    .concat(Object.values(additionalSkill))
     .concat(Object.values(personalInfoOthers))
     .concat(Object.values(education))
     .concat(experience.achievements)
     .concat([skill.description])
-    .concat(skill.achievements)) {
-    expect(getByText(exp)).toBeInTheDocument();
+    .concat(skill.achievements)
+    .concat(hobbies)) {
+    expect(getByText(new RegExp(exp, "i"))).toBeInTheDocument();
   }
 
-  debug();
+  // debug();
 });
 
 ///////////////////////////////////////////////////////////////////////////////
