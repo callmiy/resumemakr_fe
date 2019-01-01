@@ -17,3 +17,7 @@ export const resetVisuallyHidden = css`
   overflow: visible;
   clip: initial;
 `;
+
+export const openSansMixin = css`
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+`;

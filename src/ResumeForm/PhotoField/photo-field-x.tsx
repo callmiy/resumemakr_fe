@@ -1,6 +1,6 @@
 import React, { createRef } from "react";
 import { FieldProps } from "formik";
-import { Icon } from "semantic-ui-react";
+import { Icon, Modal, Button } from "semantic-ui-react";
 
 import { noOp } from "../../utils";
 import {
@@ -9,7 +9,8 @@ import {
   EditorContainer,
   ChangePhoto,
   UploadPhotoIconWrap,
-  InputFile
+  InputFile,
+  ConfirmDeleteModal
 } from "./photo-field-styles";
 interface Props<Values> extends FieldProps<Values> {
   removeFilePreview?: () => void;
@@ -18,6 +19,7 @@ interface State {
   file?: File;
   url?: string;
   fileState: FileState;
+  open?: boolean;
 }
 
 enum FileState {
@@ -44,6 +46,7 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
 
   componentWillUnmount() {
     this.removePreview();
+    (this.props.removeFilePreview || noOp)();
   }
 
   render() {
@@ -64,6 +67,8 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
             {this.renderFileInput("Upload Photo")}
           </FileChooser>
         )}
+
+        {this.renderModal()}
       </>
     );
   }
@@ -91,8 +96,7 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
             <ChangePhoto
               onClick={evt => {
                 evt.stopPropagation();
-                this.setState({ fileState: FileState.deleted });
-                this.removePreview();
+                this.setState({ open: true });
               }}
             >
               <Icon name="delete" /> Remove
@@ -121,6 +125,44 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
           onChange={this.handleFileUpload}
         />
       </>
+    );
+  };
+
+  private renderModal = () => {
+    return (
+      <ConfirmDeleteModal open={this.state.open}>
+        <Modal.Header>Removing photo</Modal.Header>
+
+        <Modal.Content>
+          <Modal.Description>
+            <div>Do you really want to remove photo?</div>
+          </Modal.Description>
+        </Modal.Content>
+
+        <Modal.Actions>
+          <Button
+            positive={true}
+            icon="remove"
+            labelPosition="right"
+            content="No"
+            onClick={() => {
+              this.setState({ open: false });
+            }}
+          />
+
+          <Button
+            negative={true}
+            icon="checkmark"
+            labelPosition="right"
+            content="Yes"
+            onClick={() => {
+              this.setState({ fileState: FileState.deleted });
+              this.removePreview();
+              this.setState({ open: false });
+            }}
+          />
+        </Modal.Actions>
+      </ConfirmDeleteModal>
     );
   };
 
@@ -156,7 +198,6 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
   };
 
   private removePreview = () => {
-    (this.props.removeFilePreview || noOp)();
     const { url } = this.state;
 
     this.setState({

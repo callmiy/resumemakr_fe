@@ -1,6 +1,8 @@
-import styled, { css } from "styled-components";
+import styled, { css } from "styled-components/macro";
+import { Modal, ModalProps } from "semantic-ui-react";
 
-import { VisuallyHidden } from "../../styles/mixins";
+import { VisuallyHidden, openSansMixin } from "../../styles/mixins";
+import { wrapped } from "../../component-utils";
 
 const Main = styled.div`
   width: 170px;
@@ -70,4 +72,29 @@ export const InputFile = styled.input.attrs({
   accept: "image/*"
 })`
   ${VisuallyHidden}
+`;
+
+const Modal1 = wrapped<ModalProps>(Modal);
+
+export const ConfirmDeleteModal = styled(Modal1)`
+  &.ui.modal {
+    width: 90%;
+    font-size: 1.6rem;
+    max-width: 500px;
+
+    & > .header {
+      ${openSansMixin};
+      font-size: 1.8rem;
+      font-weight: 500;
+      min-height: 70px;
+      padding: 0em 1.5rem !important;
+      background: #323942;
+      color: #fff;
+      line-height: 70px;
+    }
+
+    .ui.button {
+      font-size: 1.5rem;
+    }
+  }
 `;

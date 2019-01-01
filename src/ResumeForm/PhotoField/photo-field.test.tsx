@@ -2,6 +2,7 @@ import React from "react";
 import "jest-dom/extend-expect";
 import "react-testing-library/cleanup-after-each";
 import { render, wait, fireEvent } from "react-testing-library";
+import { getByText as domGetByText } from "dom-testing-library";
 import "jest-styled-components";
 
 import PhotoField from ".";
@@ -70,7 +71,7 @@ it("shows edit buttons when preview clicked", () => {
 });
 
 it("deletes photo", () => {
-  const { ui, mockRemoveFilePreview } = setUp();
+  const { ui } = setUp();
   const { getByLabelText, getByTestId, getByText, queryByTestId } = render(ui);
 
   uploadFile(
@@ -78,11 +79,34 @@ it("deletes photo", () => {
     createFile("dog.jpg", 1234, "image/jpeg")
   );
 
-  expect(mockRemoveFilePreview.mock.calls.length).toBe(1);
-
+  /**
+   * When she mouses over the photo
+   */
   fireEvent.mouseEnter(getByTestId("photo-preview"));
+
+  /**
+   * And clicks the photo remove button
+   */
   fireEvent.click(getByText("Remove"));
-  expect(mockRemoveFilePreview.mock.calls.length).toBe(2);
+
+  /**
+   * She sees a modal dialog on the page
+   */
+
+  const $modalDescription = getByText(/Do you really want to remove photo\?/);
+
+  /**
+   * When she clicks on the yes button
+   */
+
+  fireEvent.click(
+    domGetByText($modalDescription.closest(".modal") as HTMLDivElement, /Yes/i)
+  );
+
+  /**
+   * She sees that the photo preview has gone from the page
+   */
+
   expect(queryByTestId("photo-preview")).not.toBeInTheDocument();
 });
 
