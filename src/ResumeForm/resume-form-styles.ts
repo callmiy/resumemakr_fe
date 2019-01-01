@@ -37,8 +37,8 @@ const NavBtn = styled.div.attrs({
   position: relative;
 
   /* &:focus, */
-  &:hover,
-  &:active {
+  /* &:active, */
+  &:hover1 {
     ${ToolTip} {
       ${btnMixin}
       vertical-align: middle;
