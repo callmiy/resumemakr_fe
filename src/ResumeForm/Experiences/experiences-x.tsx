@@ -59,16 +59,16 @@ function Experience({ index, exp, arrayHelper }: ExperienceProps) {
 
       <Card.Content>
         <FastField
-          name={makeName(index, "line1")}
-          label="Line 1 (e.g. position)"
-          defaultValue={exp.line1}
+          name={makeName(index, "position")}
+          label="Title/Position/Responsibility"
+          defaultValue={exp.position}
           component={RegularField}
         />
 
         <FastField
-          name={makeName(index, "line2")}
-          label="Line 2 (e.g. company, department)"
-          defaultValue={exp.line2}
+          name={makeName(index, "companyName")}
+          label="Company, department etc."
+          defaultValue={exp.companyName}
           component={RegularField}
         />
 
@@ -87,18 +87,22 @@ function Experience({ index, exp, arrayHelper }: ExperienceProps) {
         />
 
         <FieldArray
-          name={makeName(index, "texts")}
+          name={makeName(index, "achievements")}
           render={helper => (
             <div>
-              <div>Experiences</div>
+              <div>
+                Achievements
+                <span> (responsibilities, activities)</span>
+              </div>
 
-              {exp.texts.map((text, ind) => (
-                <ExperienceText
+              {exp.achievements.map((achievement, ind) => (
+                <Achievement
                   key={ind}
-                  text={text}
-                  textIndex={ind}
-                  expFieldName={makeName(index, "texts")}
+                  achievement={achievement}
+                  index={ind}
+                  fieldName={makeName(index, "achievements")}
                   arrayHelper={helper}
+                  expIndex1={index}
                 />
               ))}
             </div>
@@ -109,32 +113,35 @@ function Experience({ index, exp, arrayHelper }: ExperienceProps) {
   );
 }
 
-interface ExperienceTextProps {
-  textIndex: number;
-  text: string;
-  expFieldName: string;
+interface AchievementProps {
+  index: number;
+  achievement: string;
+  fieldName: string;
   arrayHelper: FieldArrayRenderProps;
+  expIndex1: number;
 }
 
-function ExperienceText({
-  textIndex,
-  text,
-  expFieldName
-}: ExperienceTextProps) {
-  const fieldName = `${expFieldName}[${textIndex}]`;
+function Achievement({
+  index,
+  achievement,
+  fieldName: expFieldName,
+  expIndex1
+}: AchievementProps) {
+  const fieldName = `${expFieldName}[${index}]`;
+
   return (
     <FastField
       name={fieldName}
       label={
         <div>
-          {`# ${textIndex + 1}`}
+          {`# ${index + 1}`}
 
           <label className="visually-hidden" htmlFor={fieldName}>
-            Experience {textIndex + 1} text
+            Experience {expIndex1} achievement {index + 1}
           </label>
         </div>
       }
-      defaultValue={text}
+      defaultValue={achievement}
       comp={TextArea}
       component={RegularField}
     />
