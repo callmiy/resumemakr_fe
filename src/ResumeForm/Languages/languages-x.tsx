@@ -9,12 +9,12 @@ import { Lang, defaultVal } from "./languages";
 
 interface Props {
   label: Section;
-  values: Lang[];
+  values?: Lang[];
 }
 
 export class Languages extends React.Component<Props, {}> {
   render() {
-    const { label, values } = this.props;
+    const { label, values = [] } = this.props;
 
     return (
       <>

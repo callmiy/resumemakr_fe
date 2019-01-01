@@ -185,7 +185,7 @@ export class ResumeForm extends React.Component<Props, State> {
     }
 
     if (section === Section.hobbies) {
-      return <Hobbies label={section} />;
+      return <Hobbies label={section} values={values.hobbies} />;
     }
 
     if (section === Section.skills) {

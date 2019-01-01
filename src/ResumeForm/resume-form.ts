@@ -30,12 +30,15 @@ import {
   validationSchema as langSchema
 } from "./Languages/languages";
 
+import { Hobby, defaultVal as hobby } from "./Hobbies/hobbies";
+
 export interface FormValues {
   personalInfo: PersonalInfo;
   experiences: Experience[];
   education: Edu[];
   additionalSkills: AdditionalSkill[];
-  languages: Lang[];
+  languages?: Lang[];
+  hobbies?: Hobby[];
 }
 
 export const initialFormValues: FormValues = {
@@ -43,7 +46,8 @@ export const initialFormValues: FormValues = {
   experiences: [experience],
   education: [education],
   additionalSkills: [additionSkill],
-  languages: [lang]
+  languages: [lang],
+  hobbies: [hobby]
 };
 
 export const validationSchema = Yup.object<FormValues>().shape({
@@ -53,7 +57,8 @@ export const validationSchema = Yup.object<FormValues>().shape({
   additionalSkills: Yup.array<AdditionalSkill>().of<AdditionalSkill>(
     addSkillSchema
   ),
-  languages: Yup.array<Lang>().of<Lang>(langSchema)
+  languages: Yup.array<Lang>().of<Lang>(langSchema),
+  hobbies: Yup.array<Hobby>()
 });
 
 // sections by string key
