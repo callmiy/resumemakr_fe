@@ -181,7 +181,7 @@ export class ResumeForm extends React.Component<Props, State> {
     }
 
     if (section === Section.langs) {
-      return <Languages label={section} />;
+      return <Languages label={section} values={values.languages} />;
     }
 
     if (section === Section.hobbies) {

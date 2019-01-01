@@ -17,7 +17,7 @@ export class AdditionalSkills extends React.Component<Props, {}> {
     const { label, values } = this.props;
 
     return (
-      <div>
+      <>
         <SectionLabel
           label={label}
           ico={<Icon name="won" />}
@@ -37,7 +37,7 @@ export class AdditionalSkills extends React.Component<Props, {}> {
             ))
           }
         />
-      </div>
+      </>
     );
   }
 }
