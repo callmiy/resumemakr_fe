@@ -62,7 +62,7 @@ function BioData() {
         </Card.Content>
       </Card>
 
-      <FastField name="photo" component={PhotoField} />
+      <FastField name={makeName("photo")} component={PhotoField} />
     </>
   );
 }
