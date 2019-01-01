@@ -18,22 +18,33 @@ import {
   defaultVal as education
 } from "./Education/education";
 
+import {
+  AdditionalSkill,
+  defaultValue as additionSkill,
+  validationSchema as addSkillSchema
+} from "./AdditionalSkills/additional-skills";
+
 export interface FormValues {
   personalInfo: PersonalInfo;
   experiences: Experience[];
   education: Edu[];
+  additionalSkills: AdditionalSkill[];
 }
 
 export const initialFormValues: FormValues = {
   personalInfo,
   experiences: [experience],
-  education: [education]
+  education: [education],
+  additionalSkills: [additionSkill]
 };
 
 export const validationSchema = Yup.object<FormValues>().shape({
   personalInfo: piSchema,
   experiences: Yup.array<Experience>().of<Experience>(expSchema),
-  education: Yup.array<Edu>().of<Edu>(edSchema)
+  education: Yup.array<Edu>().of<Edu>(edSchema),
+  additionalSkills: Yup.array<AdditionalSkill>().of<AdditionalSkill>(
+    addSkillSchema
+  )
 });
 
 // sections by string key
