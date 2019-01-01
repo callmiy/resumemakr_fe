@@ -1,9 +1,9 @@
 import * as Yup from "yup";
 
-export type Hobby = string;
+export type HobbyVal = string;
 
-export const defaultVal: Hobby = "Swimming";
+export const defaultVal: HobbyVal = "Swimming";
 
-export const emptyVal: Hobby = "";
+export const emptyVal: HobbyVal = "";
 
 export const validationSchema = Yup.string();

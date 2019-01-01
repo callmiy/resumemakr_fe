@@ -1,21 +1,21 @@
 import * as Yup from "yup";
 
-export interface Edu {
+export interface EducationVal {
   school: string;
   course: string;
 }
 
-export const emptyVal: Edu = {
+export const emptyVal: EducationVal = {
   school: "",
   course: ""
 };
 
-export const defaultVal: Edu = {
+export const defaultVal: EducationVal = {
   school: "The City College of New York, New York City, NY",
   course: "MS in Computer Science, Distinction"
 };
 
-export const validationSchema = Yup.object<Edu>().shape({
+export const validationSchema = Yup.object<EducationVal>().shape({
   school: Yup.string()
     .required()
     .min(5),

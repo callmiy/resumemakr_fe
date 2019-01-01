@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 
-export interface Experience {
+export interface ExperienceVal {
   line1: string;
   line2: string;
   from_date: string;
@@ -16,7 +16,7 @@ export const emptyVals = {
   texts: []
 };
 
-export const validationSchema = Yup.object<Experience>().shape({
+export const validationSchema = Yup.object<ExperienceVal>().shape({
   line1: Yup.string()
     .required()
     .min(2),
@@ -34,7 +34,7 @@ export const validationSchema = Yup.object<Experience>().shape({
     .min(1)
 });
 
-export const defaultVal: Experience = {
+export const defaultVal: ExperienceVal = {
   line1: "IT Manager",
   line2: "Apple, New York City, NY",
   from_date: "2015-03-31",

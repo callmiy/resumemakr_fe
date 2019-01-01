@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 
-export interface PersonalInfo {
+export interface PersonalInfoVal {
   first_name: string;
   last_name: string;
   profession: string;
@@ -11,7 +11,7 @@ export interface PersonalInfo {
   date_of_birth: string;
 }
 
-export const defaultVal: PersonalInfo = {
+export const defaultVal: PersonalInfoVal = {
   first_name: "Christian",
   last_name: "Hybrid",
   profession: "IT Manager",
@@ -24,7 +24,7 @@ USA`,
   date_of_birth: ""
 };
 
-export const validationSchema = Yup.object<PersonalInfo>().shape({
+export const validationSchema = Yup.object<PersonalInfoVal>().shape({
   phone: Yup.string()
     .required()
     .min(2),

@@ -2,14 +2,14 @@ import React from "react";
 import { Icon, Card, TextArea } from "semantic-ui-react";
 import { FastField } from "formik";
 
-import { PersonalInfo as PI } from "./personal-info";
+import { PersonalInfoVal } from "./personal-info";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
 import PhotoField from "../PhotoField";
 import { Section } from "../resume-form";
 
 interface Props {
-  values: PI;
+  values: PersonalInfoVal;
   label: Section;
 }
 

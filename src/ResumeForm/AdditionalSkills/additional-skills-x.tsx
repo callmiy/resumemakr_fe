@@ -5,11 +5,11 @@ import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 import { Section } from "../resume-form";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
-import { AdditionalSkill, defaultValue } from "./additional-skills";
+import { AdditionalSkillVal, defaultValue } from "./additional-skills";
 
 interface Props {
   label: Section;
-  values: AdditionalSkill[];
+  values: AdditionalSkillVal[];
 }
 
 export class AdditionalSkills extends React.Component<Props, {}> {
@@ -46,7 +46,7 @@ export default AdditionalSkills;
 
 interface SkillProps {
   index: number;
-  skill?: AdditionalSkill;
+  skill?: AdditionalSkillVal;
   arrayHelper: FieldArrayRenderProps;
 }
 
@@ -80,6 +80,6 @@ function Skill({
   );
 }
 
-function makeName(index: number, key: keyof AdditionalSkill) {
+function makeName(index: number, key: keyof AdditionalSkillVal) {
   return `additionalSkills[${index}].${key}`;
 }

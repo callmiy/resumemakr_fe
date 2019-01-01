@@ -5,11 +5,11 @@ import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 import { Section } from "../resume-form";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
-import { Edu, defaultVal } from "./education";
+import { EducationVal, defaultVal } from "./education";
 
 interface Props {
   label: Section;
-  values: Edu[];
+  values: EducationVal[];
 }
 
 export class Education extends React.Component<Props, {}> {
@@ -46,7 +46,7 @@ export default Education;
 
 interface SchoolProps {
   index: number;
-  edu?: Edu;
+  edu?: EducationVal;
   arrayHelper: FieldArrayRenderProps;
 }
 
@@ -76,6 +76,6 @@ function School({ index, edu = { ...defaultVal }, arrayHelper }: SchoolProps) {
   );
 }
 
-function makeName(index: number, key: keyof Edu) {
+function makeName(index: number, key: keyof EducationVal) {
   return `education[${index}].${key}`;
 }

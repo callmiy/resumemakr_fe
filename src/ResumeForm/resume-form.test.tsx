@@ -5,8 +5,8 @@ import { render, fireEvent } from "react-testing-library";
 
 import ResumeForm from ".";
 import { FormValues } from "./resume-form";
-import { PersonalInfo } from "./PersonalInfo/personal-info";
-import { Experience } from "./Experiences/experiences";
+import { PersonalInfoVal } from "./PersonalInfo/personal-info";
+import { ExperienceVal } from "./Experiences/experiences";
 import { createFile } from "../test_utils";
 
 it("navigates forward", () => {

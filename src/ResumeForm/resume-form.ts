@@ -1,31 +1,31 @@
 import * as Yup from "yup";
 
 import {
-  Experience,
+  ExperienceVal,
   validationSchema as expSchema,
   defaultVal as experience
 } from "./Experiences/experiences";
 
 import {
-  PersonalInfo,
+  PersonalInfoVal,
   defaultVal as personalInfo,
   validationSchema as piSchema
 } from "./PersonalInfo/personal-info";
 
 import {
-  Edu,
+  EducationVal,
   validationSchema as edSchema,
   defaultVal as education
 } from "./Education/education";
 
 import {
-  AdditionalSkill,
+  AdditionalSkillVal,
   defaultValue as additionSkill,
   validationSchema as addSkillSchema
 } from "./AdditionalSkills/additional-skills";
 
 import {
-  Lang,
+  LanguageVal,
   defaultVal as lang,
   validationSchema as langSchema
 } from "./Languages/languages";
@@ -36,15 +36,15 @@ import {
   validationSchema as skillsSchema
 } from "./Skills/skills";
 
-import { Hobby, defaultVal as hobby } from "./Hobbies/hobbies";
+import { HobbyVal, defaultVal as hobby } from "./Hobbies/hobbies";
 
 export interface FormValues {
-  personalInfo: PersonalInfo;
-  experiences: Experience[];
-  education: Edu[];
-  additionalSkills: AdditionalSkill[];
-  languages?: Lang[];
-  hobbies?: Hobby[];
+  personalInfo: PersonalInfoVal;
+  experiences: ExperienceVal[];
+  education: EducationVal[];
+  additionalSkills: AdditionalSkillVal[];
+  languages?: LanguageVal[];
+  hobbies?: HobbyVal[];
   skills: SkillVal[];
 }
 
@@ -60,13 +60,13 @@ export const initialFormValues: FormValues = {
 
 export const validationSchema = Yup.object<FormValues>().shape({
   personalInfo: piSchema,
-  experiences: Yup.array<Experience>().of<Experience>(expSchema),
-  education: Yup.array<Edu>().of<Edu>(edSchema),
-  additionalSkills: Yup.array<AdditionalSkill>().of<AdditionalSkill>(
+  experiences: Yup.array<ExperienceVal>().of<ExperienceVal>(expSchema),
+  education: Yup.array<EducationVal>().of<EducationVal>(edSchema),
+  additionalSkills: Yup.array<AdditionalSkillVal>().of<AdditionalSkillVal>(
     addSkillSchema
   ),
-  languages: Yup.array<Lang>().of<Lang>(langSchema),
-  hobbies: Yup.array<Hobby>(),
+  languages: Yup.array<LanguageVal>().of<LanguageVal>(langSchema),
+  hobbies: Yup.array<HobbyVal>(),
   skills: Yup.array<SkillVal>().of<SkillVal>(skillsSchema)
 });
 

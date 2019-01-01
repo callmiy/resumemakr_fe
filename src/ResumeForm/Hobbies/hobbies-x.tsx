@@ -5,11 +5,11 @@ import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 import { Section } from "../resume-form";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
-import { Hobby, defaultVal } from "./hobbies";
+import { HobbyVal, defaultVal } from "./hobbies";
 
 interface Props {
   label: Section;
-  values?: Hobby[];
+  values?: HobbyVal[];
 }
 
 export class Hobbies extends React.Component<Props, {}> {
@@ -28,7 +28,7 @@ export class Hobbies extends React.Component<Props, {}> {
           name="hobbies"
           render={arrayHelper =>
             values.map((hobby, index) => (
-              <Hob
+              <Hobby
                 key={index}
                 index={index}
                 hobby={hobby}
@@ -46,11 +46,11 @@ export default Hobbies;
 
 interface HobbyProps {
   index: number;
-  hobby?: Hobby;
+  hobby?: HobbyVal;
   arrayHelper: FieldArrayRenderProps;
 }
 
-function Hob({ index, hobby = defaultVal, arrayHelper }: HobbyProps) {
+function Hobby({ index, hobby = defaultVal, arrayHelper }: HobbyProps) {
   return (
     <Card>
       <Card.Content>

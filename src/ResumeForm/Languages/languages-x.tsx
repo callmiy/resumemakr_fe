@@ -5,11 +5,11 @@ import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 import { Section } from "../resume-form";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
-import { Lang, defaultVal } from "./languages";
+import { LanguageVal, defaultVal } from "./languages";
 
 interface Props {
   label: Section;
-  values?: Lang[];
+  values?: LanguageVal[];
 }
 
 export class Languages extends React.Component<Props, {}> {
@@ -46,7 +46,7 @@ export default Languages;
 
 interface LangProps {
   index: number;
-  lang?: Lang;
+  lang?: LanguageVal;
   arrayHelper: FieldArrayRenderProps;
 }
 
@@ -76,6 +76,6 @@ function Language({ index, lang = { ...defaultVal }, arrayHelper }: LangProps) {
   );
 }
 
-function makeName(index: number, key: keyof Lang) {
+function makeName(index: number, key: keyof LanguageVal) {
   return `languages[${index}].${key}`;
 }

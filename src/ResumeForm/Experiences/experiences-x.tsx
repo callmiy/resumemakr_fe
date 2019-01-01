@@ -2,13 +2,13 @@ import React from "react";
 import { TextArea, Card, Icon } from "semantic-ui-react";
 import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 
-import { Experience } from "./experiences";
+import { ExperienceVal } from "./experiences";
 import RegularField from "../RegularField";
 import SectionLabel from "../SectionLabel";
 import { Section } from "../resume-form";
 
 interface Props {
-  values: Experience[];
+  values: ExperienceVal[];
   label: Section;
 }
 
@@ -28,7 +28,7 @@ export class Experiences extends React.Component<Props, {}> {
           name="experiences"
           render={arrayHelper =>
             values.map((exp, index) => (
-              <Company
+              <Experience
                 key={index}
                 index={index}
                 exp={exp}
@@ -44,13 +44,13 @@ export class Experiences extends React.Component<Props, {}> {
 
 export default Experiences;
 
-interface CompanyProps {
+interface ExperienceProps {
   index: number;
-  exp: Experience;
+  exp: ExperienceVal;
   arrayHelper: FieldArrayRenderProps;
 }
 
-function Company({ index, exp, arrayHelper }: CompanyProps) {
+function Experience({ index, exp, arrayHelper }: ExperienceProps) {
   return (
     <Card>
       <Card.Content>
@@ -141,6 +141,6 @@ function ExperienceText({
   );
 }
 
-function makeName(index: number, key: keyof Experience) {
+function makeName(index: number, key: keyof ExperienceVal) {
   return `experiences[${index}].${key}`;
 }
