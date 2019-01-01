@@ -2,7 +2,7 @@ import React from "react";
 import { TextArea, Card, Icon } from "semantic-ui-react";
 import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 
-import { Experience, defaultVal } from "./experiences";
+import { Experience } from "./experiences";
 import RegularField from "../RegularField";
 import SectionLabel from "../SectionLabel";
 import { Section } from "../resume-form";
@@ -46,15 +46,11 @@ export default Experiences;
 
 interface CompanyProps {
   index: number;
-  exp?: Experience;
+  exp: Experience;
   arrayHelper: FieldArrayRenderProps;
 }
 
-function Company({
-  index,
-  exp = { ...defaultVal },
-  arrayHelper
-}: CompanyProps) {
+function Company({ index, exp, arrayHelper }: CompanyProps) {
   return (
     <Card>
       <Card.Content>
