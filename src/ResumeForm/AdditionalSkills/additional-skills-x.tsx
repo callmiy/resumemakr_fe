@@ -58,7 +58,7 @@ function Skill({
   return (
     <Card>
       <Card.Content>
-        <Card.Header>School #{index + 1}</Card.Header>
+        <Card.Header>#{index + 1}</Card.Header>
       </Card.Content>
 
       <Card.Content>
