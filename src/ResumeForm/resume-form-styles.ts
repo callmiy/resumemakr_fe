@@ -2,6 +2,32 @@ import styled, { css } from "styled-components";
 
 import { VisuallyHidden, resetVisuallyHidden } from "../styles/mixins";
 
+export const Container = styled.div`
+  form {
+    width: 100%;
+    padding-bottom: 4rem;
+  }
+
+  .card {
+    width: 100%;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .names {
+    display: flex;
+    margin-bottom: 5px;
+
+    & > div {
+      width: 48%;
+
+      &:first-of-type {
+        margin-right: 4%;
+      }
+    }
+  }
+`;
+
 const btnMixin = css`
   transition: background 0.4s ease-in-out, border-color 0.4s ease-in-out,
     color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;

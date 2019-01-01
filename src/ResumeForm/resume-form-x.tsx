@@ -2,7 +2,6 @@ import React from "react";
 import { Form } from "semantic-ui-react";
 import { Formik, FormikProps } from "formik";
 
-import "./resume-form.scss";
 import {
   FormValues,
   initialFormValues,
@@ -12,7 +11,9 @@ import {
   sectionsList,
   lastSectionIndex
 } from "./resume-form";
+
 import { noOp } from "../utils";
+
 import {
   PreviewBtn,
   PreviewBtnIcon,
@@ -21,8 +22,10 @@ import {
   PrevBtnIcon,
   BottomNavs,
   NextBtn,
-  NextBtnIcon
+  NextBtnIcon,
+  Container
 } from "./resume-form-styles";
+
 import Preview from "./Preview";
 import PersonalInfo from "./PersonalInfo";
 import Experiences from "./Experiences";
@@ -54,7 +57,7 @@ export class ResumeForm extends React.Component<Props, State> {
 
   render() {
     return (
-      <div className="ResumeForm">
+      <Container>
         <Formik
           initialValues={this.props.initialValues || initialFormValues}
           onSubmit={noOp}
@@ -62,7 +65,7 @@ export class ResumeForm extends React.Component<Props, State> {
           validationSchema={validationSchema}
           validateOnChange={false}
         />
-      </div>
+      </Container>
     );
   }
 
