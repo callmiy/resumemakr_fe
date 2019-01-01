@@ -12,19 +12,28 @@ import {
   validationSchema as piSchema
 } from "./PersonalInfo/personal-info";
 
+import {
+  Edu,
+  validationSchema as edSchema,
+  defaultVal as education
+} from "./Education/education";
+
 export interface FormValues {
   personalInfo: PersonalInfo;
   experiences: Experience[];
+  education: Edu[];
 }
 
 export const initialFormValues: FormValues = {
   personalInfo,
-  experiences: [experience]
+  experiences: [experience],
+  education: [education]
 };
 
 export const validationSchema = Yup.object<FormValues>().shape({
   personalInfo: piSchema,
-  experiences: Yup.array<Experience>().of<Experience>(expSchema)
+  experiences: Yup.array<Experience>().of<Experience>(expSchema),
+  education: Yup.array<Edu>().of<Edu>(edSchema)
 });
 
 // sections by string key
