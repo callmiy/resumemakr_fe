@@ -1,6 +1,7 @@
 import React from "react";
 
 import { FormValues } from "../resume-form";
+
 import {
   Container,
   Left,
@@ -13,8 +14,13 @@ import {
   PersonalText,
   Img,
   Right,
-  TitleRight
+  TitleRight,
+  Description,
+  Ul
 } from "./preview-styles";
+
+import { SkillVal } from "../Skills/skills";
+import { ExperienceVal } from "../Experiences/experiences";
 
 interface Props {
   values: FormValues;
@@ -53,23 +59,19 @@ export class Preview extends React.Component<Props, State> {
 
   render() {
     const {
-      first_name,
-      last_name,
-      profession,
-      address,
-      phone,
-      email
-    } = this.props.values.personalInfo;
+      personalInfo: {
+        first_name,
+        last_name,
+        profession,
+        address,
+        phone,
+        email
+      },
+      skills,
+      experiences
+    } = this.props.values;
 
     const { src } = this.state;
-
-    // tslint:disable-next-line:no-console
-    console.log(
-      "\n\t\tLogging start\n\n\n\n this.props\n",
-      this.props.values,
-      src,
-      "\n\n\n\n\t\tLogging ends\n"
-    );
 
     return (
       <Container data-testid="preview-resume-section">
@@ -106,7 +108,7 @@ export class Preview extends React.Component<Props, State> {
 
           {src && (
             <Section>
-              <Img src={src} />
+              <Img src={src} alt={`${first_name} ${last_name} photo`} />
             </Section>
           )}
 
@@ -117,7 +119,19 @@ export class Preview extends React.Component<Props, State> {
 
         <Right>
           <Section>
-            <TitleRight>Skills Summary</TitleRight>
+            <TitleRight>Skills</TitleRight>
+
+            {skills.map((skill, index) => (
+              <Skill key={index} skill={skill} index={index} />
+            ))}
+          </Section>
+
+          <Section>
+            <TitleRight>Experience</TitleRight>
+
+            {experiences.map((exp, index) => (
+              <Experience key={index} exp={exp} index={index} />
+            ))}
           </Section>
         </Right>
       </Container>
@@ -126,3 +140,51 @@ export class Preview extends React.Component<Props, State> {
 }
 
 export default Preview;
+
+function Skill({
+  skill: { description, achievements },
+  index
+}: {
+  skill: SkillVal;
+  index: number;
+}) {
+  return (
+    <>
+      <Description>{description}</Description>
+
+      <Ul>
+        {achievements.map((achievement, ind) => (
+          <li key={ind}>{achievement}</li>
+        ))}
+      </Ul>
+    </>
+  );
+}
+
+function Experience({
+  exp: { position, achievements, from_date, to_date, companyName },
+  index
+}: {
+  exp: ExperienceVal;
+  index: number;
+}) {
+  return (
+    <div className="experience-container">
+      <div className="left">
+        {from_date} {(to_date && `-${to_date}`) || ""}
+      </div>
+
+      <div className="right">
+        <Description className="position">{position}</Description>
+
+        <div className="company">{companyName}</div>
+
+        <Ul>
+          {achievements.map((achievement, ind) => (
+            <li key={ind}>{achievement}</li>
+          ))}
+        </Ul>
+      </div>
+    </div>
+  );
+}

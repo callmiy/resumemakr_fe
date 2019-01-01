@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { ApolloProvider } from "react-apollo";
+import { createGlobalStyle } from "styled-components";
 import "semantic-ui-css-offline";
 
 import "./index.scss";
@@ -10,8 +11,22 @@ import setUp from "./State/apollo-setup";
 
 const { persistCache, client } = setUp();
 
+const GlobalStyle = createGlobalStyle`
+  ul {
+    padding: 0;
+    margin: 0;
+
+  
+  }
+
+  li{
+      list-style-type: none;
+    }
+`;
+
 ReactDOM.render(
   <ApolloProvider client={client}>
+    <GlobalStyle />
     <App persistCache={persistCache} />
   </ApolloProvider>,
 
