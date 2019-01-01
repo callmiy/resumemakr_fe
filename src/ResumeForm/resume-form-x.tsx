@@ -179,7 +179,10 @@ export class ResumeForm extends React.Component<Props, State> {
 
     if (section === Section.addSkills) {
       return (
-        <AdditionalSkills label={section} values={values.additionalSkills} />
+        <AdditionalSkills
+          label={section}
+          values={values.additionalSkills || []}
+        />
       );
     }
 

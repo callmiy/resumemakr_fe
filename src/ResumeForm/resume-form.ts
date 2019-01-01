@@ -42,7 +42,7 @@ export interface FormValues {
   personalInfo: PersonalInfoVal;
   experiences: ExperienceVal[];
   education: EducationVal[];
-  additionalSkills: AdditionalSkillVal[];
+  additionalSkills?: AdditionalSkillVal[];
   languages?: LanguageVal[];
   hobbies?: HobbyVal[];
   skills: SkillVal[];
@@ -60,14 +60,20 @@ export const initialFormValues: FormValues = {
 
 export const validationSchema = Yup.object<FormValues>().shape({
   personalInfo: piSchema,
-  experiences: Yup.array<ExperienceVal>().of<ExperienceVal>(expSchema),
-  education: Yup.array<EducationVal>().of<EducationVal>(edSchema),
+  experiences: Yup.array<ExperienceVal>()
+    .of<ExperienceVal>(expSchema)
+    .required(),
+  education: Yup.array<EducationVal>()
+    .of<EducationVal>(edSchema)
+    .required(),
+  skills: Yup.array<SkillVal>()
+    .of<SkillVal>(skillsSchema)
+    .required(),
   additionalSkills: Yup.array<AdditionalSkillVal>().of<AdditionalSkillVal>(
     addSkillSchema
   ),
   languages: Yup.array<LanguageVal>().of<LanguageVal>(langSchema),
-  hobbies: Yup.array<HobbyVal>(),
-  skills: Yup.array<SkillVal>().of<SkillVal>(skillsSchema)
+  hobbies: Yup.array<HobbyVal>()
 });
 
 // sections by string key
