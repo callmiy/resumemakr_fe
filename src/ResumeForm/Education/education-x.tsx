@@ -71,6 +71,34 @@ function School({ index, edu = { ...defaultVal }, arrayHelper }: SchoolProps) {
           defaultValue={edu.course}
           component={RegularField}
         />
+
+        <FastField
+          name={makeName(index, "from_date")}
+          label="Date from"
+          defaultValue={edu.from_date}
+          component={RegularField}
+        />
+
+        <FastField
+          name={makeName(index, "to_date")}
+          label="Date to"
+          defaultValue={edu.to_date}
+          component={RegularField}
+        />
+
+        <FieldArray
+          name={makeName(index, "achievements")}
+          render={helper =>
+            (edu.achievements || []).map((achievement, ind) => (
+              <FastField
+                name={`${makeName(index, "achievements")}.${ind}`}
+                key={ind}
+                defaultValue={achievement}
+                component={RegularField}
+              />
+            ))
+          }
+        />
       </Card.Content>
     </Card>
   );
