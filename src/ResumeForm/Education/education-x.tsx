@@ -25,7 +25,7 @@ export class Education extends React.Component<Props, {}> {
         />
 
         <FieldArray
-          name="experiences"
+          name="education"
           render={arrayHelper =>
             values.map((edu, index) => (
               <School
