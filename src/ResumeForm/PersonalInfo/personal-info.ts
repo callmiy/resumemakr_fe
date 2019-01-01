@@ -8,7 +8,7 @@ export interface PersonalInfoVal {
   photo?: File | null;
   address: string;
   email: string;
-  date_of_birth: string;
+  date_of_birth?: string;
 }
 
 export const defaultVal: PersonalInfoVal = {
@@ -44,9 +44,7 @@ export const validationSchema = Yup.object<PersonalInfoVal>().shape({
     .email()
     .required()
     .min(2),
-  date_of_birth: Yup.string()
-    .required()
-    .min(2)
+  date_of_birth: Yup.string().min(2)
 });
 
 export const emptyVals = {
