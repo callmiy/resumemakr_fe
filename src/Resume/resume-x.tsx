@@ -1,53 +1,104 @@
-import React from "react";
+import React, { createRef } from "react";
 import { RouteComponentProps } from "react-router-dom";
+import lodashIsEqual from "lodash/isEqual";
 
-import "./resume.scss";
-import "./header.scss";
-import { FIRST_LEVEL_CLASS, SECOND_LEVEL_CLASS } from "../constants";
 import ResumeForm from "../ResumeForm";
 import { FormValues } from "../ResumeForm/resume-form";
+import { Container, AppMain, DownloadBtn } from "./resume-styles";
+import { AppHeader, ToolTip } from "../styles/mixins";
+import Preview from "../Preview";
+import { Mode as PreviewMode } from "../Preview/preview";
+import { FORM_VALUES_KEY } from "../constants";
 
 interface Props extends RouteComponentProps<{}> {}
 
-enum Action {
-  EDITING = "EDITING",
-  PREVIEWING = "PREVIEWING"
+enum Hash {
+  edit = "#edit",
+  preview = "#preview"
 }
 
 interface State {
-  action: Action;
   values?: FormValues;
 }
 
 export class Resume extends React.Component<Props, State> {
-  state: State = {
-    action: Action.EDITING
-  };
+  form = createRef<ResumeForm>();
+
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
+      values: this.hydrate()
+    };
+  }
+
+  componentDidUpdate() {
+    const hydrated = this.hydrate();
+
+    if (!hydrated) {
+      return;
+    }
+
+    const isEqual = lodashIsEqual(hydrated, this.state.values);
+
+    if (!isEqual) {
+      this.setState({ values: hydrated });
+    }
+  }
 
   render() {
-    const { action, values } = this.state;
+    const { values } = this.state;
+
+    const {
+      location: { hash }
+    } = this.props;
 
     return (
-      <div className={`${FIRST_LEVEL_CLASS} Resume`}>
-        <Header />
-        <div className={SECOND_LEVEL_CLASS}>
-          <div className="side-bar">Side bar</div>
+      <Container>
+        {hash !== Hash.preview && (
+          <>
+            <AppHeader>
+              <DownloadBtn onClick={this.download}>
+                <ToolTip>Download your resume</ToolTip>
 
-          <div className="main-container">
-            <div className="main">
-              {action === Action.EDITING && (
-                <ResumeForm initialValues={values} />
-              )}
-            </div>
+                <span>Download</span>
+              </DownloadBtn>
+            </AppHeader>
+
+            <AppMain>
+              <div className="side-bar">Side bar</div>
+
+              <div className="main-container">
+                <div className="main">
+                  <ResumeForm ref={this.form} initialValues={values} />
+                </div>
+              </div>
+            </AppMain>
+          </>
+        )}
+
+        {hash === Hash.preview && values && (
+          <div className="main-container preview">
+            <Preview mode={PreviewMode.download} values={values} />
           </div>
-        </div>
-      </div>
+        )}
+      </Container>
     );
   }
+
+  private download = () => {
+    const {
+      history,
+      location: { pathname }
+    } = this.props;
+
+    history.push(pathname + Hash.preview);
+  };
+
+  private hydrate = (): FormValues | undefined => {
+    const st = localStorage.getItem(FORM_VALUES_KEY);
+    return (st && JSON.parse(st)) || undefined;
+  };
 }
 
 export default Resume;
-
-function Header() {
-  return <div className="resume-header">Header</div>;
-}

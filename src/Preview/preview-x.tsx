@@ -1,13 +1,14 @@
 import React from "react";
 
-import { FormValues } from "../resume-form";
+import { FormValues } from "../ResumeForm/resume-form";
+import { Mode } from "./preview";
 
 import {
   Container,
   Left,
   Section,
   NamePos,
-  FirstName,
+  Name,
   Profession,
   TitleLeft,
   PersonalTitle,
@@ -16,11 +17,13 @@ import {
   Right,
   TitleRight,
   Description,
-  Ul
+  Ul,
+  PersonalIcon
 } from "./preview-styles";
 
 interface Props {
   values: FormValues;
+  mode: Mode;
 }
 
 interface State {
@@ -73,15 +76,17 @@ export class Preview extends React.Component<Props, State> {
       languages
     } = this.props.values;
 
+    const { mode } = this.props;
+
     const { src } = this.state;
 
     return (
-      <Container data-testid="preview-resume-section">
+      <Container data-testid="preview-resume-section" mode={mode}>
         <Left>
           <Section>
             <NamePos>
-              <FirstName>{first_name}</FirstName>
-              <FirstName>{last_name}</FirstName>
+              <Name>{first_name}</Name>
+              <Name>{last_name}</Name>
             </NamePos>
 
             <Profession>{profession}</Profession>
@@ -98,19 +103,22 @@ export class Preview extends React.Component<Props, State> {
             )}
 
             <PersonalTitle>
-              Address
+              <PersonalIcon name="map marker alternate" />
+
               {address.split("\n").map((s, k) => (
                 <PersonalText key={k}>{s.trim()}</PersonalText>
               ))}
             </PersonalTitle>
 
             <PersonalTitle>
-              Phone
+              <PersonalIcon name="phone" />
+
               <PersonalText>{phone}</PersonalText>
             </PersonalTitle>
 
             <PersonalTitle>
-              Email
+              <PersonalIcon name="mail" />
+
               <PersonalText>{email}</PersonalText>
             </PersonalTitle>
           </Section>

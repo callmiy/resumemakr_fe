@@ -3,16 +3,17 @@ import "jest-dom/extend-expect";
 import "react-testing-library/cleanup-after-each";
 import { render } from "react-testing-library";
 
+import { createFile } from "../test_utils";
 import Preview from ".";
-import { PersonalInfoVal } from "../PersonalInfo/personal-info";
-import { ExperienceVal } from "../Experiences/experiences";
-import { EducationVal } from "../Education/education";
-import { FormValues } from "../resume-form";
-import { SkillVal } from "../Skills/skills";
-import { createFile } from "../../test_utils";
-import { AdditionalSkillVal } from "../AdditionalSkills/additional-skills";
-import { HobbyVal } from "../Hobbies/hobbies";
-import { LanguageVal } from "../Languages/languages";
+import { Mode } from "./preview";
+import { PersonalInfoVal } from "../ResumeForm/PersonalInfo/personal-info";
+import { ExperienceVal } from "../ResumeForm/Experiences/experiences";
+import { EducationVal } from "../ResumeForm/Education/education";
+import { FormValues } from "../ResumeForm/resume-form";
+import { SkillVal } from "../ResumeForm/Skills/skills";
+import { AdditionalSkillVal } from "../ResumeForm/AdditionalSkills/additional-skills";
+import { HobbyVal } from "../ResumeForm/Hobbies/hobbies";
+import { LanguageVal } from "../ResumeForm/Languages/languages";
 
 it("renders form preview", () => {
   const photo = createFile("kanmii.jpg", 12345, "image/jpeg");
@@ -78,8 +79,8 @@ it("renders form preview", () => {
     languages: [language]
   };
 
-  const { debug, getByText, getByAltText } = render(
-    <Preview values={values} />
+  const { getByText, getByAltText } = render(
+    <Preview values={values} mode={Mode.download} />
   );
 
   expect(

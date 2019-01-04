@@ -82,7 +82,11 @@ function FirstColumn() {
           component={RegularField}
         />
 
-        <FastField name="phone" label="Phone" component={RegularField} />
+        <FastField
+          name={makeName("phone")}
+          label="Phone"
+          component={RegularField}
+        />
 
         <FastField
           name={makeName("email")}

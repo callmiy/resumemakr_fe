@@ -1,8 +1,7 @@
 import styled, { css } from "styled-components/macro";
 import { Modal, ModalProps } from "semantic-ui-react";
 
-import { VisuallyHidden, openSansMixin } from "../../styles/mixins";
-import { wrapped } from "../../component-utils";
+import { VisuallyHidden, openSansMixin, wrapped } from "../../styles/mixins";
 
 const Main = styled.div`
   width: 170px;

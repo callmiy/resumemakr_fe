@@ -12,13 +12,10 @@ import {
   lastSectionIndex
 } from "./resume-form";
 
-import { noOp } from "../utils";
-
 import {
   PreviewBtn,
   PreviewBtnIcon,
   EditBtn,
-  ToolTip,
   PrevBtnIcon,
   BottomNavs,
   NextBtn,
@@ -26,7 +23,10 @@ import {
   Container
 } from "./resume-form-styles";
 
-import Preview from "./Preview";
+import { noOp } from "../utils";
+import { ToolTip } from "../styles/mixins";
+import Preview from "../Preview";
+import { Mode as PreviewMode } from "../Preview/preview";
 import PersonalInfo from "./PersonalInfo";
 import Experiences from "./Experiences";
 import Education from "./Education";
@@ -34,6 +34,7 @@ import AdditionalSkills from "./AdditionalSkills";
 import Languages from "./Languages";
 import Hobbies from "./Hobbies";
 import Skills from "./Skills";
+import { FORM_VALUES_KEY } from "../constants";
 
 enum Action {
   editing = "editing",
@@ -55,6 +56,15 @@ export class ResumeForm extends React.Component<Props, State> {
     section: Section.personalInfo
   };
 
+  values: FormValues = this.props.initialValues || initialFormValues;
+
+  getValues = () => this.values;
+
+  setValues = async (values: FormValues) => {
+    localStorage.setItem(FORM_VALUES_KEY, JSON.stringify(values));
+    this.values = values;
+  };
+
   render() {
     return (
       <Container>
@@ -70,6 +80,7 @@ export class ResumeForm extends React.Component<Props, State> {
   }
 
   private renderForm = ({ values, ...props }: FormikProps<FormValues>) => {
+    this.setValues(values);
     const { action, section } = this.state;
     const sectionIndex = sectionsList.indexOf(section);
 
@@ -77,7 +88,9 @@ export class ResumeForm extends React.Component<Props, State> {
       <Form>
         {this.renderCurrEditingSection(values)}
 
-        {action === Action.previewing && <Preview values={values} />}
+        {action === Action.previewing && (
+          <Preview values={values} mode={PreviewMode.preview} />
+        )}
         <BottomNavs>
           {action === Action.editing && (
             <>

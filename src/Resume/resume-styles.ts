@@ -1,14 +1,21 @@
-@import "../styles/extensions";
+import styled from "styled-components/macro";
 
-.Resume {
-  @extend %app-container;
+import { AppContainer, AppMain as AppMain1, NavBtn } from "../styles/mixins";
 
-  .app-main {
-    display: flex;
-    flex-direction: row;
-    background-color: #f4f4f4;
-  }
+export const DownloadBtn = styled(NavBtn)`
+  color: #09f !important;
+  background: #f4f4f4;
+  border-color: currentColor;
+  border-width: 2px;
+`;
 
+export const AppMain = styled(AppMain1)`
+  display: flex;
+  flex-direction: row;
+  background-color: #f4f4f4;
+`;
+
+export const Container = styled(AppContainer)`
   .side-bar {
     min-height: 100%;
     width: 45px;
@@ -24,6 +31,11 @@
     overflow-y: auto;
     flex: 1;
     min-height: 100%;
+
+    &.preview {
+      max-width: 900px;
+      margin: 0 auto;
+    }
   }
 
   .main {
@@ -56,4 +68,4 @@
       display: inline-block;
     }
   }
-}
+`;

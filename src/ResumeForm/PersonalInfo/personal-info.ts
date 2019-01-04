@@ -12,15 +12,15 @@ export interface PersonalInfoVal {
 }
 
 export const defaultVal: PersonalInfoVal = {
-  first_name: "Christian",
-  last_name: "Hybrid",
-  profession: "IT Manager",
-  phone: "202-555-0177",
+  first_name: "Adekanmi",
+  last_name: "Ademiiju",
+  profession: "Full Stack Developer",
+  phone: "+4915213839916",
   photo: null,
-  address: `970 Drummond Street
-Newark, NJ 07102
-USA`,
-  email: "christian.w.hybrid@gmail.com",
+  address: `30 Ortenberger Straße
+77654 Offenburg
+Germany`,
+  email: "maneptha@gmail.com",
   date_of_birth: ""
 };
 
