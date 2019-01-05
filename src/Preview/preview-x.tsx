@@ -26,37 +26,7 @@ interface Props {
   mode: Mode;
 }
 
-interface State {
-  src?: string;
-}
-
-export class Preview extends React.Component<Props, State> {
-  state: State = {};
-
-  componentDidMount() {
-    const {
-      values: {
-        personalInfo: { photo }
-      }
-    } = this.props;
-
-    if (!photo) {
-      return;
-    }
-
-    this.setState({ src: URL.createObjectURL(photo) });
-  }
-
-  componentWillUnmount() {
-    const { src } = this.state;
-
-    if (!src) {
-      return;
-    }
-
-    URL.revokeObjectURL(src);
-  }
-
+export class Preview extends React.Component<Props> {
   render() {
     const {
       personalInfo: {
@@ -66,7 +36,8 @@ export class Preview extends React.Component<Props, State> {
         address,
         phone,
         email,
-        date_of_birth
+        date_of_birth,
+        photo
       },
       skills,
       experiences,
@@ -77,8 +48,6 @@ export class Preview extends React.Component<Props, State> {
     } = this.props.values;
 
     const { mode } = this.props;
-
-    const { src } = this.state;
 
     return (
       <Container data-testid="preview-resume-section" mode={mode}>
@@ -123,9 +92,9 @@ export class Preview extends React.Component<Props, State> {
             </PersonalTitle>
           </Section>
 
-          {src && (
+          {photo && (
             <Section>
-              <Img src={src} alt={`${first_name} ${last_name} photo`} />
+              <Img src={photo} alt={`${first_name} ${last_name} photo`} />
             </Section>
           )}
 

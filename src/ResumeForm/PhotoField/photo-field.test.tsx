@@ -24,7 +24,9 @@ it("changes to preview on file select", async () => {
     createFile("dog.jpg", 1234, "image/jpeg")
   );
 
-  expect(queryByLabelText(/Upload Photo/)).not.toBeInTheDocument();
+  await wait(() =>
+    expect(queryByLabelText(/Upload Photo/)).not.toBeInTheDocument()
+  );
 
   expect(getByTestId("photo-preview")).toHaveStyleRule(
     "background-image",
@@ -32,7 +34,7 @@ it("changes to preview on file select", async () => {
   );
 });
 
-it("toggles edit buttons on mouse move on preview", () => {
+it("toggles edit buttons on mouse move on preview", async () => {
   const { ui } = setUp();
   const { getByLabelText, getByTestId, queryByTestId } = render(ui);
 
@@ -41,8 +43,12 @@ it("toggles edit buttons on mouse move on preview", () => {
     createFile("dog.jpg", 1234, "image/jpeg")
   );
 
-  const $preview = getByTestId("photo-preview");
-  expect(queryByTestId("edit-btns")).not.toBeInTheDocument();
+  let $preview: HTMLDivElement;
+
+  await wait(() => {
+    $preview = getByTestId("photo-preview") as HTMLDivElement;
+    expect(queryByTestId("edit-btns")).not.toBeInTheDocument();
+  });
 
   // MOUSE ENTER
   fireEvent.mouseEnter($preview);
@@ -53,7 +59,7 @@ it("toggles edit buttons on mouse move on preview", () => {
   expect(queryByTestId("edit-btns")).not.toBeInTheDocument();
 });
 
-it("shows edit buttons when preview clicked", () => {
+it("shows edit buttons when preview clicked", async () => {
   const { ui } = setUp();
   const { getByLabelText, getByTestId, queryByTestId } = render(ui);
 
@@ -62,7 +68,7 @@ it("shows edit buttons when preview clicked", () => {
     createFile("dog.jpg", 1234, "image/jpeg")
   );
 
-  expect(queryByTestId("edit-btns")).not.toBeInTheDocument();
+  await wait(() => expect(queryByTestId("edit-btns")).not.toBeInTheDocument());
 
   const $preview = getByTestId("photo-preview");
 
@@ -70,7 +76,7 @@ it("shows edit buttons when preview clicked", () => {
   expect(getByTestId("edit-btns")).toBeInTheDocument();
 });
 
-it("deletes photo", () => {
+it("deletes photo", async () => {
   const { ui } = setUp();
   const { getByLabelText, getByTestId, getByText, queryByTestId } = render(ui);
 
@@ -79,10 +85,14 @@ it("deletes photo", () => {
     createFile("dog.jpg", 1234, "image/jpeg")
   );
 
-  /**
-   * When she mouses over the photo
-   */
-  fireEvent.mouseEnter(getByTestId("photo-preview"));
+  await wait(() => {
+    /**
+     * When she mouses over the photo
+     */
+    fireEvent.mouseEnter(getByTestId("photo-preview"));
+
+    return true;
+  });
 
   /**
    * And clicks the photo remove button
@@ -110,26 +120,24 @@ it("deletes photo", () => {
   expect(queryByTestId("photo-preview")).not.toBeInTheDocument();
 });
 
-it("changes photo", () => {
+it("changes photo", async () => {
   const { mockSetFieldValue, ui, fieldName } = setUp();
   const { getByLabelText, getByTestId } = render(ui);
 
   const file1 = createFile("dog.jpg", 1234, "image/jpeg");
   const file2 = createFile("cat.jpg", 2345, "image/jpeg");
   uploadFile(getByLabelText("Upload Photo"), file1);
-  expect(mockSetFieldValue.mock.calls[0]).toEqual([fieldName, file1]);
+
+  await wait(() =>
+    expect(mockSetFieldValue.mock.calls[0][0]).toEqual(fieldName)
+  );
 
   fireEvent.mouseEnter(getByTestId("photo-preview"));
   uploadFile(getByLabelText("Change photo"), file2);
-  expect(mockSetFieldValue.mock.calls[1]).toEqual([fieldName, file2]);
-});
 
-it("cleans up in unmount", async () => {
-  const { mockRemoveFilePreview, ui } = setUp();
-  const { unmount } = render(ui);
-
-  await wait(() => expect(unmount()).toBe(true));
-  expect(mockRemoveFilePreview.mock.calls.length).toBe(1);
+  await wait(() =>
+    expect(mockSetFieldValue.mock.calls[1][0]).toEqual(fieldName)
+  );
 });
 
 it("does not set field value if no file selected", async () => {
@@ -138,7 +146,7 @@ it("does not set field value if no file selected", async () => {
   const { getByLabelText } = render(ui);
 
   uploadFile(getByLabelText("Upload Photo"));
-  expect(mockSetFieldValue).not.toBeCalled();
+  await wait(() => expect(mockSetFieldValue).not.toBeCalled());
 });
 
 ///////////////////////////////////////////////////////////////////////////////

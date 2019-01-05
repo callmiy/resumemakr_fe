@@ -5,7 +5,7 @@ export interface PersonalInfoVal {
   last_name: string;
   profession: string;
   phone: string;
-  photo?: File | null;
+  photo?: string;
   address: string;
   email: string;
   date_of_birth?: string;
@@ -16,12 +16,12 @@ export const defaultVal: PersonalInfoVal = {
   last_name: "Ademiiju",
   profession: "Full Stack Developer",
   phone: "+4915213839916",
-  photo: null,
   address: `30 Ortenberger Straße
 77654 Offenburg
 Germany`,
   email: "maneptha@gmail.com",
-  date_of_birth: ""
+  date_of_birth: "",
+  photo: ""
 };
 
 export const validationSchema = Yup.object<PersonalInfoVal>().shape({
@@ -44,15 +44,16 @@ export const validationSchema = Yup.object<PersonalInfoVal>().shape({
     .email()
     .required()
     .min(2),
-  date_of_birth: Yup.string().min(2)
+  date_of_birth: Yup.string().min(2),
+  photo: Yup.string()
 });
 
-export const emptyVals = {
+export const emptyVals: PersonalInfoVal = {
   first_name: "",
   last_name: "",
   profession: "",
   phone: "",
-  photo: null,
+  photo: "",
   address: "",
   email: "",
   date_of_birth: ""

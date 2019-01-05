@@ -2,7 +2,6 @@ import React, { createRef } from "react";
 import { FieldProps } from "formik";
 import { Icon, Modal, Button } from "semantic-ui-react";
 
-import { noOp } from "../../utils";
 import {
   FileChooser,
   Thumb,
@@ -16,7 +15,6 @@ interface Props<Values> extends FieldProps<Values> {
   removeFilePreview?: () => void;
 }
 interface State {
-  file?: File;
   url?: string;
   fileState: FileState;
   open?: boolean;
@@ -31,23 +29,11 @@ enum FileState {
 
 export class PhotoField<Values> extends React.Component<Props<Values>, State> {
   state: State = {
-    fileState: FileState.clean
+    fileState: FileState.clean,
+    url: this.props.field.value
   };
 
   inputRef = createRef<HTMLInputElement>();
-
-  componentDidMount() {
-    this.setPreview(this.props.field.value);
-  }
-
-  componentDidUpdate() {
-    this.setInitialFile();
-  }
-
-  componentWillUnmount() {
-    this.removePreview();
-    (this.props.removeFilePreview || noOp)();
-  }
 
   render() {
     const { fileState } = this.state;
@@ -74,16 +60,15 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
   }
 
   renderThumb = () => {
-    const { file, fileState, url } = this.state;
+    const { fileState, url } = this.state;
 
-    if (!(file && url)) {
+    if (!url) {
       return null;
     }
 
     return (
       <Thumb
         url={url}
-        key={file.name}
         data-testid="photo-preview"
         onClick={this.touch}
         onMouseLeave={this.unTouch}
@@ -156,8 +141,7 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
             labelPosition="right"
             content="Yes"
             onClick={() => {
-              this.setState({ fileState: FileState.deleted });
-              this.removePreview();
+              this.setState({ fileState: FileState.deleted, url: undefined });
               this.setState({ open: false });
             }}
           />
@@ -180,57 +164,15 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
       return;
     }
 
-    this.removePreview();
-    this.setPreview(file);
-    this.props.form.setFieldValue(this.props.field.name, file);
-  };
+    const reader = new FileReader();
 
-  private setPreview = (file: File | null) => {
-    if (!file) {
-      return;
-    }
+    reader.onloadend = () => {
+      const url = reader.result as string;
+      this.setState({ url, fileState: FileState.previewing });
+      this.props.form.setFieldValue(this.props.field.name, url);
+    };
 
-    this.setState({
-      file,
-      url: URL.createObjectURL(file),
-      fileState: FileState.previewing
-    });
-  };
-
-  private removePreview = () => {
-    const { url } = this.state;
-
-    this.setState({
-      file: undefined,
-      url: undefined
-    });
-
-    if (!url) {
-      return;
-    }
-
-    URL.revokeObjectURL(url);
-  };
-
-  private setInitialFile = () => {
-    const { fileState } = this.state;
-
-    if (fileState !== FileState.clean) {
-      return;
-    }
-
-    const value = this.props.field.value as File | null;
-    if (!value) {
-      return;
-    }
-
-    const { file } = this.state;
-
-    if (file === value) {
-      return;
-    }
-
-    this.setPreview(value);
+    reader.readAsDataURL(file);
   };
 }
 
