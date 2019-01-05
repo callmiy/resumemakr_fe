@@ -93,9 +93,10 @@ export class Preview extends React.Component<Props> {
           </Section>
 
           {photo && (
-            <Section>
-              <Img src={photo} alt={`${first_name} ${last_name} photo`} />
-            </Section>
+            <Img
+              backgroundImg={photo}
+              data-testid={`${first_name} ${last_name} photo`}
+            />
           )}
 
           {additionalSkills && additionalSkills.length && (

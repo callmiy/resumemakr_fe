@@ -14,7 +14,7 @@ export const FileChooser = styled(Main)`
 `;
 
 export const Thumb = styled(Main)`
-  background-image: ${({ url }: { url: string }) => `url(${url})`};
+  background-image: ${({ url }: { url: string }) => url};
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;

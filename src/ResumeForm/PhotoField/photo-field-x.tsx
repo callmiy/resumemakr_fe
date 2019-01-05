@@ -28,12 +28,20 @@ enum FileState {
 }
 
 export class PhotoField<Values> extends React.Component<Props<Values>, State> {
-  state: State = {
-    fileState: FileState.clean,
-    url: this.props.field.value
-  };
-
   inputRef = createRef<HTMLInputElement>();
+
+  constructor(props: Props<Values>) {
+    super(props);
+
+    const {
+      field: { value }
+    } = this.props;
+
+    this.state = {
+      fileState: value ? FileState.previewing : FileState.clean,
+      url: value
+    };
+  }
 
   render() {
     const { fileState } = this.state;
@@ -167,7 +175,7 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      const url = reader.result as string;
+      const url = `url(${reader.result as string})`;
       this.setState({ url, fileState: FileState.previewing });
       this.props.form.setFieldValue(this.props.field.name, url);
     };

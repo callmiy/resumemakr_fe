@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Icon } from "semantic-ui-react";
 
 import { Mode } from "./preview";
@@ -20,14 +20,18 @@ export const Container = styled.div`
   overflow-wrap: break-word;
   word-break: break-word;
   line-height: normal;
-
-  margin-top: ${({ mode }: ContainerProps) =>
-    mode === Mode.preview ? "2em !important" : "0"};
-
   background-color: #ffffff;
+  box-shadow: 0 0.5em 2.5em 0 rgba(0, 0, 0, 0.25);
+  margin-top: 2em !important;
 
-  box-shadow: ${({ mode }: ContainerProps) =>
-    mode === Mode.preview ? "0 0.5em 2.5em 0 rgba(0, 0, 0, 0.25)" : "none"};
+  ${({ mode }: ContainerProps) =>
+    mode === Mode.download &&
+    css`
+      margin-top: 0 !important;
+      box-shadow: none;
+      min-height: 100%;
+      border: 1px solid #d6cdcd;
+    `};
 
   position: relative;
   color: #292b2c;
@@ -58,7 +62,7 @@ const LeftRight = styled.div`
 `;
 
 export const Left = styled(LeftRight)`
-  width: 30%;
+  width: 25%;
   background-color: #373d48;
   color: #fff;
 `;
@@ -71,6 +75,7 @@ export const Right = styled(LeftRight)`
 export const Section = styled.div`
   font-family: "Arimo" !important;
   position: relative;
+  margin-top: 1em;
 
   &:first-of-type {
     padding-top: 0;
@@ -147,17 +152,14 @@ export const PersonalText = styled.p`
   }
 `;
 
-export const Img = styled.img`
+export const Img = styled.div`
+  background-image: ${({ backgroundImg }: { backgroundImg: string }) =>
+    backgroundImg};
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
   width: 100%;
-  max-width: 33em;
-  min-width: 100px;
-  max-height: 60em;
-  height: auto;
-  background-color: #fff;
-  border-color: #fff;
-  vertical-align: middle;
-  border-style: none;
-  src: ${({ src }: { src: string }) => src};
+  min-height: 170px;
 `;
 
 export const Description = styled.div`

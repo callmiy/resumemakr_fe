@@ -16,8 +16,6 @@ import { HobbyVal } from "../ResumeForm/Hobbies/hobbies";
 import { LanguageVal } from "../ResumeForm/Languages/languages";
 
 it("renders form preview", () => {
-  const photo = createFile("kanmii.jpg", 12345, "image/jpeg");
-
   const personalInfoOthers = {
     first_name: "Kanmii",
     last_name: "Ademii",
@@ -30,7 +28,7 @@ it("renders form preview", () => {
 
   const personalInfo: PersonalInfoVal = {
     ...personalInfoOthers,
-    photo
+    photo: "photo"
   };
 
   const expOthers = {
@@ -79,12 +77,12 @@ it("renders form preview", () => {
     languages: [language]
   };
 
-  const { getByText, getByAltText } = render(
+  const { getByText, getByTestId } = render(
     <Preview values={values} mode={Mode.download} />
   );
 
   expect(
-    getByAltText(`${personalInfo.first_name} ${personalInfo.last_name} photo`)
+    getByTestId(`${personalInfo.first_name} ${personalInfo.last_name} photo`)
   ).toBeInTheDocument();
 
   for (const exp of Object.values(expOthers)
