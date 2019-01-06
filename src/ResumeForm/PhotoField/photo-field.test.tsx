@@ -43,20 +43,18 @@ it("toggles edit buttons on mouse move on preview", async () => {
     createFile("dog.jpg", 1234, "image/jpeg")
   );
 
-  let $preview: HTMLDivElement;
-
   await wait(() => {
-    $preview = getByTestId("photo-preview") as HTMLDivElement;
+    const $preview = getByTestId("photo-preview") as HTMLDivElement;
+    expect(queryByTestId("edit-btns")).not.toBeInTheDocument();
+
+    // MOUSE ENTER
+    fireEvent.mouseEnter($preview);
+    expect(getByTestId("edit-btns")).toBeInTheDocument();
+
+    // MOUSE LEAVE
+    fireEvent.mouseLeave($preview);
     expect(queryByTestId("edit-btns")).not.toBeInTheDocument();
   });
-
-  // MOUSE ENTER
-  fireEvent.mouseEnter($preview);
-  expect(getByTestId("edit-btns")).toBeInTheDocument();
-
-  // MOUSE LEAVE
-  fireEvent.mouseLeave($preview);
-  expect(queryByTestId("edit-btns")).not.toBeInTheDocument();
 });
 
 it("shows edit buttons when preview clicked", async () => {
@@ -68,12 +66,12 @@ it("shows edit buttons when preview clicked", async () => {
     createFile("dog.jpg", 1234, "image/jpeg")
   );
 
-  await wait(() => expect(queryByTestId("edit-btns")).not.toBeInTheDocument());
-
-  const $preview = getByTestId("photo-preview");
-
-  fireEvent.click($preview);
-  expect(getByTestId("edit-btns")).toBeInTheDocument();
+  expect(queryByTestId("edit-btns")).not.toBeInTheDocument();
+  await wait(() => {
+    const $preview = getByTestId("photo-preview");
+    fireEvent.click($preview);
+    expect(getByTestId("edit-btns")).toBeInTheDocument();
+  });
 });
 
 it("deletes photo", async () => {
@@ -90,8 +88,6 @@ it("deletes photo", async () => {
      * When she mouses over the photo
      */
     fireEvent.mouseEnter(getByTestId("photo-preview"));
-
-    return true;
   });
 
   /**

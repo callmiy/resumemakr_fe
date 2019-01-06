@@ -7,6 +7,13 @@
       "type": "npm",
       "script": "start",
       "problemMatcher": []
+    },
+
+    {
+      "label": "Apollo code gen",
+      "type": "shell",
+      "command": "apollo-codegen introspect-schema http://localhost:4025/api --output src/graphql/schema.json && apollo-codegen generate src/graphql/*.ts --schema src/graphql/schema.json --target typescript --output src/graphql/apollo-gql.ts",
+      "problemMatcher": []
     }
   ]
 }

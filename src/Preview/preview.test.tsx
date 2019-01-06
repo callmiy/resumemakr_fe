@@ -3,7 +3,6 @@ import "jest-dom/extend-expect";
 import "react-testing-library/cleanup-after-each";
 import { render } from "react-testing-library";
 
-import { createFile } from "../test_utils";
 import Preview from ".";
 import { Mode } from "./preview";
 import { PersonalInfoVal } from "../ResumeForm/PersonalInfo/personal-info";

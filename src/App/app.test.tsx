@@ -1,13 +1,12 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { render, wait } from "react-testing-library";
+
 import App from "./app-x";
+import { renderWithApollo } from "../test_utils";
 
-it("renders without crashing", done => {
-  const div = document.createElement("div");
-  ReactDOM.render(<App persistCache={jest.fn()} />, div);
-
-  setTimeout(() => {
-    ReactDOM.unmountComponentAtNode(div);
-    done();
-  });
+it("renders without crashing", async () => {
+  // tslint:disable-next-line:no-any
+  const Ui = renderWithApollo(App as any).Ui as any;
+  const { unmount } = render(<Ui persistCache={jest.fn()} />);
+  await wait(() => expect(unmount()).toBe(true));
 });

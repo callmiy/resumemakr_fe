@@ -17,7 +17,7 @@ export function makeClient() {
 interface HistoryProps {
   push?: (path: string) => void;
   replace?: (path: string) => void;
-  path?: string;
+  resumeBuilderPath?: string;
 }
 
 const defaultHistoryProps: HistoryProps = {
@@ -27,7 +27,7 @@ const defaultHistoryProps: HistoryProps = {
 
 export function makeHistory(params: HistoryProps = defaultHistoryProps) {
   const history = createMemoryHistory({
-    initialEntries: [params.path || "/"]
+    initialEntries: [params.resumeBuilderPath || "/"]
   });
 
   return { ...history, ...params };
@@ -57,7 +57,9 @@ export function renderWithRouter<TProps>(
 }
 
 export function renderWithApollo<TProps>(
-  Ui: FunctionComponent<TProps & { client: ApolloClient<{}> }>
+  Ui:
+    | FunctionComponent<TProps & { client: ApolloClient<{}> }>
+    | ComponentClass<TProps & { client: ApolloClient<{}> }>
 ) {
   const client = makeClient();
 
