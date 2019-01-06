@@ -8,9 +8,10 @@ import {
   EditorContainer,
   ChangePhoto,
   UploadPhotoIconWrap,
-  InputFile,
-  ConfirmDeleteModal
+  InputFile
 } from "./photo-field-styles";
+
+import { AppModal } from "../../styles/mixins";
 interface Props<Values> extends FieldProps<Values> {
   removeFilePreview?: () => void;
 }
@@ -123,7 +124,7 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
 
   private renderModal = () => {
     return (
-      <ConfirmDeleteModal open={this.state.open}>
+      <AppModal open={this.state.open}>
         <Modal.Header>Removing photo</Modal.Header>
 
         <Modal.Content>
@@ -154,7 +155,7 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
             }}
           />
         </Modal.Actions>
-      </ConfirmDeleteModal>
+      </AppModal>
     );
   };
 

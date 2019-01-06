@@ -4,16 +4,14 @@ import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import logger from "../logger";
 import Loading from "../Loading";
 import { RESUME_PATH, ROOT_URL, LOGIN_URL, SIGN_UP_URL } from "../routing";
-import { FIRST_LEVEL_CLASS, SECOND_LEVEL_CLASS } from "../constants";
 import AuthRequired from "../AuthRequired";
+import { AppContainer } from "../styles/mixins";
 
 function Root() {
   return (
-    <div className={FIRST_LEVEL_CLASS}>
-      <div className={SECOND_LEVEL_CLASS}>
-        <Loading />
-      </div>
-    </div>
+    <AppContainer style={{ justifyContent: "center", alignItems: "center" }}>
+      <Loading />
+    </AppContainer>
   );
 }
 

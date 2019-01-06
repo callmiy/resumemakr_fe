@@ -9,13 +9,9 @@ import { AppHeader, ToolTip } from "../styles/mixins";
 import Preview from "../Preview";
 import { Mode as PreviewMode } from "../Preview/preview";
 import { FORM_VALUES_KEY } from "../constants";
+import { ResumePathHash } from "../routing";
 
-interface Props extends RouteComponentProps<{}> {}
-
-enum Hash {
-  edit = "#edit",
-  preview = "#preview"
-}
+interface Props extends RouteComponentProps<{ title: string }> {}
 
 interface State {
   values?: FormValues;
@@ -55,7 +51,7 @@ export class Resume extends React.Component<Props, State> {
 
     return (
       <Container>
-        {hash !== Hash.preview && (
+        {hash === ResumePathHash.edit && (
           <>
             <AppHeader>
               <DownloadBtn onClick={this.download}>
@@ -77,7 +73,7 @@ export class Resume extends React.Component<Props, State> {
           </>
         )}
 
-        {hash === Hash.preview && values && (
+        {hash === ResumePathHash.preview && values && (
           <div className="main-container preview">
             <Preview mode={PreviewMode.download} values={values} />
           </div>
@@ -92,7 +88,7 @@ export class Resume extends React.Component<Props, State> {
       location: { pathname }
     } = this.props;
 
-    history.push(pathname + Hash.preview);
+    history.push(pathname + ResumePathHash.preview);
   };
 
   private hydrate = (): FormValues | undefined => {

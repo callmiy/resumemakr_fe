@@ -8,6 +8,7 @@ import { onError } from "apollo-link-error";
 import { getBackendUrls } from "./get-backend-urls";
 import { getToken } from "./tokens";
 import { SCHEMA_VERSION, SCHEMA_VERSION_KEY, SCHEMA_KEY } from "../constants";
+import initState from "./resolvers";
 
 const HTTP_URL = getBackendUrls().apiUrl;
 const httpLink = middleWares(new HttpLink({ uri: HTTP_URL }) as ApolloLink);
@@ -15,7 +16,7 @@ const cache = new InMemoryCache();
 
 const client = new ApolloClient({
   cache,
-  link: ApolloLink.from([httpLink])
+  link: ApolloLink.from([initState(cache), httpLink])
 });
 
 // tslint:disable-next-line:no-any

@@ -1,5 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components/macro";
+import { Modal, ModalProps } from "semantic-ui-react";
 
 export function wrapped<T>(
   Component: React.ComponentClass<T> | React.FunctionComponent<T>
@@ -128,4 +129,29 @@ export const AppContainer = styled.div`
 export const AppHeader = styled.div`
   flex-shrink: 0;
   height: 60px;
+`;
+
+const Modal1 = wrapped<ModalProps>(Modal);
+
+export const AppModal = styled(Modal1)`
+  &.ui.modal {
+    width: 90%;
+    font-size: 1.6rem;
+    max-width: 500px;
+
+    & > .header {
+      ${openSansMixin};
+      font-size: 1.8rem;
+      font-weight: 500;
+      min-height: 70px;
+      padding: 0em 1.5rem !important;
+      background: #323942;
+      color: #fff;
+      line-height: 70px;
+    }
+
+    .ui.button {
+      font-size: 1.5rem;
+    }
+  }
 `;
