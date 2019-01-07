@@ -1,7 +1,8 @@
 import React from "react";
-import { Modal, Button, Input } from "semantic-ui-react";
+import { Modal, Button } from "semantic-ui-react";
+import { ApolloError } from "apollo-client";
 
-import { HomeContainer } from "./home-styles";
+import { HomeContainer, InputLabel } from "./home-styles";
 import { AppModal } from "../styles/mixins";
 import { makeResumeRoute } from "../routing";
 import { Props } from "./home";
@@ -9,6 +10,7 @@ import { Props } from "./home";
 interface State {
   open?: boolean;
   resumeTitle: string;
+  graphQlError?: ApolloError;
 }
 
 export class Home extends React.Component<Props, State> {
@@ -34,7 +36,13 @@ export class Home extends React.Component<Props, State> {
         <Modal.Content>
           <Modal.Description>
             <div>
-              <Input name="resume-title" onChange={this.onChange} />
+              <InputLabel htmlFor="resume-title">Enter resume title</InputLabel>
+
+              <input
+                id="resume-title"
+                name="resume-title"
+                onChange={this.onChange}
+              />
             </div>
           </Modal.Description>
         </Modal.Content>
@@ -68,7 +76,7 @@ export class Home extends React.Component<Props, State> {
     this.setState({ resumeTitle: evt.currentTarget.value });
   };
 
-  private goToResume = () => {
+  private goToResume = async () => {
     const { resumeTitle } = this.state;
 
     if (!resumeTitle) {
@@ -76,17 +84,47 @@ export class Home extends React.Component<Props, State> {
       return;
     }
 
-    const { history, setCurrentResumeTitle } = this.props;
+    const { history, setCurrentResumeTitle, createResumeTitle } = this.props;
 
-    if (setCurrentResumeTitle) {
-      setCurrentResumeTitle({
-        variables: {
-          title: resumeTitle
-        }
-      });
+    if (!createResumeTitle) {
+      return;
     }
 
-    history.push(makeResumeRoute(resumeTitle));
+    try {
+      const result = await createResumeTitle({
+        variables: {
+          resume: { title: resumeTitle }
+        }
+      });
+
+      if (!result) {
+        return;
+      }
+
+      const { data } = result;
+
+      if (!data) {
+        return;
+      }
+
+      const { resume } = data;
+
+      if (!resume) {
+        return;
+      }
+
+      if (setCurrentResumeTitle) {
+        setCurrentResumeTitle({
+          variables: {
+            title: resume.title
+          }
+        });
+      }
+
+      history.push(makeResumeRoute(resume.title));
+    } catch (error) {
+      this.setState({ graphQlError: error });
+    }
   };
 }
 

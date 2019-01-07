@@ -4,7 +4,7 @@ import { MutationFn } from "react-apollo";
 
 export const currentResumeTitleLocalMutation = gql`
   mutation CurrentResumeTitleLocalMutation($title: String!) {
-    title(title: $title) @client
+    currentResumeTitle(title: $title) @client
   }
 `;
 

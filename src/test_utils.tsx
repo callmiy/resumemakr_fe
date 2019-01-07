@@ -34,9 +34,7 @@ export function makeHistory(params: HistoryProps = defaultHistoryProps) {
 }
 
 export function renderWithRouter<TProps>(
-  Ui:
-    | FunctionComponent<TProps & { history: History }>
-    | ComponentClass<TProps & { history: History }>,
+  Ui: FunctionComponent<TProps> | ComponentClass<TProps>,
   historyProps?: HistoryProps
 ) {
   const history = makeHistory(historyProps) as History;
@@ -46,7 +44,7 @@ export function renderWithRouter<TProps>(
     // to reference it in our tests (just try to avoid using
     // this to test implementation details).
     history,
-    Ui: (props: TProps) => {
+    Ui: (props: Exclude<TProps, "history" | "location" | "match">) => {
       return (
         <Router history={history}>
           <Ui history={history} {...props} />
@@ -57,9 +55,7 @@ export function renderWithRouter<TProps>(
 }
 
 export function renderWithApollo<TProps>(
-  Ui:
-    | FunctionComponent<TProps & { client: ApolloClient<{}> }>
-    | ComponentClass<TProps & { client: ApolloClient<{}> }>
+  Ui: FunctionComponent<TProps> | ComponentClass<TProps>
 ) {
   const client = makeClient();
 
