@@ -107,7 +107,7 @@ export const Titles = styled.div`
     cursor: pointer;
 
     .icon {
-      margin: 0 !important;
+      margin: 0 0 2.8px 1px !important;
       opacity: 1;
       font-size: 0.8em;
     }
