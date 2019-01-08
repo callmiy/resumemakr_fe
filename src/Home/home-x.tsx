@@ -20,7 +20,7 @@ export class Home extends React.Component<Props, State> {
   state: State = { resumeTitle: "" };
 
   render() {
-    const { loading, error, resumes } = this.props;
+    const { loading, error } = this.props;
 
     if (loading) {
       return (
@@ -36,10 +36,6 @@ export class Home extends React.Component<Props, State> {
 
         <HomeMain>
           {error && <div>{error.message}</div>}
-
-          {resumes && resumes.edges && !resumes.edges.length && (
-            <div onClick={this.openModal}> You have no resumes</div>
-          )}
 
           {this.renderTitles()}
 
@@ -108,6 +104,10 @@ export class Home extends React.Component<Props, State> {
 
     if (!edges) {
       return null;
+    }
+
+    if (!edges.length) {
+      return <div onClick={this.openModal}>You have no resumes</div>;
     }
 
     return (

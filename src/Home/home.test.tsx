@@ -13,7 +13,8 @@ import {
   CreateResumeTitle,
   CreateResumeTitle_resume_resume,
   CreateResumeTitleVariables,
-  ResumeTitles_resumes
+  ResumeTitles_resumes,
+  ResumeTitles_resumes_edges_node
 } from "../graphql/apollo-gql";
 
 const HomeP = Home as React.ComponentClass<Partial<Props>>;
@@ -22,13 +23,14 @@ it("renders loading indicator", () => {
   /**
    * Given a user is on the home page
    */
+  const { Ui } = renderWithRouter(HomeP);
   const {
     getByTestId,
     queryByText,
     rerender,
     queryByTestId,
     getByText
-  } = render(<HomeP loading={true} />);
+  } = render(<Ui loading={true} />);
 
   /**
    * She sees the loading indicator
@@ -40,7 +42,7 @@ it("renders loading indicator", () => {
    */
   expect(queryByText("+")).not.toBeInTheDocument();
 
-  rerender(<HomeP loading={false} />);
+  rerender(<Ui loading={false} />);
 
   /**
    * Later she sees that loading indicator is gone
@@ -61,7 +63,8 @@ it("renders error", () => {
   /**
    * Given a user is on the home page
    */
-  const { queryByTestId, getByText } = render(<HomeP error={error} />);
+  const { Ui } = renderWithRouter(HomeP);
+  const { queryByTestId, getByText } = render(<Ui error={error} />);
 
   /**
    * She sees no loading indicator on the page
@@ -91,8 +94,9 @@ it("renders message if user has not created resume", () => {
   /**
    * When she navigates to the home page
    */
+  const { Ui } = renderWithRouter(HomeP);
 
-  const { getByText, getByLabelText } = render(<HomeP resumes={resumes} />);
+  const { getByText, getByLabelText } = render(<Ui resumes={resumes} />);
 
   /**
    * Then she sees a message that she has not created any resumes previously
@@ -122,14 +126,14 @@ it("renders resume titles", () => {
         node: {
           title: titles[0],
           id: "1"
-        }
+        } as ResumeTitles_resumes_edges_node
       },
 
       {
         node: {
           title: titles[1],
           id: "2"
-        }
+        } as ResumeTitles_resumes_edges_node
       }
     ]
   };
