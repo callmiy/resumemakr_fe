@@ -1,12 +1,14 @@
 import React from "react";
-import { Modal, Button } from "semantic-ui-react";
+import { Modal, Button, Grid, Label, Icon } from "semantic-ui-react";
 import { ApolloError } from "apollo-client";
+import dateFormat from "date-fns/format";
 
-import { HomeContainer, InputLabel, HomeMain } from "./home-styles";
+import { HomeContainer, InputLabel, HomeMain, Titles } from "./home-styles";
 import { AppModal } from "../styles/mixins";
 import { makeResumeRoute } from "../routing";
 import { Props } from "./home";
 import Loading from "../Loading";
+import Header from "../Header";
 
 interface State {
   open?: boolean;
@@ -30,6 +32,8 @@ export class Home extends React.Component<Props, State> {
 
     return (
       <HomeContainer>
+        <Header />
+
         <HomeMain>
           {error && <div>{error.message}</div>}
 
@@ -38,11 +42,11 @@ export class Home extends React.Component<Props, State> {
           )}
 
           {this.renderTitles()}
-        </HomeMain>
 
-        <div className="new" onClick={this.openModal}>
-          <span>+</span>
-        </div>
+          <div className="new" onClick={this.openModal}>
+            <span>+</span>
+          </div>
+        </HomeMain>
 
         {this.renderModal()}
       </HomeContainer>
@@ -107,9 +111,18 @@ export class Home extends React.Component<Props, State> {
     }
 
     return (
-      <div>
-        Click on a title to edit your resume
-        <ul>
+      <Titles>
+        <div className="header">My resumes</div>
+
+        <Grid reversed="computer" columns={3}>
+          <Grid.Row className="row-header">
+            <Grid.Column className="controls">Controls</Grid.Column>
+
+            <Grid.Column>Last modified</Grid.Column>
+
+            <Grid.Column className="title">Title</Grid.Column>
+          </Grid.Row>
+
           {edges.map(edge => {
             if (!edge) {
               return null;
@@ -121,16 +134,51 @@ export class Home extends React.Component<Props, State> {
               return null;
             }
 
-            const { id, title } = node;
+            const { id, title, updatedAt } = node;
 
             return (
-              <li key={id} onClick={() => this.goToResume(title)}>
-                {title}
-              </li>
+              <Grid.Row key={id}>
+                <Grid.Column className="controls">
+                  <Label
+                    color="blue"
+                    circular={true}
+                    onClick={() => this.goToResume(title)}
+                  >
+                    <Icon name="pencil" />
+                  </Label>
+
+                  <Label
+                    color="green"
+                    circular={true}
+                    onClick={() => this.goToResume(title)}
+                  >
+                    <Icon name="cloud download" />
+                  </Label>
+
+                  <Label
+                    color="red"
+                    circular={true}
+                    onClick={() => this.goToResume(title)}
+                  >
+                    <Icon name="delete" />
+                  </Label>
+                </Grid.Column>
+
+                <Grid.Column onClick={() => this.goToResume(title)}>
+                  {dateFormat(updatedAt, "Do MMM, YYYY H:mm A")}
+                </Grid.Column>
+
+                <Grid.Column
+                  className="clickable"
+                  onClick={() => this.goToResume(title)}
+                >
+                  {title}
+                </Grid.Column>
+              </Grid.Row>
             );
           })}
-        </ul>
-      </div>
+        </Grid>
+      </Titles>
     );
   };
 

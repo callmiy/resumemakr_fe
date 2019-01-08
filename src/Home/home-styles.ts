@@ -1,6 +1,12 @@
 import styled from "styled-components/macro";
+import { lighten } from "polished";
 
-import { AppContainer, VisuallyHidden, AppMain } from "../styles/mixins";
+import {
+  AppContainer,
+  VisuallyHidden,
+  AppMain,
+  appBgColor
+} from "../styles/mixins";
 
 export const HomeContainer = styled(AppContainer)`
   position: relative;
@@ -32,5 +38,78 @@ export const InputLabel = styled.label`
 
 export const HomeMain = styled(AppMain)`
   font-size: 1.4em;
-  padding: 0.5em;
+  padding: 10px;
+`;
+
+const bgColor = lighten(0.026, appBgColor);
+
+export const Titles = styled.div`
+  max-width: 800px;
+  background: #ffffff;
+
+  & > .header {
+    background-color: ${bgColor};
+    padding: 10px 10px 20px 10px;
+    font-size: 1.3em;
+    font-weight: 700;
+  }
+
+  .ui.grid {
+    & > .row {
+      padding: 10px;
+      border-bottom: 1px solid ${appBgColor};
+
+      &:first-child {
+        padding-top: 20px;
+        border-bottom: none;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &.row-header {
+        background-color: ${bgColor};
+        margin-top: 20px;
+        margin-left: 10px;
+        margin-right: 10px;
+        text-transform: uppercase;
+        color: blue;
+        font-weight: 600;
+        font-size: 0.8em;
+
+        & > .title {
+          padding-left: 0;
+        }
+      }
+
+      & > .controls {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  .clickable {
+    cursor: pointer;
+  }
+
+  .ui.circular.label {
+    min-width: 1.5em;
+    min-height: 1.5em;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 50%;
+    margin-right: 10px;
+    cursor: pointer;
+
+    .icon {
+      margin: 0 !important;
+      opacity: 1;
+      font-size: 0.8em;
+    }
+  }
 `;
