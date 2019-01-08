@@ -21,20 +21,20 @@ export interface Variable {
   user: UserFragment | null;
 }
 
-type Fn = MutationFn<Variable, Variable>;
-
 export interface UserLocalMutationProps {
-  updateLocalUser: Fn;
+  updateLocalUser?: MutationFn<Variable, Variable>;
 }
 
 export const userLocalMutationGql = graphql<
   {},
   Variable,
   Variable,
-  UserLocalMutationProps
+  UserLocalMutationProps | void
 >(userLocalMutation, {
-  props: props => {
-    const mutate = props.mutate as Fn;
+  props: ({ mutate }) => {
+    if (!mutate) {
+      return undefined;
+    }
 
     return {
       updateLocalUser: mutate

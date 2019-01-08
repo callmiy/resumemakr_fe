@@ -102,7 +102,11 @@ export class SignUp extends React.Component<Props, State> {
         }
 
         const { user } = registration;
-        await updateLocalUser({ variables: { user } });
+
+        if (updateLocalUser) {
+          await updateLocalUser({ variables: { user } });
+        }
+
         history.push(ROOT_URL);
       }
     } catch (error) {
