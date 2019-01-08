@@ -36,11 +36,21 @@ const Spinner = styled.div`
   }
 `;
 
-export const Loading = () => (
-  <Spinner>
-    <div className="double-bounce1" />
-    <div className="double-bounce2" />
-  </Spinner>
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const Loading = (props = {}) => (
+  <Container>
+    <Spinner {...props}>
+      <div className="double-bounce1" />
+      <div className="double-bounce2" />
+    </Spinner>
+  </Container>
 );
 
 export default Loading;

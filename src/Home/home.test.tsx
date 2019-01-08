@@ -6,6 +6,7 @@ import { render, fireEvent, wait } from "react-testing-library";
 import { Home } from "./home-x";
 import { renderWithRouter, fillField, WithData } from "../test_utils";
 import { makeResumeRoute } from "../routing";
+import { Props } from "./home";
 
 import {
   CreateResumeTitle,
@@ -13,7 +14,44 @@ import {
   CreateResumeTitleVariables
 } from "../graphql/apollo-gql";
 
-it("renders ok", async () => {
+const HomeP = Home as HomePartial;
+
+it("renders loading indicator", () => {
+  /**
+   * Given a user is on the home page
+   */
+  const {
+    getByTestId,
+    queryByText,
+    rerender,
+    queryByTestId,
+    getByText
+  } = render(<HomeP loading={true} />);
+
+  /**
+   * She sees the loading indicator
+   */
+  expect(getByTestId("loading resume titles")).toBeInTheDocument();
+
+  /**
+   * But she does not see the add new button
+   */
+  expect(queryByText("+")).not.toBeInTheDocument();
+
+  rerender(<HomeP loading={false} />);
+
+  /**
+   * Later she sees that loading indicator is gone
+   */
+  expect(queryByTestId("loading resume titles")).not.toBeInTheDocument();
+
+  /**
+   * And that "add new" button has shown
+   */
+  expect(getByText("+")).toBeInTheDocument();
+});
+
+it("creates resume title", async () => {
   const title = "my awesome resume";
   const mockPush = jest.fn();
   const mockSetCurrentResumeTitle = jest.fn();
@@ -29,10 +67,11 @@ it("renders ok", async () => {
   };
 
   const mockCreateResumeTitle = jest.fn(() => Promise.resolve(result));
-  // tslint:disable-next-line:no-any
-  const Ui = renderWithRouter(Home, { push: mockPush }).Ui as any;
+  const { Ui } = renderWithRouter(HomeP, { push: mockPush });
 
-  // Given that a user is on the home page
+  /**
+   * Given that a user is on the home page
+   */
   const { getByLabelText, queryByLabelText, getByText } = render(
     <Ui
       setCurrentResumeTitle={mockSetCurrentResumeTitle}
@@ -91,3 +130,5 @@ it("renders ok", async () => {
 ////////////////////////// HELPER FUNCTIONS ///////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+type HomePartial = React.ComponentClass<Partial<Props>>;

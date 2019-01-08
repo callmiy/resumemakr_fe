@@ -69,25 +69,25 @@ export interface LoginMutationVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetResumeTitles
+// GraphQL query operation: ResumeTitles
 // ====================================================
 
-export interface GetResumeTitles_resumes_edges_node {
+export interface ResumeTitles_resumes_edges_node {
   id: string;  // The ID of an object
   _id: string;
   title: string;
 }
 
-export interface GetResumeTitles_resumes_edges {
-  node: GetResumeTitles_resumes_edges_node | null;  // The item at the end of the edge
+export interface ResumeTitles_resumes_edges {
+  node: ResumeTitles_resumes_edges_node | null;  // The item at the end of the edge
 }
 
-export interface GetResumeTitles_resumes {
-  edges: (GetResumeTitles_resumes_edges | null)[] | null;
+export interface ResumeTitles_resumes {
+  edges: (ResumeTitles_resumes_edges | null)[] | null;
 }
 
-export interface GetResumeTitles {
-  resumes: GetResumeTitles_resumes | null;  // query a resume
+export interface ResumeTitles {
+  resumes: ResumeTitles_resumes | null;  // query a resume
 }
 
 

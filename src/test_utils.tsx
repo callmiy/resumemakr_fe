@@ -34,7 +34,7 @@ export function makeHistory(params: HistoryProps = defaultHistoryProps) {
 }
 
 export function renderWithRouter<TProps>(
-  Ui: FunctionComponent<TProps> | ComponentClass<TProps>,
+  Component: FunctionComponent<TProps> | ComponentClass<TProps>,
   historyProps?: HistoryProps
 ) {
   const history = makeHistory(historyProps) as History;
@@ -44,10 +44,10 @@ export function renderWithRouter<TProps>(
     // to reference it in our tests (just try to avoid using
     // this to test implementation details).
     history,
-    Ui: (props: Exclude<TProps, "history" | "location" | "match">) => {
+    Ui: (props: TProps) => {
       return (
         <Router history={history}>
-          <Ui history={history} {...props} />
+          <Component history={history} {...props} />
         </Router>
       );
     }

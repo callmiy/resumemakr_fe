@@ -6,6 +6,7 @@ import { HomeContainer, InputLabel } from "./home-styles";
 import { AppModal } from "../styles/mixins";
 import { makeResumeRoute } from "../routing";
 import { Props } from "./home";
+import Loading from "../Loading";
 
 interface State {
   open?: boolean;
@@ -17,6 +18,16 @@ export class Home extends React.Component<Props, State> {
   state: State = { resumeTitle: "" };
 
   render() {
+    const { loading } = this.props;
+
+    if (loading) {
+      return (
+        <HomeContainer>
+          <Loading data-testid="loading resume titles" />
+        </HomeContainer>
+      );
+    }
+
     return (
       <HomeContainer>
         {this.renderModal()}
