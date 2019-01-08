@@ -119,6 +119,7 @@ export const AppMain = styled.div`
 `;
 
 export const AppContainer = styled.div`
+  background-color: #f4f4f4;
   width: 100%;
   height: 100%;
   overflow: hidden;

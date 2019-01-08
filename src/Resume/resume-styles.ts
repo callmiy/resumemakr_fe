@@ -12,7 +12,6 @@ export const DownloadBtn = styled(NavBtn)`
 export const AppMain = styled(AppMain1)`
   display: flex;
   flex-direction: row;
-  background-color: #f4f4f4;
 `;
 
 export const Container = styled(AppContainer)`
