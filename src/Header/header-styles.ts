@@ -21,5 +21,25 @@ export const Container = styled.div`
       text-transform: capitalize;
       width: 36px;
     }
+
+    .item > .label {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #989898 !important;
+      border-color: #989898 !important;
+
+      & > .icon {
+        margin: 0 !important;
+      }
+    }
+
+    .dropdown .menu {
+      font-size: 1.5em;
+      margin-top: 0.1em;
+    }
   }
 `;

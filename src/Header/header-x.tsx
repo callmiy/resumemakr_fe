@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, Menu } from "semantic-ui-react";
+import { Input, Menu, Icon, Label, Dropdown } from "semantic-ui-react";
 import { NavLink } from "react-router-dom";
 
 import { LOGIN_URL, ROOT_URL } from "../routing";
@@ -28,13 +28,27 @@ export class Header extends React.Component<{}, {}> {
               <Input icon="search" placeholder="Search..." />
             </Menu.Item>
 
-            <Menu.Item
-              as={NavLink}
-              to={LOGIN_URL}
-              name="logout"
-              active={activeItem === "logout"}
-              onClick={this.handleItemClick}
-            />
+            <Dropdown
+              item={true}
+              icon={
+                <Label circular={true}>
+                  <Icon name="user" />
+                </Label>
+              }
+              simple={true}
+            >
+              <Dropdown.Menu>
+                <Dropdown.Divider />
+
+                <Dropdown.Item
+                  as={NavLink}
+                  to={LOGIN_URL}
+                  onClick={this.handleItemClick}
+                >
+                  Logout
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </Menu.Menu>
         </Menu>
       </Container>
