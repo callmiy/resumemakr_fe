@@ -43,6 +43,13 @@ async function persistCache() {
   }
 }
 
+export const resetClientAndPersistor = async () => {
+  await persistor.pause(); // Pause automatic persistence.
+  await persistor.purge(); // Delete everything in the storage provider.
+  await client.clearStore();
+  await persistor.resume();
+};
+
 export default function setUp() {
   return { persistCache, client };
 }
