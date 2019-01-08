@@ -7,10 +7,12 @@ import { RESUME_PATH, ROOT_URL, LOGIN_URL, SIGN_UP_URL } from "../routing";
 import AuthRequired from "../AuthRequired";
 import { AppContainer } from "../styles/mixins";
 import { Props } from "./app";
+import Header from "../Header";
 
 function Root() {
   return (
-    <AppContainer style={{ justifyContent: "center", alignItems: "center" }}>
+    <AppContainer>
+      <Header />
       <Loading />
     </AppContainer>
   );
