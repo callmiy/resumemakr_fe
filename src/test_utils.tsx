@@ -101,3 +101,7 @@ export function uploadFile($input: HTMLElement, file?: File) {
 
   fireEvent.change($input);
 }
+
+export interface WithData<TData> {
+  data: TData;
+}

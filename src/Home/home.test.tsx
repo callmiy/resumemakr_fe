@@ -4,22 +4,31 @@ import "react-testing-library/cleanup-after-each";
 import { render, fireEvent, wait } from "react-testing-library";
 
 import { Home } from "./home-x";
-import { renderWithRouter, fillField } from "../test_utils";
+import { renderWithRouter, fillField, WithData } from "../test_utils";
 import { makeResumeRoute } from "../routing";
+
+import {
+  CreateResumeTitle,
+  CreateResumeTitle_resume_resume,
+  CreateResumeTitleVariables
+} from "../graphql/apollo-gql";
 
 it("renders ok", async () => {
   const title = "my awesome resume";
   const mockPush = jest.fn();
   const mockSetCurrentResumeTitle = jest.fn();
-  const mockCreateResumeTitle = jest.fn(() =>
-    Promise.resolve({
-      data: {
+
+  const result: WithData<CreateResumeTitle> = {
+    data: {
+      resume: {
         resume: {
           title
-        }
+        } as CreateResumeTitle_resume_resume
       }
-    })
-  );
+    }
+  };
+
+  const mockCreateResumeTitle = jest.fn(() => Promise.resolve(result));
   // tslint:disable-next-line:no-any
   const Ui = renderWithRouter(Home, { push: mockPush }).Ui as any;
 
@@ -54,13 +63,15 @@ it("renders ok", async () => {
   /**
    * She is redirected to the page where she can fill her resume
    */
+  const input: CreateResumeTitleVariables = {
+    input: {
+      title
+    }
+  };
+
   await wait(() =>
     expect(mockCreateResumeTitle).toBeCalledWith({
-      variables: {
-        resume: {
-          title
-        }
-      }
+      variables: input
     })
   );
 

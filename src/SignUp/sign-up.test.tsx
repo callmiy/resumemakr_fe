@@ -5,14 +5,26 @@ import { render, fireEvent, wait, waitForElement } from "react-testing-library";
 
 import { SignUp } from "./sign-up-x";
 import { Props } from "./sign-up";
-import { makeClient, renderWithRouter, fillField } from "../test_utils";
 import { ROOT_URL, LOGIN_URL } from "../routing";
 
+import {
+  makeClient,
+  renderWithRouter,
+  fillField,
+  WithData
+} from "../test_utils";
+
+import {
+  UserRegMutation,
+  UserRegMutation_registration_user
+} from "../graphql/apollo-gql";
+
 it("renders correctly and submits", async () => {
-  const user = {};
-  const result = {
+  const user = {} as UserRegMutation_registration_user;
+  const registration = { user };
+  const result: WithData<UserRegMutation> = {
     data: {
-      registration: user
+      registration
     }
   };
 

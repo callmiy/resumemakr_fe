@@ -93,7 +93,7 @@ export class Home extends React.Component<Props, State> {
     try {
       const result = await createResumeTitle({
         variables: {
-          resume: { title: resumeTitle }
+          input: { title: resumeTitle }
         }
       });
 
@@ -107,7 +107,13 @@ export class Home extends React.Component<Props, State> {
         return;
       }
 
-      const { resume } = data;
+      const { resume: payload } = data;
+
+      if (!payload) {
+        return;
+      }
+
+      const { resume } = payload;
 
       if (!resume) {
         return;

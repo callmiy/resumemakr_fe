@@ -5,9 +5,11 @@ import userFragment from "./user.fragment";
 import { LoginMutation, LoginMutationVariables } from "./apollo-gql";
 
 export const loginMutation = gql`
-  mutation LoginMutation($login: LoginUser!) {
-    login(login: $login) {
-      ...UserFragment
+  mutation LoginMutation($input: LoginInput!) {
+    login(input: $input) {
+      user {
+        ...UserFragment
+      }
     }
   }
   ${userFragment}

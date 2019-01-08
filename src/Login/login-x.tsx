@@ -13,7 +13,7 @@ import {
 
 import "./login.scss";
 import { Props, ValidationSchema } from "./login";
-import { LoginUser } from "../graphql/apollo-gql";
+import { LoginInput } from "../graphql/apollo-gql";
 import { SIGN_UP_URL, ROOT_URL } from "../routing";
 import PwdInput from "../PwdInput";
 
@@ -21,7 +21,7 @@ const Errors = React.memo(ErrorsComp, ErrorsCompEqual);
 
 interface State {
   otherErrors?: string;
-  formErrors?: FormikErrors<LoginUser>;
+  formErrors?: FormikErrors<LoginInput>;
   graphQlErrors?: ApolloError;
   pwdType?: "password" | "text";
 }
@@ -45,7 +45,7 @@ export class Login extends React.Component<Props, State> {
     );
   }
 
-  private renderForm = (props: FormikProps<LoginUser>) => {
+  private renderForm = (props: FormikProps<LoginInput>) => {
     const { history } = this.props;
     const { graphQlErrors, otherErrors, formErrors } = this.state;
     const { dirty, isSubmitting } = props;
@@ -108,7 +108,7 @@ export class Login extends React.Component<Props, State> {
     values,
     setSubmitting,
     validateForm
-  }: FormikProps<LoginUser>) => async () => {
+  }: FormikProps<LoginInput>) => async () => {
     this.handleErrorsDismissed();
 
     const { login, updateLocalUser, history } = this.props;
@@ -132,12 +132,18 @@ export class Login extends React.Component<Props, State> {
     try {
       const result = await login({
         variables: {
-          login: values
+          input: values
         }
       });
 
       if (result && result.data) {
-        const user = result.data.login;
+        const loggedInUser = result.data.login;
+
+        if (!loggedInUser) {
+          return;
+        }
+
+        const { user } = loggedInUser;
 
         await updateLocalUser({
           variables: { user }
@@ -154,7 +160,7 @@ export class Login extends React.Component<Props, State> {
 
 export default Login;
 
-function EmailInput(props: FieldProps<LoginUser>) {
+function EmailInput(props: FieldProps<LoginInput>) {
   const { field } = props;
 
   return (

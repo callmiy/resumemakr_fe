@@ -7,22 +7,26 @@
 // GraphQL mutation operation: CreateResumeTitle
 // ====================================================
 
-export interface CreateResumeTitle_resume_additionalSkills {
+export interface CreateResumeTitle_resume_resume_additionalSkills {
   description: string;
   level: string | null;
 }
 
-export interface CreateResumeTitle_resume_languages {
+export interface CreateResumeTitle_resume_resume_languages {
   description: string;
   level: string | null;
+}
+
+export interface CreateResumeTitle_resume_resume {
+  id: string;  // The ID of an object
+  title: string;
+  description: string | null;
+  additionalSkills: (CreateResumeTitle_resume_resume_additionalSkills | null)[] | null;
+  languages: (CreateResumeTitle_resume_resume_languages | null)[] | null;
 }
 
 export interface CreateResumeTitle_resume {
-  id: string;
-  title: string;
-  description: string | null;
-  additionalSkills: (CreateResumeTitle_resume_additionalSkills | null)[] | null;
-  languages: (CreateResumeTitle_resume_languages | null)[] | null;
+  resume: CreateResumeTitle_resume_resume | null;
 }
 
 export interface CreateResumeTitle {
@@ -30,7 +34,7 @@ export interface CreateResumeTitle {
 }
 
 export interface CreateResumeTitleVariables {
-  resume: ResumeInput;
+  input: ResumeInput;
 }
 
 
@@ -41,11 +45,15 @@ export interface CreateResumeTitleVariables {
 // GraphQL mutation operation: LoginMutation
 // ====================================================
 
-export interface LoginMutation_login {
-  id: string;
+export interface LoginMutation_login_user {
+  id: string;  // The ID of an object
   name: string;
   email: string;
   jwt: string;
+}
+
+export interface LoginMutation_login {
+  user: LoginMutation_login_user | null;
 }
 
 export interface LoginMutation {
@@ -53,7 +61,33 @@ export interface LoginMutation {
 }
 
 export interface LoginMutationVariables {
-  login: LoginUser;
+  input: LoginInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetResumeTitles
+// ====================================================
+
+export interface GetResumeTitles_resumes_edges_node {
+  id: string;  // The ID of an object
+  _id: string;
+  title: string;
+}
+
+export interface GetResumeTitles_resumes_edges {
+  node: GetResumeTitles_resumes_edges_node | null;  // The item at the end of the edge
+}
+
+export interface GetResumeTitles_resumes {
+  edges: (GetResumeTitles_resumes_edges | null)[] | null;
+}
+
+export interface GetResumeTitles {
+  resumes: GetResumeTitles_resumes | null;  // query a resume
 }
 
 
@@ -64,11 +98,15 @@ export interface LoginMutationVariables {
 // GraphQL mutation operation: UserRegMutation
 // ====================================================
 
-export interface UserRegMutation_registration {
-  id: string;
+export interface UserRegMutation_registration_user {
+  id: string;  // The ID of an object
   name: string;
   email: string;
   jwt: string;
+}
+
+export interface UserRegMutation_registration {
+  user: UserRegMutation_registration_user | null;
 }
 
 export interface UserRegMutation {
@@ -76,7 +114,29 @@ export interface UserRegMutation {
 }
 
 export interface UserRegMutationVariables {
-  registration: Registration;
+  input: RegistrationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: ResumeTitlesFrag
+// ====================================================
+
+export interface ResumeTitlesFrag_edges_node {
+  id: string;  // The ID of an object
+  _id: string;
+  title: string;
+}
+
+export interface ResumeTitlesFrag_edges {
+  node: ResumeTitlesFrag_edges_node | null;  // The item at the end of the edge
+}
+
+export interface ResumeTitlesFrag {
+  edges: (ResumeTitlesFrag_edges | null)[] | null;
 }
 
 
@@ -111,7 +171,7 @@ export interface ResumeMinimalFrag_languages {
 }
 
 export interface ResumeMinimalFrag {
-  id: string;
+  id: string;  // The ID of an object
   title: string;
   description: string | null;
   additionalSkills: (ResumeMinimalFrag_additionalSkills | null)[] | null;
@@ -127,7 +187,7 @@ export interface ResumeMinimalFrag {
 // ====================================================
 
 export interface UserFragment {
-  id: string;
+  id: string;  // The ID of an object
   name: string;
   email: string;
   jwt: string;
@@ -140,7 +200,7 @@ export interface UserFragment {
 // START Enums and Input Objects
 //==============================================================
 
-// Variables for creating Resume
+// null
 export interface ResumeInput {
   additionalSkills?: (RatedInput | null)[] | null;
   description?: string | null;
@@ -187,14 +247,14 @@ export interface PersonalInfoInput {
   profession: string;
 }
 
-// Variables for login in User
-export interface LoginUser {
+// null
+export interface LoginInput {
   email: string;
   password: string;
 }
 
-// Variables for creating User and credential
-export interface Registration {
+// null
+export interface RegistrationInput {
   email: string;
   name: string;
   password: string;

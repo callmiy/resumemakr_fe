@@ -4,7 +4,7 @@ import { WithApolloClient } from "react-apollo";
 
 import { RegMutationProps } from "../graphql/user-reg.mutation";
 import { UserLocalMutationProps } from "../State/user.local.mutation";
-import { Registration } from "../graphql/apollo-gql";
+import { RegistrationInput } from "../graphql/apollo-gql";
 
 export interface Props
   extends RouteComponentProps,
@@ -14,9 +14,9 @@ export interface Props
   scrollToTop?: () => void;
 }
 
-export type FormValuesKey = keyof Registration;
+export type FormValuesKey = keyof RegistrationInput;
 
-export const initialFormValues: Registration = {
+export const initialFormValues: RegistrationInput = {
   name: "",
   email: "",
   password: "",
@@ -24,7 +24,7 @@ export const initialFormValues: Registration = {
   source: "password"
 };
 
-export const ValidationSchema = Yup.object<Registration>().shape({
+export const ValidationSchema = Yup.object<RegistrationInput>().shape({
   name: Yup.string()
     .min(2, "must be at least 2 characters")
     .max(50, "is too long!")

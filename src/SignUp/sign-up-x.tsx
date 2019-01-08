@@ -21,7 +21,7 @@ import {
   FormValuesKey
 } from "./sign-up";
 
-import { Registration } from "../graphql/apollo-gql";
+import { RegistrationInput } from "../graphql/apollo-gql";
 import { LOGIN_URL, ROOT_URL } from "../routing";
 
 const FORM_RENDER_PROPS = {
@@ -34,7 +34,7 @@ const FORM_RENDER_PROPS = {
 
 interface State {
   otherErrors?: string;
-  formErrors?: FormikErrors<Registration>;
+  formErrors?: FormikErrors<RegistrationInput>;
   graphQlErrors?: ApolloError;
 }
 
@@ -62,7 +62,7 @@ export class SignUp extends React.Component<Props, State> {
     values,
     setSubmitting,
     validateForm
-  }: FormikProps<Registration>) => async () => {
+  }: FormikProps<RegistrationInput>) => async () => {
     this.handleErrorsDismissed();
 
     const {
@@ -91,11 +91,17 @@ export class SignUp extends React.Component<Props, State> {
 
     try {
       const result = await regUser({
-        variables: { registration: values }
+        variables: { input: values }
       });
 
       if (result && result.data) {
-        const user = result.data.registration;
+        const { registration } = result.data;
+
+        if (!registration) {
+          return;
+        }
+
+        const { user } = registration;
         await updateLocalUser({ variables: { user } });
         history.push(ROOT_URL);
       }
@@ -106,7 +112,7 @@ export class SignUp extends React.Component<Props, State> {
     }
   };
 
-  private renderForm = (props: FormikProps<Registration>) => {
+  private renderForm = (props: FormikProps<RegistrationInput>) => {
     const { dirty, isSubmitting } = props;
     const { history } = this.props;
 
@@ -216,7 +222,7 @@ export class SignUp extends React.Component<Props, State> {
   };
 
   private renderInput = (label: string, type: string) => (
-    formProps: FieldProps<Registration>
+    formProps: FieldProps<RegistrationInput>
   ) => {
     const { field } = formProps;
     const name = field.name as FormValuesKey;

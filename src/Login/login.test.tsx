@@ -5,14 +5,21 @@ import { render, fireEvent, wait, waitForElement } from "react-testing-library";
 
 import { Login } from "./login-x";
 import { Props } from "./login";
-import { makeClient, renderWithRouter, fillField } from "../test_utils";
+import {
+  makeClient,
+  renderWithRouter,
+  fillField,
+  WithData
+} from "../test_utils";
 import { SIGN_UP_URL, ROOT_URL } from "../routing";
+import { LoginMutation, LoginMutation_login_user } from "../graphql/apollo-gql";
 
 it("renders correctly and submits", async () => {
-  const user = {};
-  const result = {
+  const user = {} as LoginMutation_login_user;
+  const login = { user };
+  const result: WithData<LoginMutation> = {
     data: {
-      login: user
+      login
     }
   };
 

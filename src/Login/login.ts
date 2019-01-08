@@ -4,7 +4,7 @@ import { FormikErrors } from "formik";
 import { ApolloError } from "apollo-client";
 import { WithApolloClient } from "react-apollo";
 
-import { LoginUser as FormValues } from "../graphql/apollo-gql";
+import { LoginInput as FormValues } from "../graphql/apollo-gql";
 import { LoginMutationProps } from "../graphql/login.mutation";
 import { UserLocalMutationProps } from "../State/user.local.mutation";
 
