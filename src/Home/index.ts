@@ -12,7 +12,8 @@ import CREATE_RESUME_TITLE, {
 import {
   CreateResumeTitle,
   CreateResumeTitleVariables,
-  ResumeTitles
+  ResumeTitles,
+  ResumeTitlesVariables
 } from "../graphql/apollo-gql";
 
 import RESUME_TITLES_QUERY, {
@@ -39,10 +40,16 @@ const createResumeTitleGql = graphql<
 const resumeTitlesGql = graphql<
   {},
   ResumeTitles,
-  {},
+  ResumeTitlesVariables,
   ResumeTitlesProps | undefined
 >(RESUME_TITLES_QUERY, {
-  props: ({ data }) => data
+  props: ({ data }) => data,
+
+  options: () => ({
+    variables: {
+      howMany: 10
+    }
+  })
 });
 
 export default compose(

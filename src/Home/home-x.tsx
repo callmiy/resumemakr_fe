@@ -18,7 +18,7 @@ export class Home extends React.Component<Props, State> {
   state: State = { resumeTitle: "" };
 
   render() {
-    const { loading } = this.props;
+    const { loading, error } = this.props;
 
     if (loading) {
       return (
@@ -31,6 +31,8 @@ export class Home extends React.Component<Props, State> {
     return (
       <HomeContainer>
         {this.renderModal()}
+
+        {error && <div>{error.message}</div>}
 
         <div className="new" onClick={this.openModal}>
           <span>+</span>

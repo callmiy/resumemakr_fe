@@ -90,6 +90,10 @@ export interface ResumeTitles {
   resumes: ResumeTitles_resumes | null;  // query a resume
 }
 
+export interface ResumeTitlesVariables {
+  howMany: number;
+}
+
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.

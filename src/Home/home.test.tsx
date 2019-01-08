@@ -2,6 +2,7 @@ import React from "react";
 import "jest-dom/extend-expect";
 import "react-testing-library/cleanup-after-each";
 import { render, fireEvent, wait } from "react-testing-library";
+import { ApolloError } from "apollo-client";
 
 import { Home } from "./home-x";
 import { renderWithRouter, fillField, WithData } from "../test_utils";
@@ -47,6 +48,33 @@ it("renders loading indicator", () => {
 
   /**
    * And that "add new" button has shown
+   */
+  expect(getByText("+")).toBeInTheDocument();
+});
+
+it("renders error", () => {
+  const error = {
+    message: "Failed to fetch"
+  } as ApolloError;
+
+  /**
+   * Given a user is on the home page
+   */
+  const { queryByTestId, getByText } = render(<HomeP error={error} />);
+
+  /**
+   * She sees no loading indicator on the page
+   */
+  expect(queryByTestId("loading resume titles")).not.toBeInTheDocument();
+
+  /**
+   * And she sees an error message
+   */
+
+  expect(getByText(error.message)).toBeInTheDocument();
+
+  /**
+   * And she see the "add new" button
    */
   expect(getByText("+")).toBeInTheDocument();
 });
