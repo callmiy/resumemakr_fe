@@ -6,6 +6,7 @@ import Loading from "../Loading";
 import { RESUME_PATH, ROOT_URL, LOGIN_URL, SIGN_UP_URL } from "../routing";
 import AuthRequired from "../AuthRequired";
 import { AppContainer } from "../styles/mixins";
+import { Props } from "./app";
 
 function Root() {
   return (
@@ -20,7 +21,7 @@ const Home = lazy(() => import("../Home"));
 const Login = lazy(() => import("../Login"));
 const SignUp = lazy(() => import("../SignUp"));
 
-export class App extends Component<{ persistCache: () => void }> {
+export class App extends Component<Props> {
   state: { cacheLoaded: boolean } = { cacheLoaded: false };
 
   async componentDidMount() {
