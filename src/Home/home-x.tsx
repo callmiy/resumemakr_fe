@@ -2,11 +2,12 @@ import React from "react";
 import { Modal, Button } from "semantic-ui-react";
 import { ApolloError } from "apollo-client";
 
-import { HomeContainer, InputLabel } from "./home-styles";
+import { HomeContainer, InputLabel, HomeMain } from "./home-styles";
 import { AppModal } from "../styles/mixins";
 import { makeResumeRoute } from "../routing";
 import { Props } from "./home";
 import Loading from "../Loading";
+import { ResumeTitlesFrag_edges } from "../graphql/apollo-gql";
 
 interface State {
   open?: boolean;
@@ -18,7 +19,7 @@ export class Home extends React.Component<Props, State> {
   state: State = { resumeTitle: "" };
 
   render() {
-    const { loading, error } = this.props;
+    const { loading, error, resumes } = this.props;
 
     if (loading) {
       return (
@@ -30,13 +31,21 @@ export class Home extends React.Component<Props, State> {
 
     return (
       <HomeContainer>
-        {this.renderModal()}
+        <HomeMain>
+          {error && <div>{error.message}</div>}
 
-        {error && <div>{error.message}</div>}
+          {resumes && resumes.edges && !resumes.edges.length && (
+            <div onClick={this.openModal}> You have no resumes</div>
+          )}
+
+          {resumes && resumes.edges && this.renderTitles(resumes.edges)}
+        </HomeMain>
 
         <div className="new" onClick={this.openModal}>
           <span>+</span>
         </div>
+
+        {this.renderModal()}
       </HomeContainer>
     );
   }
@@ -76,10 +85,36 @@ export class Home extends React.Component<Props, State> {
             icon="checkmark"
             labelPosition="right"
             content="Yes"
-            onClick={this.goToResume}
+            onClick={this.createResume}
           />
         </Modal.Actions>
       </AppModal>
+    );
+  };
+
+  private renderTitles = (edges: Array<ResumeTitlesFrag_edges | null>) => {
+    return (
+      <ul>
+        {edges.map(edge => {
+          if (!edge) {
+            return null;
+          }
+
+          const { node } = edge;
+
+          if (!node) {
+            return null;
+          }
+
+          const { id, title } = node;
+
+          return (
+            <li key={id} onClick={() => this.goToResume(title)}>
+              {title}
+            </li>
+          );
+        })}
+      </ul>
     );
   };
 
@@ -89,7 +124,7 @@ export class Home extends React.Component<Props, State> {
     this.setState({ resumeTitle: evt.currentTarget.value });
   };
 
-  private goToResume = async () => {
+  private createResume = async () => {
     const { resumeTitle } = this.state;
 
     if (!resumeTitle) {
@@ -97,7 +132,7 @@ export class Home extends React.Component<Props, State> {
       return;
     }
 
-    const { history, setCurrentResumeTitle, createResumeTitle } = this.props;
+    const { setCurrentResumeTitle, createResumeTitle } = this.props;
 
     if (!createResumeTitle) {
       return;
@@ -140,11 +175,14 @@ export class Home extends React.Component<Props, State> {
         });
       }
 
-      history.push(makeResumeRoute(resume.title));
+      this.goToResume(resume.title);
     } catch (error) {
       this.setState({ graphQlError: error });
     }
   };
+
+  private goToResume = (title: string) =>
+    this.props.history.push(makeResumeRoute(title));
 }
 
 export default Home;

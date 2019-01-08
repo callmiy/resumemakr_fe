@@ -12,10 +12,11 @@ import { Props } from "./home";
 import {
   CreateResumeTitle,
   CreateResumeTitle_resume_resume,
-  CreateResumeTitleVariables
+  CreateResumeTitleVariables,
+  ResumeTitles_resumes
 } from "../graphql/apollo-gql";
 
-const HomeP = Home as HomePartial;
+const HomeP = Home as React.ComponentClass<Partial<Props>>;
 
 it("renders loading indicator", () => {
   /**
@@ -77,6 +78,83 @@ it("renders error", () => {
    * And she see the "add new" button
    */
   expect(getByText("+")).toBeInTheDocument();
+});
+
+it("renders message if user has not created resume", () => {
+  /**
+   * Given a user has not created any resumes previously
+   */
+  const resumes: ResumeTitles_resumes = {
+    edges: []
+  };
+
+  /**
+   * When she navigates to the home page
+   */
+
+  const { getByText, getByLabelText } = render(<HomeP resumes={resumes} />);
+
+  /**
+   * Then she sees a message that she has not created any resumes previously
+   */
+  const $noResumes = getByText(/You have no resumes/i);
+
+  /**
+   * When she clicks on this message
+   */
+  fireEvent.click($noResumes);
+
+  /**
+   * Then she sees a UI asking her to create a new resume
+   */
+  expect(getByLabelText(/Enter resume title/)).toBeInTheDocument();
+});
+
+it("renders resume titles", () => {
+  /**
+   * Given a user has resumes in the system
+   */
+  const titles = ["My awesome title 1", "My awesome title 2"];
+
+  const resumes: ResumeTitles_resumes = {
+    edges: [
+      {
+        node: {
+          title: titles[0],
+          id: "1"
+        }
+      },
+
+      {
+        node: {
+          title: titles[1],
+          id: "2"
+        }
+      }
+    ]
+  };
+
+  /**
+   * When she visits the home page
+   */
+  const mockPush = jest.fn();
+  const { Ui } = renderWithRouter(HomeP, { push: mockPush });
+  const { getByText } = render(<Ui resumes={resumes} />);
+
+  /**
+   * Then she should see her resumes' titles
+   */
+  titles.forEach(t => expect(getByText(t)).toBeInTheDocument());
+
+  /**
+   * When she clicks on the second title
+   */
+  fireEvent.click(getByText(titles[1]));
+
+  /**
+   * Then she is redirected to page to edit the resume
+   */
+  expect(mockPush).toBeCalledWith(makeResumeRoute(titles[1]));
 });
 
 it("creates resume title", async () => {
@@ -158,5 +236,3 @@ it("creates resume title", async () => {
 ////////////////////////// HELPER FUNCTIONS ///////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-
-type HomePartial = React.ComponentClass<Partial<Props>>;

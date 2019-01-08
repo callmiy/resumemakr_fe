@@ -74,7 +74,6 @@ export interface LoginMutationVariables {
 
 export interface ResumeTitles_resumes_edges_node {
   id: string;  // The ID of an object
-  _id: string;
   title: string;
 }
 
@@ -131,7 +130,6 @@ export interface UserRegMutationVariables {
 
 export interface ResumeTitlesFrag_edges_node {
   id: string;  // The ID of an object
-  _id: string;
   title: string;
 }
 

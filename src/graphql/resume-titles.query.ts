@@ -8,7 +8,6 @@ const resumeTitlesFrag = gql`
     edges {
       node {
         id
-        _id
         title
       }
     }

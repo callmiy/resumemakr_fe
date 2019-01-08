@@ -1,6 +1,6 @@
 import styled from "styled-components/macro";
 
-import { AppContainer, VisuallyHidden } from "../styles/mixins";
+import { AppContainer, VisuallyHidden, AppMain } from "../styles/mixins";
 
 export const HomeContainer = styled(AppContainer)`
   position: relative;
@@ -28,4 +28,8 @@ export const HomeContainer = styled(AppContainer)`
 
 export const InputLabel = styled.label`
   ${VisuallyHidden}
+`;
+
+export const HomeMain = styled(AppMain)`
+  padding: 0.5em;
 `;
