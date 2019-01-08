@@ -7,7 +7,6 @@ import { AppModal } from "../styles/mixins";
 import { makeResumeRoute } from "../routing";
 import { Props } from "./home";
 import Loading from "../Loading";
-import { ResumeTitlesFrag_edges } from "../graphql/apollo-gql";
 
 interface State {
   open?: boolean;
@@ -38,7 +37,7 @@ export class Home extends React.Component<Props, State> {
             <div onClick={this.openModal}> You have no resumes</div>
           )}
 
-          {resumes && resumes.edges && this.renderTitles(resumes.edges)}
+          {this.renderTitles()}
         </HomeMain>
 
         <div className="new" onClick={this.openModal}>
@@ -53,7 +52,9 @@ export class Home extends React.Component<Props, State> {
   private renderModal = () => {
     return (
       <AppModal open={this.state.open}>
-        <Modal.Header>Enter resume title e.g Amazon DE</Modal.Header>
+        <Modal.Header>
+          Enter resume title e.g name of company to send to
+        </Modal.Header>
 
         <Modal.Content>
           <Modal.Description>
@@ -76,7 +77,7 @@ export class Home extends React.Component<Props, State> {
             labelPosition="right"
             content="No"
             onClick={() => {
-              this.setState({ open: false });
+              this.setState({ open: false, resumeTitle: "" });
             }}
           />
 
@@ -92,29 +93,44 @@ export class Home extends React.Component<Props, State> {
     );
   };
 
-  private renderTitles = (edges: Array<ResumeTitlesFrag_edges | null>) => {
+  private renderTitles = () => {
+    const { resumes } = this.props;
+
+    if (!resumes) {
+      return null;
+    }
+
+    const { edges } = resumes;
+
+    if (!edges) {
+      return null;
+    }
+
     return (
-      <ul>
-        {edges.map(edge => {
-          if (!edge) {
-            return null;
-          }
+      <div>
+        Click on a title to edit your resume
+        <ul>
+          {edges.map(edge => {
+            if (!edge) {
+              return null;
+            }
 
-          const { node } = edge;
+            const { node } = edge;
 
-          if (!node) {
-            return null;
-          }
+            if (!node) {
+              return null;
+            }
 
-          const { id, title } = node;
+            const { id, title } = node;
 
-          return (
-            <li key={id} onClick={() => this.goToResume(title)}>
-              {title}
-            </li>
-          );
-        })}
-      </ul>
+            return (
+              <li key={id} onClick={() => this.goToResume(title)}>
+                {title}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     );
   };
 

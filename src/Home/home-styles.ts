@@ -31,5 +31,6 @@ export const InputLabel = styled.label`
 `;
 
 export const HomeMain = styled(AppMain)`
+  font-size: 1.4em;
   padding: 0.5em;
 `;
