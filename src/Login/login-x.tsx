@@ -29,6 +29,10 @@ interface State {
 export class Login extends React.Component<Props, State> {
   state: State = {};
 
+  componentDidMount() {
+    this.logoutUser();
+  }
+
   render() {
     return (
       <div className="app-container">
@@ -145,15 +149,33 @@ export class Login extends React.Component<Props, State> {
 
         const { user } = loggedInUser;
 
-        await updateLocalUser({
-          variables: { user }
-        });
+        if (updateLocalUser) {
+          await updateLocalUser({
+            variables: { user }
+          });
+        }
 
         history.push(ROOT_URL);
       }
     } catch (error) {
       setSubmitting(false);
       this.setState({ graphQlErrors: error });
+    }
+  };
+
+  private logoutUser = () => {
+    const { user, updateLocalUser } = this.props;
+
+    if (!user) {
+      return;
+    }
+
+    if (updateLocalUser) {
+      updateLocalUser({
+        variables: {
+          user: null
+        }
+      });
     }
   };
 }

@@ -5,14 +5,16 @@ import { render, fireEvent, wait, waitForElement } from "react-testing-library";
 
 import { Login } from "./login-x";
 import { Props } from "./login";
-import {
-  makeClient,
-  renderWithRouter,
-  fillField,
-  WithData
-} from "../test_utils";
 import { SIGN_UP_URL, ROOT_URL } from "../routing";
-import { LoginMutation, LoginMutation_login_user } from "../graphql/apollo-gql";
+import { renderWithRouter, fillField, WithData } from "../test_utils";
+
+import {
+  LoginMutation,
+  LoginMutation_login_user,
+  UserFragment
+} from "../graphql/apollo-gql";
+
+const LoginP = Login as React.ComponentClass<Partial<Props>>;
 
 it("renders correctly and submits", async () => {
   const user = {} as LoginMutation_login_user;
@@ -124,6 +126,45 @@ it("redirects to sign up", () => {
   expect(mockReplace).toBeCalledWith(SIGN_UP_URL);
 });
 
+it("logs out user if logged in", async () => {
+  const mockUpdateLocalUser = jest.fn();
+  const user = {} as UserFragment;
+
+  const { ui } = makeComp({
+    updateLocalUser: mockUpdateLocalUser,
+    user
+  });
+
+  const {} = render(ui);
+
+  await wait(() =>
+    expect(mockUpdateLocalUser).toBeCalledWith({
+      variables: {
+        user: null
+      }
+    })
+  );
+});
+
+it("does not log out user if user not logged in", async () => {
+  const mockUpdateLocalUser = jest.fn();
+  const user = null;
+
+  const { ui } = makeComp({
+    updateLocalUser: mockUpdateLocalUser,
+    user
+  });
+
+  const {} = render(ui);
+  expect(mockUpdateLocalUser).not.toBeCalled();
+});
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+////////////////////////// HELPER FUNCTIONS ///////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
 // tslint:disable-next-line:no-any
 function makeLoginFunc(data?: any) {
   if (data) {
@@ -141,19 +182,16 @@ function fillForm(getByLabelText: any, getByText: any) {
 }
 
 function makeComp(params: Props | {} = {}) {
-  const client = makeClient();
   const mockPush = jest.fn();
   const mockReplace = jest.fn();
-  const { Ui, ...rest } = renderWithRouter(Login, {
+  const { Ui, ...rest } = renderWithRouter(LoginP, {
     push: mockPush,
     replace: mockReplace
   });
-  // tslint:disable-next-line:no-any
-  const Ui1 = Ui as any;
 
   return {
     ...rest,
-    ui: <Ui1 client={client} {...params} />,
+    ui: <Ui {...params} />,
     mockPush,
     mockReplace
   };

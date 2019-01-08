@@ -4,7 +4,7 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { UserFragment } from "../graphql/apollo-gql";
 import { Variable as UserMutationVar } from "./user.local.mutation";
 import USER_QUERY, { UserLocalGqlData } from "./auth.local.query";
-// import { resetClientAndPersistor } from "../containers/AppContext/set-up";
+import { resetClientAndPersistor } from "./apollo-setup";
 import { getToken, clearToken, storeToken } from "./tokens";
 
 type ClientStateFn<TVariables> = (
@@ -55,7 +55,7 @@ const userMutation: ClientStateFn<UserMutationVar> = async (
   };
 
   if (loggedOutUser) {
-    // await resetClientAndPersistor();
+    await resetClientAndPersistor();
     data.loggedOutUser = loggedOutUser;
   }
 
