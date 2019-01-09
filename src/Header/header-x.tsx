@@ -5,11 +5,17 @@ import { NavLink } from "react-router-dom";
 import { LOGIN_URL, ROOT_URL } from "../routing";
 import { Container } from "./header-styles";
 
-export class Header extends React.Component<{}, {}> {
+interface Props {
+  leftMenuItems?: JSX.Element[];
+  rightMenuItems?: JSX.Element[];
+}
+
+export class Header extends React.Component<Props, {}> {
   state = { activeItem: "home" };
 
   render() {
     const { activeItem } = this.state;
+    const { leftMenuItems = [], rightMenuItems = [] } = this.props;
 
     return (
       <Container>
@@ -20,10 +26,13 @@ export class Header extends React.Component<{}, {}> {
             className="logo"
             name="home"
             active={activeItem === "home"}
-            onClick={this.handleItemClick}
           />
 
+          {leftMenuItems.map(l => l)}
+
           <Menu.Menu position="right">
+            {rightMenuItems.map(r => r)}
+
             <Menu.Item>
               <Input icon="search" placeholder="Search..." />
             </Menu.Item>
@@ -40,11 +49,7 @@ export class Header extends React.Component<{}, {}> {
               <Dropdown.Menu>
                 <Dropdown.Divider />
 
-                <Dropdown.Item
-                  as={NavLink}
-                  to={LOGIN_URL}
-                  onClick={this.handleItemClick}
-                >
+                <Dropdown.Item as={NavLink} to={LOGIN_URL}>
                   Logout
                 </Dropdown.Item>
               </Dropdown.Menu>
@@ -54,8 +59,6 @@ export class Header extends React.Component<{}, {}> {
       </Container>
     );
   }
-
-  private handleItemClick = () => 1;
 }
 
 export default Header;
