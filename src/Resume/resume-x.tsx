@@ -4,12 +4,13 @@ import lodashIsEqual from "lodash/isEqual";
 
 import ResumeForm from "../ResumeForm";
 import { FormValues } from "../ResumeForm/resume-form";
-import { Container, AppMain, DownloadBtn } from "./resume-styles";
-import { AppHeader, ToolTip } from "../styles/mixins";
+import { DownloadBtn, Container } from "./resume-styles";
+import { AppMain, ToolTip } from "../styles/mixins";
 import Preview from "../Preview";
 import { Mode as PreviewMode } from "../Preview/preview";
 import { FORM_VALUES_KEY } from "../constants";
 import { ResumePathHash } from "../routing";
+import Header from "../Header";
 
 interface Props extends RouteComponentProps<{ title: string }> {}
 
@@ -53,13 +54,15 @@ export class Resume extends React.Component<Props, State> {
       <Container>
         {hash === ResumePathHash.edit && (
           <>
-            <AppHeader>
-              <DownloadBtn onClick={this.download}>
-                <ToolTip>Download your resume</ToolTip>
+            <Header
+              rightMenuItems={[
+                <DownloadBtn key="1" onClick={this.download}>
+                  <ToolTip>Download your resume</ToolTip>
 
-                <span>Download</span>
-              </DownloadBtn>
-            </AppHeader>
+                  <span>Download</span>
+                </DownloadBtn>
+              ]}
+            />
 
             <AppMain>
               <div className="side-bar">Side bar</div>

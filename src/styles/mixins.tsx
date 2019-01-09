@@ -34,24 +34,24 @@ export const openSansMixin = css`
 
 export const btnMixin = css`
   transition: background 0.4s ease-in-out, border-color 0.4s ease-in-out,
-    color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
-  text-align: center;
-  display: inline-block;
-  white-space: nowrap;
-  vertical-align: middle;
-  touch-action: manipulation;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  background-image: none;
-  text-decoration: none;
-  font-weight: 400;
-  border-style: solid;
-  border-radius: 3px;
-  font-size: 1.5rem;
-  line-height: 36px;
+    color 0.4s ease-in-out, box-shadow 0.4s ease-in-out !important;
+  text-align: center !important;
+  display: inline-block !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+  touch-action: manipulation !important;
+  cursor: pointer !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  background-image: none !important;
+  text-decoration: none !important;
+  font-weight: 400 !important;
+  border-style: solid !important;
+  border-radius: 3px !important;
+  font-size: 1.5rem !important;
+  line-height: 36px !important;
 `;
 
 export const ToolTip = styled.span`
@@ -59,13 +59,10 @@ export const ToolTip = styled.span`
   color: #ffffff;
 `;
 
-export const NavBtn = styled.div.attrs({
-  tabIndex: 0,
-  "aria-haspopup": "true"
-})`
+export const navBtn = css`
   ${btnMixin}
-  position: relative;
-  padding: 0 1em;
+  position: relative !important;
+  padding: 0 1em !important;
 
   /* &:focus, */
   /* &:active, */
@@ -97,6 +94,13 @@ export const NavBtn = styled.div.attrs({
       }
     }
   }
+`;
+
+export const NavBtn = styled.div.attrs({
+  tabIndex: 0,
+  "aria-haspopup": "true"
+})`
+  ${navBtn}
 `;
 
 export const EpicBtnIcon = styled.i`

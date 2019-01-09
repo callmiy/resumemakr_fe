@@ -1,20 +1,24 @@
 import styled from "styled-components/macro";
+import { Menu } from "semantic-ui-react";
 
-import { AppContainer, AppMain as AppMain1, NavBtn } from "../styles/mixins";
+import { AppContainer, wrapped, navBtn, AppMain } from "../styles/mixins";
 
-export const DownloadBtn = styled(NavBtn)`
+const DownloadBtnWrapped = wrapped(Menu.Item);
+
+export const DownloadBtn = styled(DownloadBtnWrapped)`
+  ${navBtn}
   color: #09f !important;
-  background: #f4f4f4;
-  border-color: currentColor;
-  border-width: 2px;
-`;
-
-export const AppMain = styled(AppMain1)`
-  display: flex;
-  flex-direction: row;
+  background: #f4f4f4 !important;
+  border-color: currentColor !important;
+  border-width: 2px !important;
+  line-height: 24px !important;
 `;
 
 export const Container = styled(AppContainer)`
+  ${AppMain} {
+    display: flex;
+  }
+
   .side-bar {
     min-height: 100%;
     width: 45px;
