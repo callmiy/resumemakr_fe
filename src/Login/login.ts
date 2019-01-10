@@ -7,13 +7,16 @@ import { LoginInput as FormValues } from "../graphql/apollo-gql";
 import { LoginMutationProps } from "../graphql/login.mutation";
 import { UserLocalMutationProps } from "../State/user.local.mutation";
 import { UserLocalGqlProps } from "../State/auth.local.query";
+import { LoggedOutUserProps } from "../State/logged-out-user.local.query";
 
 export interface OwnProps extends RouteComponentProps<{}> {}
 
-export type Props = OwnProps &
-  LoginMutationProps &
-  UserLocalMutationProps &
-  UserLocalGqlProps;
+export interface Props
+  extends OwnProps,
+    LoginMutationProps,
+    UserLocalMutationProps,
+    UserLocalGqlProps,
+    LoggedOutUserProps {}
 
 export const ValidationSchema = Yup.object<FormValues>().shape({
   email: Yup.string()

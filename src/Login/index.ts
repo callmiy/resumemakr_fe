@@ -1,13 +1,15 @@
 import { graphql, compose } from "react-apollo";
 
-import Login from "./login-x";
-import { userLocalMutationGql } from "../State/user.local.mutation";
-import { LoginMutation, LoginMutationVariables } from "../graphql/apollo-gql";
-import LOGIN_MUTATION, { LoginMutationProps } from "../graphql/login.mutation";
 import USER_LOCAL_QUERY, {
   UserLocalGqlProps,
   UserLocalGqlData
 } from "../State/auth.local.query";
+
+import Login from "./login-x";
+import { userLocalMutationGql } from "../State/user.local.mutation";
+import { LoginMutation, LoginMutationVariables } from "../graphql/apollo-gql";
+import LOGIN_MUTATION, { LoginMutationProps } from "../graphql/login.mutation";
+import { loggedOutUserGql } from "../State/logged-out-user.local.query";
 
 const loginGql = graphql<
   {},
@@ -34,6 +36,7 @@ const userLocalGql = graphql<
 });
 
 export default compose(
+  loggedOutUserGql,
   userLocalGql,
   userLocalMutationGql,
   loginGql

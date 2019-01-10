@@ -34,11 +34,16 @@ export class Login extends React.Component<Props, State> {
   }
 
   render() {
+    const { loggedOutUser } = this.props;
+
     return (
       <div className="app-container">
         <div className="app-main routes-login">
           <Formik
-            initialValues={{ email: "", password: "" }}
+            initialValues={{
+              email: (loggedOutUser && loggedOutUser.email) || "",
+              password: ""
+            }}
             onSubmit={() => null}
             render={this.renderForm}
             validationSchema={ValidationSchema}
