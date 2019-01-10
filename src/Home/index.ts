@@ -20,6 +20,8 @@ import RESUME_TITLES_QUERY, {
   ResumeTitlesProps
 } from "../graphql/resume-titles.query";
 
+import { deleteResumeGql } from "../graphql/delete-resume.mutation";
+
 const createResumeTitleGql = graphql<
   {},
   CreateResumeTitle,
@@ -57,5 +59,6 @@ const resumeTitlesGql = graphql<
 export default compose(
   resumeTitlesGql,
   currentResumeTitleLocalMutationGql<OwnProps>(),
-  createResumeTitleGql
+  createResumeTitleGql,
+  deleteResumeGql
 )(Home);

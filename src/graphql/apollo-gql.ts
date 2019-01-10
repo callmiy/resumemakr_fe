@@ -42,6 +42,31 @@ export interface CreateResumeTitleVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: DeleteResume
+// ====================================================
+
+export interface DeleteResume_deleteResume_resume {
+  id: string;  // The ID of an object
+  title: string;
+}
+
+export interface DeleteResume_deleteResume {
+  resume: DeleteResume_deleteResume_resume | null;
+}
+
+export interface DeleteResume {
+  deleteResume: DeleteResume_deleteResume | null;
+}
+
+export interface DeleteResumeVariables {
+  input: DeleteResumeInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: LoginMutation
 // ====================================================
 
@@ -76,6 +101,7 @@ export interface ResumeTitles_resumes_edges_node {
   id: string;  // The ID of an object
   title: string;
   updatedAt: any;
+  __typename: "Resume";
 }
 
 export interface ResumeTitles_resumes_edges {
@@ -84,6 +110,7 @@ export interface ResumeTitles_resumes_edges {
 
 export interface ResumeTitles_resumes {
   edges: (ResumeTitles_resumes_edges | null)[] | null;
+  __typename: "ResumeConnection";
 }
 
 export interface ResumeTitles {
@@ -133,6 +160,7 @@ export interface ResumeTitlesFrag_edges_node {
   id: string;  // The ID of an object
   title: string;
   updatedAt: any;
+  __typename: "Resume";
 }
 
 export interface ResumeTitlesFrag_edges {
@@ -209,15 +237,17 @@ export interface ResumeInput {
   additionalSkills?: (RatedInput | null)[] | null;
   description?: string | null;
   education?: (EducationInput | null)[] | null;
-  experiences?: (ResumeExperienceInput | null)[] | null;
+  experiences?: (CreateExperienceInput | null)[] | null;
   languages?: (RatedInput | null)[] | null;
   personalInfo?: PersonalInfoInput | null;
+  skills?: (CreateSkillInput | null)[] | null;
   title: string;
 }
 
 // Variables for creating an object with a rating
 export interface RatedInput {
   description: string;
+  id?: string | null;
   level?: string | null;
 }
 
@@ -226,15 +256,17 @@ export interface EducationInput {
   achievements?: (string | null)[] | null;
   course: string;
   fromDate: string;
+  id?: string | null;
   school: string;
   toDate?: string | null;
 }
 
 // Variables for creating resume experience
-export interface ResumeExperienceInput {
+export interface CreateExperienceInput {
   achievements?: (string | null)[] | null;
   companyName: string;
   fromDate: string;
+  id?: string | null;
   position: string;
   toDate?: string | null;
 }
@@ -245,10 +277,23 @@ export interface PersonalInfoInput {
   dateOfBirth?: any | null;
   email: string;
   firstName: string;
+  id?: string | null;
   lastName: string;
   phone: string;
   photo?: string | null;
   profession: string;
+}
+
+// A resume skill
+export interface CreateSkillInput {
+  achievements?: (string | null)[] | null;
+  description: string;
+  id?: string | null;
+}
+
+// null
+export interface DeleteResumeInput {
+  id: string;
 }
 
 // null

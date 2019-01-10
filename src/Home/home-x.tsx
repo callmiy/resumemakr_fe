@@ -1,23 +1,49 @@
 import React from "react";
-import { Modal, Button, Grid, Label, Icon } from "semantic-ui-react";
-import { ApolloError } from "apollo-client";
+import { Modal, Button, Grid, Label, Icon, Popup } from "semantic-ui-react";
+import { ApolloError, MutationUpdaterFn } from "apollo-client";
 import dateFormat from "date-fns/format";
 
-import { HomeContainer, InputLabel, HomeMain, Titles } from "./home-styles";
+import {
+  HomeContainer,
+  InputLabel,
+  HomeMain,
+  Titles,
+  CtrlLabelText,
+  DeleteResumeSuccess
+} from "./home-styles";
+
 import { AppModal } from "../styles/mixins";
 import { makeResumeRoute } from "../routing";
 import { Props } from "./home";
 import Loading from "../Loading";
 import Header from "../Header";
+import {
+  ResumeTitles,
+  ResumeTitlesVariables,
+  DeleteResume,
+  ResumeTitles_resumes_edges_node
+} from "../graphql/apollo-gql";
+import resumeTitles from "../graphql/resume-titles.query";
 
 interface State {
-  open?: boolean;
+  openModal?: boolean;
   resumeTitle: string;
   graphQlError?: ApolloError;
+  deleteError?: {
+    id: string;
+    errors: string[];
+  };
+  deletedResume?: string;
+  deletingResume?: string;
+  confirmDeleteId?: string;
 }
 
 export class Home extends React.Component<Props, State> {
-  state: State = { resumeTitle: "" };
+  state: State = {
+    resumeTitle: ""
+  };
+
+  deleteTriggerRefs: { id?: undefined | HTMLElement } = {};
 
   render() {
     const { loading, error } = this.props;
@@ -25,6 +51,7 @@ export class Home extends React.Component<Props, State> {
     if (loading) {
       return (
         <HomeContainer>
+          <Header />
           <Loading data-testid="loading resume titles" />
         </HomeContainer>
       );
@@ -51,7 +78,7 @@ export class Home extends React.Component<Props, State> {
 
   private renderModal = () => {
     return (
-      <AppModal open={this.state.open}>
+      <AppModal open={this.state.openModal}>
         <Modal.Header>
           Enter resume title e.g name of company to send to
         </Modal.Header>
@@ -77,7 +104,7 @@ export class Home extends React.Component<Props, State> {
             labelPosition="right"
             content="No"
             onClick={() => {
-              this.setState({ open: false, resumeTitle: "" });
+              this.setState({ openModal: false, resumeTitle: "" });
             }}
           />
 
@@ -110,9 +137,25 @@ export class Home extends React.Component<Props, State> {
       return <div onClick={this.openModal}>You have no resumes</div>;
     }
 
+    const { deletedResume } = this.state;
+
     return (
       <Titles>
-        <div className="header">My resumes</div>
+        <div className="header">
+          <div>My resumes</div>
+
+          {deletedResume && (
+            <DeleteResumeSuccess onClick={this.resetDeletedResume}>
+              <div>
+                <Label style={{ cursor: "pointer" }} horizontal={true}>
+                  Dismiss
+                </Label>
+
+                <span>{deletedResume} deleted successfully</span>
+              </div>
+            </DeleteResumeSuccess>
+          )}
+        </div>
 
         <Grid reversed="computer" columns={3}>
           <Grid.Row className="row-header">
@@ -135,9 +178,14 @@ export class Home extends React.Component<Props, State> {
             }
 
             const { id, title, updatedAt } = node;
+            const { deletingResume } = this.state;
 
             return (
-              <Grid.Row key={id}>
+              <Grid.Row key={id} data-testid={`${title} row`}>
+                {deletingResume === id && (
+                  <Loading data-testid={`deleting ${title}`} />
+                )}
+
                 <Grid.Column className="controls">
                   <Label
                     color="blue"
@@ -156,11 +204,22 @@ export class Home extends React.Component<Props, State> {
                   </Label>
 
                   <Label
+                    style={{ position: "relative" }}
                     color="red"
                     circular={true}
-                    onClick={() => this.goToResume(title)}
+                    onClick={() => {
+                      this.setState({ confirmDeleteId: id });
+                    }}
                   >
                     <Icon name="delete" />
+
+                    <CtrlLabelText ref={this.setConfirmDeleteTriggerRef(id)}>
+                      delete {title}
+                    </CtrlLabelText>
+
+                    {this.renderConfirmDelete(node)}
+
+                    {this.renderDeleteError(node)}
                   </Label>
                 </Grid.Column>
 
@@ -182,17 +241,108 @@ export class Home extends React.Component<Props, State> {
     );
   };
 
-  private openModal = () => this.setState({ open: true });
+  private renderDeleteError = ({
+    id,
+    title
+  }: ResumeTitles_resumes_edges_node) => {
+    const { deleteError } = this.state;
+
+    if (!deleteError) {
+      return null;
+    }
+
+    if (deleteError.id !== id) {
+      return null;
+    }
+
+    return (
+      <Popup
+        context={this.deleteTriggerRefs[id]}
+        position="top center"
+        verticalOffset={10}
+        open={deleteError.id === id}
+        onClose={this.handleDeleteErrorPopup}
+      >
+        <div style={{ color: "red" }}>
+          {deleteError.errors.map((t, index) => (
+            <div key={index}>{t}</div>
+          ))}
+        </div>
+      </Popup>
+    );
+  };
+
+  private renderConfirmDelete = ({
+    id,
+    title
+  }: ResumeTitles_resumes_edges_node) => {
+    const { confirmDeleteId } = this.state;
+
+    if (confirmDeleteId !== id) {
+      return null;
+    }
+
+    return (
+      <Popup
+        context={this.deleteTriggerRefs[id]}
+        position="top center"
+        verticalOffset={10}
+        open={confirmDeleteId === id}
+        onClose={this.handleConfirmDeletePopup}
+      >
+        <div>Sure to delete {title}</div>
+
+        <Grid divided={true} columns="equal">
+          <Grid.Column>
+            <Button
+              data-testid={`yes to delete ${title}`}
+              color="red"
+              fluid={true}
+              onClick={evt => {
+                evt.stopPropagation();
+                this.handleConfirmDeletePopup();
+                this.deleteResume(id);
+              }}
+            >
+              Yes
+            </Button>
+          </Grid.Column>
+
+          <Grid.Column>
+            <Button
+              data-testid={`no to delete ${title}`}
+              color="blue"
+              content="No"
+              fluid={true}
+              onClick={evt => {
+                evt.stopPropagation();
+                this.handleConfirmDeletePopup();
+              }}
+            />
+          </Grid.Column>
+        </Grid>
+      </Popup>
+    );
+  };
+
+  private handleConfirmDeletePopup = () => {
+    this.setState({
+      confirmDeleteId: undefined
+    });
+  };
+
+  private openModal = () => this.setState({ openModal: true });
 
   private onChange = (evt: React.SyntheticEvent<HTMLInputElement>) => {
     this.setState({ resumeTitle: evt.currentTarget.value });
   };
 
   private createResume = async () => {
-    const { resumeTitle } = this.state;
+    const { resumeTitle = "" } = this.state;
+    const title = resumeTitle.trim();
 
-    if (!resumeTitle) {
-      this.setState({ open: false });
+    if (!title) {
+      this.setState({ openModal: false });
       return;
     }
 
@@ -205,7 +355,7 @@ export class Home extends React.Component<Props, State> {
     try {
       const result = await createResumeTitle({
         variables: {
-          input: { title: resumeTitle }
+          input: { title }
         }
       });
 
@@ -247,6 +397,134 @@ export class Home extends React.Component<Props, State> {
 
   private goToResume = (title: string) =>
     this.props.history.push(makeResumeRoute(title));
+
+  private deleteResume = async (id: string) => {
+    const { deleteResume } = this.props;
+
+    if (!deleteResume) {
+      this.setState({
+        deleteError: {
+          id,
+          errors: ["Something is wrong:", "unable to delete resume"]
+        }
+      });
+      return;
+    }
+
+    if (!deleteResume) {
+      return;
+    }
+
+    const result = await deleteResume({
+      variables: {
+        input: { id }
+      },
+
+      update: this.updateAfterDelete
+    });
+
+    if (!result) {
+      return;
+    }
+
+    const { data } = result;
+
+    if (!data) {
+      return;
+    }
+
+    const { deleteResume: deletedResume } = data;
+
+    if (!deletedResume) {
+      return;
+    }
+
+    const { resume } = deletedResume;
+
+    if (!resume) {
+      return;
+    }
+
+    this.setState({ deletingResume: id }, () => {
+      this.setState({ deletedResume: resume.title, deletingResume: undefined });
+    });
+
+    setTimeout(() => {
+      this.setState({ deletedResume: undefined });
+    }, 7000);
+  };
+
+  private handleDeleteErrorPopup = () => {
+    this.setState({ deleteError: undefined });
+  };
+
+  private resetDeletedResume = () => {
+    this.setState({ deletedResume: undefined });
+  };
+
+  private updateAfterDelete: MutationUpdaterFn<DeleteResume> = (
+    cache,
+    { data: newData }
+  ) => {
+    if (!newData) {
+      return;
+    }
+
+    const { deleteResume: resumeToBeRemoved } = newData;
+
+    if (!resumeToBeRemoved) {
+      return;
+    }
+
+    const resumeToBeRemovedId =
+      (resumeToBeRemoved.resume && resumeToBeRemoved.resume.id) || "";
+
+    const readData = cache.readQuery<ResumeTitles, ResumeTitlesVariables>({
+      query: resumeTitles,
+
+      variables: {
+        howMany: 10
+      }
+    });
+
+    if (!readData) {
+      return;
+    }
+
+    const { resumes } = readData;
+
+    if (!resumes) {
+      return;
+    }
+
+    const { edges } = resumes;
+
+    if (!edges) {
+      return;
+    }
+
+    cache.writeQuery<ResumeTitles, ResumeTitlesVariables>({
+      query: resumeTitles,
+
+      variables: {
+        howMany: 10
+      },
+
+      data: {
+        resumes: {
+          edges: edges.filter(e => {
+            return e && e.node && e.node.id !== resumeToBeRemovedId;
+          }),
+
+          __typename: "ResumeConnection"
+        }
+      }
+    });
+  };
+
+  private setConfirmDeleteTriggerRef = (id: string) => (ref: HTMLElement) => {
+    this.deleteTriggerRefs[id] = ref;
+  };
 }
 
 export default Home;

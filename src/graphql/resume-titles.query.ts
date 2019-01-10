@@ -10,6 +10,7 @@ const resumeTitlesFrag = gql`
         id
         title
         updatedAt
+        __typename
       }
     }
   }
@@ -19,6 +20,7 @@ export const resumeTitles = gql`
   query ResumeTitles($howMany: Int!) {
     resumes(first: $howMany) {
       ...ResumeTitlesFrag
+      __typename
     }
   }
 

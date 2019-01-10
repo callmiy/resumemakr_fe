@@ -12,7 +12,10 @@ import initState from "./resolvers";
 
 const HTTP_URL = getBackendUrls().apiUrl;
 const httpLink = middleWares(new HttpLink({ uri: HTTP_URL }) as ApolloLink);
-const cache = new InMemoryCache();
+
+const cache = new InMemoryCache({
+  addTypename: true
+});
 
 const client = new ApolloClient({
   cache,

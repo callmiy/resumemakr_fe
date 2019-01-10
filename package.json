@@ -64,7 +64,15 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "src/**/*.{ts,tsx}"
+      "src/**/*.{ts,tsx}",
+      "!src/index.tsx",
+      "!src/App/index.ts",
+      "!src/Home/index.ts",
+      "!src/SignUp/index.ts",
+      "!src/Login/index.ts",
+      "!src/SignUp/index.ts",
+      "!src/State/**",
+      "!src/graphql/**"
     ]
   }
 }

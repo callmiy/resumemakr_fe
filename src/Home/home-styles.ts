@@ -3,7 +3,7 @@ import { lighten } from "polished";
 
 import {
   AppContainer,
-  VisuallyHidden,
+  VisuallyHidden as visuallyHidden,
   AppMain,
   appBgColor
 } from "../styles/mixins";
@@ -33,7 +33,7 @@ export const HomeContainer = styled(AppContainer)`
 `;
 
 export const InputLabel = styled.label`
-  ${VisuallyHidden}
+  ${visuallyHidden}
 `;
 
 export const HomeMain = styled(AppMain)`
@@ -111,5 +111,27 @@ export const Titles = styled.div`
       opacity: 1;
       font-size: 0.8em;
     }
+  }
+`;
+
+export const CtrlLabelText = styled.span`
+  ${visuallyHidden}
+`;
+
+export const DeleteResumeSuccess = styled.div`
+  font-size: 0.7em;
+  font-weight: 400;
+  margin-top: 10px;
+  margin-bottom: -15px;
+
+  & > div {
+    border: 1px solid #1e99ff;
+    display: inline-block;
+    padding-right: 10px;
+  }
+
+  .ui.horizontal.label {
+    background-color: #1e99ff !important;
+    border-color: #1e99ff !important;
   }
 `;

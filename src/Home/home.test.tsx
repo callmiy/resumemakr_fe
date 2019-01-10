@@ -14,7 +14,8 @@ import {
   CreateResumeTitle_resume_resume,
   CreateResumeTitleVariables,
   ResumeTitles_resumes,
-  ResumeTitles_resumes_edges_node
+  ResumeTitles_resumes_edges_node,
+  DeleteResume
 } from "../graphql/apollo-gql";
 
 const HomeP = Home as React.ComponentClass<Partial<Props>>;
@@ -88,7 +89,8 @@ it("renders message if user has not created resume", () => {
    * Given a user has not created any resumes previously
    */
   const resumes: ResumeTitles_resumes = {
-    edges: []
+    edges: [],
+    __typename: "ResumeConnection"
   };
 
   /**
@@ -135,7 +137,8 @@ it("renders resume titles", () => {
           id: "2"
         } as ResumeTitles_resumes_edges_node
       }
-    ]
+    ],
+    __typename: "ResumeConnection"
   };
 
   /**
@@ -233,6 +236,167 @@ it("creates resume title", async () => {
   );
 
   expect(mockPush).toBeCalledWith(makeResumeRoute(title));
+});
+
+it("renders error if deleteResume prop not injected", async () => {
+  /**
+   * Given there are resumes in the system
+   */
+
+  const resumes: ResumeTitles_resumes = {
+    edges: [
+      {
+        node: {
+          title: "Title 1",
+          id: "1"
+        } as ResumeTitles_resumes_edges_node
+      }
+    ],
+    __typename: "ResumeConnection"
+  };
+
+  /**
+   * When a user visits the home page
+   */
+  const { Ui } = renderWithRouter(HomeP);
+
+  const { getByText, queryByText, getByTestId } = render(
+    <Ui resumes={resumes} />
+  );
+
+  /**
+   * Then she sees no UI showing resume can not be deleted
+   */
+  expect(queryByText(/unable to delete resume/i)).not.toBeInTheDocument();
+
+  /**
+   * When she deletes one of the displayed resume titles
+   */
+  fireEvent.click(getByText(/delete title 1/i));
+  fireEvent.click(getByTestId("yes to delete Title 1"));
+
+  /**
+   * Then she sees an error UI saying the resume can not be deleted
+   */
+  expect(getByText(/unable to delete resume/i)).toBeInTheDocument();
+});
+
+it("deletes resume", async () => {
+  /**
+   * Given there are resumes in the system
+   */
+
+  const titles = ["My awesome title 1", "My awesome title 2"];
+
+  const resumes: ResumeTitles_resumes = {
+    edges: [
+      {
+        node: {
+          title: titles[0],
+          id: "1"
+        } as ResumeTitles_resumes_edges_node
+      },
+
+      {
+        node: {
+          title: titles[1],
+          id: "2"
+        } as ResumeTitles_resumes_edges_node
+      }
+    ],
+    __typename: "ResumeConnection"
+  };
+
+  /**
+   * When a user visits the home page
+   */
+
+  const result: WithData<DeleteResume> = {
+    data: {
+      deleteResume: {
+        resume: {
+          id: "2",
+          title: titles[1]
+        }
+      }
+    }
+  };
+
+  const deleteResume = jest.fn(() => Promise.resolve(result));
+
+  const { Ui } = renderWithRouter(HomeP);
+
+  const { getByText, queryByText, getByTestId } = render(
+    <Ui resumes={resumes} deleteResume={deleteResume} />
+  );
+
+  const successRegexp = new RegExp(`${titles[1]} deleted`, "i");
+  const confirmRegexp = new RegExp(`Sure to delete ${titles[1]}`, "i");
+
+  /**
+   * She sees one of her resumes' title on the page
+   */
+  expect(getByTestId(`${titles[1]} row`)).toBeInTheDocument();
+
+  /**
+   * And she sees no UI asking her to confirm if she wants to delete resume
+   */
+  expect(queryByText(confirmRegexp)).not.toBeInTheDocument();
+
+  /**
+   * When she clicks to delete one of the displayed resume titles
+   */
+  fireEvent.click(getByText(new RegExp(`delete ${titles[1]}`, "i")));
+
+  /**
+   * Then she sees UI asking her to confirm if she wants to delete resume
+   */
+  expect(getByText(confirmRegexp)).toBeInTheDocument();
+
+  /**
+   * When she clicks on 'no she does not want to delete resume'
+   */
+  fireEvent.click(getByTestId(`no to delete ${titles[1]}`));
+
+  /**
+   * Then she sees the UI asking her to confirm if she wants to delete resume
+   * is gone
+   */
+  expect(queryByText(confirmRegexp)).not.toBeInTheDocument();
+
+  /**
+   * When she clicks to delete one of the displayed resume titles
+   */
+  fireEvent.click(getByText(new RegExp(`delete ${titles[1]}`, "i")));
+
+  /**
+   * Then she sees no UI showing resume has been deleted
+   */
+  expect(queryByText(successRegexp)).not.toBeInTheDocument();
+
+  /**
+   * When she confirms to delete resume
+   */
+  fireEvent.click(getByTestId(`yes to delete ${titles[1]}`));
+
+  /**
+   * Then she sees a UI showing her action succeeded
+   */
+
+  await wait(() => {
+    const $successMsg = getByText(successRegexp);
+    expect($successMsg).toBeInTheDocument();
+
+    /**
+     * When she clicks on the success message
+     */
+    fireEvent.click($successMsg);
+
+    /**
+     * Then she sees that the message has disappeared
+     */
+    expect(queryByText(successRegexp)).not.toBeInTheDocument();
+  });
 });
 
 ///////////////////////////////////////////////////////////////////////////////
