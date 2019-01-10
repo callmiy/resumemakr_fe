@@ -1,23 +1,6 @@
-import * as Yup from "yup";
+import { RatedInput } from "../graphql/apollo-gql";
 
-export interface AdditionalSkillVal {
-  description: string;
-  ratingDescription?: string;
-}
-
-export const defaultValue: AdditionalSkillVal = {
+export const defaultValue: RatedInput = {
   description: "Adobe Photoshop",
-  ratingDescription: "Excellent"
+  level: "Excellent"
 };
-
-export const emptyValue: AdditionalSkillVal = {
-  description: "",
-  ratingDescription: ""
-};
-
-export const validationSchema = Yup.object<AdditionalSkillVal>().shape({
-  description: Yup.string()
-    .required()
-    .min(2),
-  ratingDescription: Yup.string()
-});

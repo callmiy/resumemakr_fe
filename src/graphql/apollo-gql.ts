@@ -8,19 +8,24 @@
 // ====================================================
 
 export interface CreateResumeTitle_createResume_resume_additionalSkills {
+  id: string;
   description: string;
   level: string | null;
+  __typename: "Rated";
 }
 
 export interface CreateResumeTitle_createResume_resume_languages {
+  id: string;
   description: string;
   level: string | null;
+  __typename: "Rated";
 }
 
 export interface CreateResumeTitle_createResume_resume {
   id: string;  // The ID of an object
   title: string;
   description: string | null;
+  __typename: "Resume";
   additionalSkills: (CreateResumeTitle_createResume_resume_additionalSkills | null)[] | null;
   languages: (CreateResumeTitle_createResume_resume_languages | null)[] | null;
 }
@@ -126,6 +131,93 @@ export interface ResumeTitlesVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: UpdateResume
+// ====================================================
+
+export interface UpdateResume_updateResume_resume_additionalSkills {
+  id: string;
+  description: string;
+  level: string | null;
+  __typename: "Rated";
+}
+
+export interface UpdateResume_updateResume_resume_languages {
+  id: string;
+  description: string;
+  level: string | null;
+  __typename: "Rated";
+}
+
+export interface UpdateResume_updateResume_resume_personalInfo {
+  id: string;
+  address: string | null;
+  dateOfBirth: any | null;
+  email: string | null;
+  firstName: string;
+  lastName: string;
+  phone: string | null;
+  photo: string | null;
+  profession: string | null;
+  __typename: "PersonalInfo";
+}
+
+export interface UpdateResume_updateResume_resume_experiences {
+  id: string;
+  achievements: (string | null)[] | null;
+  companyName: string;
+  fromDate: string;
+  position: string;
+  toDate: string | null;
+  __typename: "ResumeExperience";
+}
+
+export interface UpdateResume_updateResume_resume_skills {
+  id: string;
+  description: string;
+  achievements: (string | null)[] | null;
+  __typename: "Skill";
+}
+
+export interface UpdateResume_updateResume_resume_education {
+  id: string;
+  course: string;
+  fromDate: string;
+  toDate: string | null;
+  school: string;
+  achievements: (string | null)[] | null;
+  __typename: "Education";
+}
+
+export interface UpdateResume_updateResume_resume {
+  id: string;  // The ID of an object
+  title: string;
+  description: string | null;
+  __typename: "Resume";
+  additionalSkills: (UpdateResume_updateResume_resume_additionalSkills | null)[] | null;
+  languages: (UpdateResume_updateResume_resume_languages | null)[] | null;
+  personalInfo: UpdateResume_updateResume_resume_personalInfo | null;
+  experiences: (UpdateResume_updateResume_resume_experiences | null)[] | null;
+  skills: (UpdateResume_updateResume_resume_skills | null)[] | null;
+  education: (UpdateResume_updateResume_resume_education | null)[] | null;
+}
+
+export interface UpdateResume_updateResume {
+  resume: UpdateResume_updateResume_resume | null;
+}
+
+export interface UpdateResume {
+  updateResume: UpdateResume_updateResume | null;
+}
+
+export interface UpdateResumeVariables {
+  input: UpdateResumeInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: UserRegMutation
 // ====================================================
 
@@ -180,6 +272,7 @@ export interface ResumeTitlesFrag {
 // ====================================================
 
 export interface RatedFrag {
+  id: string;
   description: string;
   level: string | null;
 }
@@ -193,19 +286,24 @@ export interface RatedFrag {
 // ====================================================
 
 export interface ResumeMinimalFrag_additionalSkills {
+  id: string;
   description: string;
   level: string | null;
+  __typename: "Rated";
 }
 
 export interface ResumeMinimalFrag_languages {
+  id: string;
   description: string;
   level: string | null;
+  __typename: "Rated";
 }
 
 export interface ResumeMinimalFrag {
   id: string;  // The ID of an object
   title: string;
   description: string | null;
+  __typename: "Resume";
   additionalSkills: (ResumeMinimalFrag_additionalSkills | null)[] | null;
   languages: (ResumeMinimalFrag_languages | null)[] | null;
 }
@@ -300,6 +398,19 @@ export interface DeleteResumeInput {
 export interface LoginInput {
   email: string;
   password: string;
+}
+
+// null
+export interface UpdateResumeInput {
+  additionalSkills?: (RatedInput | null)[] | null;
+  description?: string | null;
+  education?: (EducationInput | null)[] | null;
+  experiences?: (CreateExperienceInput | null)[] | null;
+  id: string;
+  languages?: (RatedInput | null)[] | null;
+  personalInfo?: PersonalInfoInput | null;
+  skills?: (CreateSkillInput | null)[] | null;
+  title?: string | null;
 }
 
 // null

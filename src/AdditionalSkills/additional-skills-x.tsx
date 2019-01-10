@@ -5,11 +5,12 @@ import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 import { Section } from "../ResumeForm/resume-form";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
-import { AdditionalSkillVal, defaultValue } from "./additional-skills";
+import { emptyVal } from "../Rated/rated";
+import { RatedInput } from "../graphql/apollo-gql";
 
 interface Props {
   label: Section;
-  values: AdditionalSkillVal[];
+  values?: Array<RatedInput | null> | null;
 }
 
 export class AdditionalSkills extends React.Component<Props, {}> {
@@ -27,7 +28,7 @@ export class AdditionalSkills extends React.Component<Props, {}> {
         <FieldArray
           name="additionalSkills"
           render={arrayHelper =>
-            values.map((skill, index) => (
+            (values || [{ ...emptyVal }]).map((skill, index) => (
               <Skill
                 key={index}
                 index={index}
@@ -46,15 +47,15 @@ export default AdditionalSkills;
 
 interface SkillProps {
   index: number;
-  skill?: AdditionalSkillVal;
+  skill: RatedInput | null;
   arrayHelper: FieldArrayRenderProps;
 }
 
-function Skill({
-  index,
-  skill = { ...defaultValue },
-  arrayHelper
-}: SkillProps) {
+function Skill({ index, skill, arrayHelper }: SkillProps) {
+  if (!skill) {
+    return null;
+  }
+
   return (
     <Card>
       <Card.Content>
@@ -65,14 +66,14 @@ function Skill({
         <FastField
           name={makeName(index, "description")}
           label="Skill, description (e.g. Editing skills)"
-          defaultValue={skill.description}
+          emptyValue={skill.description}
           component={RegularField}
         />
 
         <FastField
-          name={makeName(index, "ratingDescription")}
+          name={makeName(index, "level")}
           label="Rating description (e.g. Advanced) (optional)"
-          defaultValue={skill.ratingDescription}
+          emptyValue={skill.level}
           component={RegularField}
         />
       </Card.Content>
@@ -80,6 +81,6 @@ function Skill({
   );
 }
 
-function makeName(index: number, key: keyof AdditionalSkillVal) {
+function makeName(index: number, key: keyof RatedInput) {
   return `additionalSkills[${index}].${key}`;
 }

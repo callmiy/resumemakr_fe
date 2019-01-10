@@ -2,13 +2,14 @@ import React from "react";
 import { TextArea, Card, Icon } from "semantic-ui-react";
 import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 
-import { ExperienceVal } from "./experiences";
+import { CreateExperienceInput } from "../graphql/apollo-gql";
 import RegularField from "../RegularField";
 import SectionLabel from "../SectionLabel";
 import { Section } from "../ResumeForm/resume-form";
+import { emptyVals } from "./experiences";
 
 interface Props {
-  values: ExperienceVal[];
+  values: Array<CreateExperienceInput | null> | null | undefined;
   label: Section;
 }
 
@@ -27,7 +28,7 @@ export class Experiences extends React.Component<Props, {}> {
         <FieldArray
           name="experiences"
           render={arrayHelper =>
-            values.map((exp, index) => (
+            (values || [{ ...emptyVals }]).map((exp, index) => (
               <Experience
                 key={index}
                 index={index}
@@ -46,11 +47,15 @@ export default Experiences;
 
 interface ExperienceProps {
   index: number;
-  exp: ExperienceVal;
+  exp: CreateExperienceInput | null;
   arrayHelper: FieldArrayRenderProps;
 }
 
 function Experience({ index, exp, arrayHelper }: ExperienceProps) {
+  if (!exp) {
+    return null;
+  }
+
   return (
     <Card>
       <Card.Content>
@@ -73,16 +78,16 @@ function Experience({ index, exp, arrayHelper }: ExperienceProps) {
         />
 
         <FastField
-          name={makeName(index, "from_date")}
+          name={makeName(index, "fromDate")}
           label="Date from"
-          defaultValue={exp.from_date}
+          defaultValue={exp.fromDate}
           component={RegularField}
         />
 
         <FastField
-          name={makeName(index, "to_date")}
+          name={makeName(index, "toDate")}
           label="Date to (optional)"
-          defaultValue={exp.to_date}
+          defaultValue={exp.toDate}
           component={RegularField}
         />
 
@@ -95,16 +100,17 @@ function Experience({ index, exp, arrayHelper }: ExperienceProps) {
                 <span> (responsibilities, activities)</span>
               </div>
 
-              {exp.achievements.map((achievement, ind) => (
-                <Achievement
-                  key={ind}
-                  achievement={achievement}
-                  index={ind}
-                  fieldName={makeName(index, "achievements")}
-                  arrayHelper={helper}
-                  expIndex1={index}
-                />
-              ))}
+              {exp.achievements &&
+                exp.achievements.map((achievement, ind) => (
+                  <Achievement
+                    key={ind}
+                    achievement={achievement}
+                    index={ind}
+                    fieldName={makeName(index, "achievements")}
+                    arrayHelper={helper}
+                    expIndex1={index}
+                  />
+                ))}
             </div>
           )}
         />
@@ -115,7 +121,7 @@ function Experience({ index, exp, arrayHelper }: ExperienceProps) {
 
 interface AchievementProps {
   index: number;
-  achievement: string;
+  achievement: string | null;
   fieldName: string;
   arrayHelper: FieldArrayRenderProps;
   expIndex1: number;
@@ -148,6 +154,6 @@ function Achievement({
   );
 }
 
-function makeName(index: number, key: keyof ExperienceVal) {
+function makeName(index: number, key: keyof CreateExperienceInput) {
   return `experiences[${index}].${key}`;
 }

@@ -3,29 +3,30 @@ import "jest-dom/extend-expect";
 import "react-testing-library/cleanup-after-each";
 import { render } from "react-testing-library";
 
+import {
+  EducationInput,
+  CreateExperienceInput,
+  PersonalInfoInput,
+  CreateSkillInput,
+  RatedInput
+} from "../graphql/apollo-gql";
+
 import Preview from ".";
 import { Mode } from "./preview";
-import { PersonalInfoVal } from "../ResumeForm/PersonalInfo/personal-info";
-import { ExperienceVal } from "../ResumeForm/Experiences/experiences";
-import { EducationVal } from "../ResumeForm/Education/education";
-import { FormValues } from "../ResumeForm/resume-form";
-import { SkillVal } from "../ResumeForm/Skills/skills";
-import { AdditionalSkillVal } from "../ResumeForm/AdditionalSkills/additional-skills";
-import { HobbyVal } from "../ResumeForm/Hobbies/hobbies";
-import { LanguageVal } from "../ResumeForm/Languages/languages";
+import { HobbyVal } from "../Hobbies/hobbies";
 
 it("renders form preview", () => {
   const personalInfoOthers = {
-    first_name: "Kanmii",
-    last_name: "Ademii",
+    firstName: "Kanmii",
+    lastName: "Ademii",
     email: "a@b.com",
     phone: "010388736633",
     address: "67 Williams Butler street Kings Plaza",
-    date_of_birth: "2015-06-12",
+    dateOfBirth: "2015-06-12",
     profession: "IT manager"
   };
 
-  const personalInfo: PersonalInfoVal = {
+  const personalInfo: PersonalInfoInput = {
     ...personalInfoOthers,
     photo: "photo"
   };
@@ -33,11 +34,11 @@ it("renders form preview", () => {
   const expOthers = {
     position: "Account Manager",
     companyName: "Union Bank PLC",
-    from_date: "03/2014",
-    to_date: "04/2015"
+    fromDate: "03/2014",
+    toDate: "04/2015"
   };
 
-  const experience: ExperienceVal = {
+  const experience: CreateExperienceInput = {
     ...expOthers,
     achievements: [
       "Took the company to the highest level",
@@ -45,28 +46,29 @@ it("renders form preview", () => {
     ]
   };
 
-  const education: EducationVal = {
+  const education: EducationInput = {
     school: "Community college",
-    course: "Psychoanalysis"
+    course: "Psychoanalysis",
+    fromDate: "06/2017"
   };
 
-  const skill: SkillVal = {
+  const skill: CreateSkillInput = {
     description: "App development",
     achievements: ["Built 1000 apps", "Saved my company money"]
   };
 
-  const additionalSkill: AdditionalSkillVal = {
+  const additionalSkill: RatedInput = {
     description: "Adobe photoshop"
   };
 
   const hobbies: HobbyVal[] = ["Singing", "Swimming", "dancing"];
 
-  const language: LanguageVal = {
+  const language: RatedInput = {
     description: "English",
-    ratingDescription: "fluent"
+    level: "fluent"
   };
 
-  const values: FormValues = {
+  const values = {
     personalInfo,
     experiences: [experience],
     education: [education],
@@ -81,7 +83,7 @@ it("renders form preview", () => {
   );
 
   expect(
-    getByTestId(`${personalInfo.first_name} ${personalInfo.last_name} photo`)
+    getByTestId(`${personalInfo.firstName} ${personalInfo.lastName} photo`)
   ).toBeInTheDocument();
 
   for (const exp of Object.values(expOthers)
@@ -89,9 +91,9 @@ it("renders form preview", () => {
     .concat(Object.values(additionalSkill))
     .concat(Object.values(personalInfoOthers))
     .concat(Object.values(education))
-    .concat(experience.achievements)
+    .concat(experience.achievements as string[])
     .concat([skill.description])
-    .concat(skill.achievements)
+    .concat(skill.achievements as string[])
     .concat(hobbies)) {
     expect(getByText(new RegExp(exp, "i"))).toBeInTheDocument();
   }

@@ -5,11 +5,11 @@ import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 import { Section } from "../ResumeForm/resume-form";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
-import { SkillVal } from "./skills";
+import { CreateSkillInput } from "../graphql/apollo-gql";
 
 interface Props {
   label: Section;
-  values: SkillVal[];
+  values?: Array<CreateSkillInput | null> | null;
 }
 
 export class Skills extends React.Component<Props, {}> {
@@ -27,7 +27,7 @@ export class Skills extends React.Component<Props, {}> {
         <FieldArray
           name="skills"
           render={arrayHelper =>
-            values.map((skill, index) => (
+            (values || []).map((skill, index) => (
               <Skill
                 key={index}
                 index={index}
@@ -46,11 +46,17 @@ export default Skills;
 
 interface SkillProps {
   index: number;
-  skill: SkillVal;
+  skill: CreateSkillInput | null;
   arrayHelper: FieldArrayRenderProps;
 }
 
 function Skill({ index, skill, arrayHelper }: SkillProps) {
+  if (!skill) {
+    return null;
+  }
+
+  const { achievements, description } = skill;
+
   return (
     <Card>
       <Card.Content>
@@ -61,7 +67,7 @@ function Skill({ index, skill, arrayHelper }: SkillProps) {
         <FastField
           name={makeName(index, "description")}
           label="Description (e.g Leadership)"
-          defaultValue={skill.description}
+          defaultValue={description}
           component={RegularField}
         />
 
@@ -71,15 +77,16 @@ function Skill({ index, skill, arrayHelper }: SkillProps) {
             <div>
               <div>Achievements</div>
 
-              {skill.achievements.map((text, ind) => (
-                <Achievement
-                  key={ind}
-                  text={text}
-                  textIndex={ind}
-                  fieldName={makeName(index, "achievements")}
-                  arrayHelper={helper}
-                />
-              ))}
+              {achievements &&
+                achievements.map((text, ind) => (
+                  <Achievement
+                    key={ind}
+                    text={text}
+                    textIndex={ind}
+                    fieldName={makeName(index, "achievements")}
+                    arrayHelper={helper}
+                  />
+                ))}
             </div>
           )}
         />
@@ -90,7 +97,7 @@ function Skill({ index, skill, arrayHelper }: SkillProps) {
 
 interface AchievementProps {
   textIndex: number;
-  text: string;
+  text: string | null;
   fieldName: string;
   arrayHelper: FieldArrayRenderProps;
 }
@@ -121,6 +128,6 @@ function Achievement({
   );
 }
 
-function makeName(index: number, key: keyof SkillVal) {
+function makeName(index: number, key: keyof CreateSkillInput) {
   return `skills[${index}].${key}`;
 }

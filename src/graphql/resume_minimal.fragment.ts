@@ -2,6 +2,7 @@ import gql from "graphql-tag";
 
 const ratedFrag = gql`
   fragment RatedFrag on Rated {
+    id
     description
     level
   }
@@ -12,13 +13,16 @@ export const resumeMinimalFrag = gql`
     id
     title
     description
+    __typename
 
     additionalSkills {
       ...RatedFrag
+      __typename
     }
 
     languages {
       ...RatedFrag
+      __typename
     }
   }
 

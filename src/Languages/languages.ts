@@ -1,23 +1,6 @@
-import * as Yup from "yup";
+import { RatedInput } from "../graphql/apollo-gql";
 
-export interface LanguageVal {
-  description: string;
-  ratingDescription?: string;
-}
-
-export const defaultVal: LanguageVal = {
+export const defaultVal: RatedInput = {
   description: "Spanish",
-  ratingDescription: "C1"
+  level: "C1"
 };
-
-export const emptyVal: LanguageVal = {
-  description: "",
-  ratingDescription: ""
-};
-
-export const validationSchema = Yup.object<LanguageVal>().shape({
-  description: Yup.string()
-    .required()
-    .min(2),
-  ratingDescription: Yup.string()
-});

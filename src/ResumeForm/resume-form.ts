@@ -1,52 +1,47 @@
 import * as Yup from "yup";
 
 import {
-  ExperienceVal,
   validationSchema as expSchema,
   defaultVal as experience
 } from "../Experiences/experiences";
 
 import {
-  PersonalInfoVal,
   defaultVal as personalInfo,
   validationSchema as piSchema
 } from "../PersonalInfo/personal-info";
 
 import {
-  EducationVal,
   validationSchema as edSchema,
   defaultVal as education
 } from "../Education/education";
 
-import {
-  AdditionalSkillVal,
-  defaultValue as additionSkill,
-  validationSchema as addSkillSchema
-} from "../AdditionalSkills/additional-skills";
+import { defaultValue as additionSkill } from "../AdditionalSkills/additional-skills";
+
+import { defaultVal as lang } from "../Languages/languages";
 
 import {
-  LanguageVal,
-  defaultVal as lang,
-  validationSchema as langSchema
-} from "../Languages/languages";
-
-import {
-  SkillVal,
   defaultVal as skills,
   validationSchema as skillsSchema
 } from "../Skills/skills";
 
-import { HobbyVal, defaultVal as hobby } from "../Hobbies/hobbies";
+import {
+  EducationInput,
+  CreateExperienceInput,
+  CreateSkillInput,
+  RatedInput,
+  UpdateResumeInput
+} from "../graphql/apollo-gql";
 
-export interface FormValues {
-  personalInfo: PersonalInfoVal;
-  experiences: ExperienceVal[];
-  education: EducationVal[];
-  additionalSkills?: AdditionalSkillVal[];
-  languages?: LanguageVal[];
-  hobbies?: HobbyVal[];
-  skills: SkillVal[];
+import { HobbyVal, defaultVal as hobby } from "../Hobbies/hobbies";
+import { validationSchema as ratedSchema } from "../Rated/rated";
+
+export interface Props {
+  initialValues?: FormValues;
 }
+
+export type FormValues = Partial<UpdateResumeInput> & {
+  hobbies: HobbyVal[];
+};
 
 export const initialFormValues: FormValues = {
   personalInfo,
@@ -60,19 +55,17 @@ export const initialFormValues: FormValues = {
 
 export const validationSchema = Yup.object<FormValues>().shape({
   personalInfo: piSchema,
-  experiences: Yup.array<ExperienceVal>()
-    .of<ExperienceVal>(expSchema)
+  experiences: Yup.array<CreateExperienceInput>()
+    .of<CreateExperienceInput>(expSchema)
     .required(),
-  education: Yup.array<EducationVal>()
-    .of<EducationVal>(edSchema)
+  education: Yup.array<EducationInput>()
+    .of<EducationInput>(edSchema)
     .required(),
-  skills: Yup.array<SkillVal>()
-    .of<SkillVal>(skillsSchema)
+  skills: Yup.array<CreateSkillInput>()
+    .of<CreateSkillInput>(skillsSchema)
     .required(),
-  additionalSkills: Yup.array<AdditionalSkillVal>().of<AdditionalSkillVal>(
-    addSkillSchema
-  ),
-  languages: Yup.array<LanguageVal>().of<LanguageVal>(langSchema),
+  additionalSkills: Yup.array<RatedInput>().of<RatedInput>(ratedSchema),
+  languages: Yup.array<RatedInput>().of<RatedInput>(ratedSchema),
   hobbies: Yup.array<HobbyVal>()
 });
 

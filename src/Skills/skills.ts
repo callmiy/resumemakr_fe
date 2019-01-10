@@ -1,11 +1,8 @@
 import * as Yup from "yup";
 
-export interface SkillVal {
-  description: string;
-  achievements: string[];
-}
+import { CreateSkillInput } from "../graphql/apollo-gql";
 
-export const defaultVal: SkillVal[] = [
+export const defaultVal: CreateSkillInput[] = [
   {
     description: "Programming and App Development",
     achievements: [
@@ -35,14 +32,14 @@ export const defaultVal: SkillVal[] = [
   }
 ];
 
-export const emptyVals: SkillVal[] = [
+export const emptyVals: CreateSkillInput[] = [
   {
     description: "",
     achievements: []
   }
 ];
 
-export const validationSchema = Yup.object<SkillVal>().shape({
+export const validationSchema = Yup.object<CreateSkillInput>().shape({
   description: Yup.string()
     .required()
     .min(2),

@@ -4,10 +4,6 @@ import "react-testing-library/cleanup-after-each";
 import { render, fireEvent } from "react-testing-library";
 
 import ResumeForm from ".";
-import { FormValues } from "./resume-form";
-import { PersonalInfoVal } from "./PersonalInfo/personal-info";
-import { ExperienceVal } from "./Experiences/experiences";
-import { createFile } from "../test_utils";
 
 it("navigates forward", () => {
   /**

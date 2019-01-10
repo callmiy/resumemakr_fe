@@ -9,7 +9,8 @@ import {
   Section,
   toSection,
   sectionsList,
-  lastSectionIndex
+  lastSectionIndex,
+  Props
 } from "./resume-form";
 
 import {
@@ -44,10 +45,6 @@ enum Action {
 interface State {
   action: Action;
   section: Section;
-}
-
-interface Props {
-  initialValues?: FormValues;
 }
 
 export class ResumeForm extends React.Component<Props, State> {

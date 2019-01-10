@@ -2,14 +2,14 @@ import React from "react";
 import { Icon, Card, TextArea } from "semantic-ui-react";
 import { FastField } from "formik";
 
-import { PersonalInfoVal } from "./personal-info";
+import { PersonalInfoInput } from "../graphql/apollo-gql";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
 import PhotoField from "../PhotoField";
 import { Section } from "../ResumeForm/resume-form";
 
 interface Props {
-  values: PersonalInfoVal;
+  values: PersonalInfoInput | null | undefined;
   label: Section;
 }
 
@@ -42,13 +42,13 @@ function BioData() {
         <Card.Content>
           <div className="names">
             <FastField
-              name={makeName("first_name")}
+              name={makeName("firstName")}
               label="First name"
               component={RegularField}
             />
 
             <FastField
-              name={makeName("last_name")}
+              name={makeName("lastName")}
               label="Last name"
               component={RegularField}
             />
@@ -96,7 +96,7 @@ function FirstColumn() {
         />
 
         <FastField
-          name={makeName("date_of_birth")}
+          name={makeName("dateOfBirth")}
           label="Date of birth yyyy-mm-dd"
           component={RegularField}
         />
@@ -105,6 +105,6 @@ function FirstColumn() {
   );
 }
 
-function makeName(suffix: string) {
+function makeName(suffix: keyof PersonalInfoInput) {
   return `personalInfo.${suffix}`;
 }

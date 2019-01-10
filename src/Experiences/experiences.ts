@@ -1,32 +1,26 @@
 import * as Yup from "yup";
 
-export interface ExperienceVal {
-  position: string;
-  companyName: string;
-  from_date: string;
-  to_date?: string;
-  achievements: string[];
-}
+import { CreateExperienceInput } from "../graphql/apollo-gql";
 
-export const emptyVals = {
+export const emptyVals: CreateExperienceInput = {
   position: "",
   companyName: "",
-  from_date: "",
-  to_date: "",
+  fromDate: "",
+  toDate: "",
   achievements: []
 };
 
-export const validationSchema = Yup.object<ExperienceVal>().shape({
+export const validationSchema = Yup.object<CreateExperienceInput>().shape({
   position: Yup.string()
     .required()
     .min(2),
   companyName: Yup.string()
     .required()
     .min(2),
-  from_date: Yup.string()
+  fromDate: Yup.string()
     .required()
     .min(2),
-  to_date: Yup.string()
+  toDate: Yup.string()
     .required()
     .min(2),
   achievements: Yup.array<string>()
@@ -34,11 +28,11 @@ export const validationSchema = Yup.object<ExperienceVal>().shape({
     .min(1)
 });
 
-export const defaultVal: ExperienceVal = {
+export const defaultVal: CreateExperienceInput = {
   position: "IT Manager",
   companyName: "Apple, New York City, NY",
-  from_date: "2015-03-31",
-  to_date: "2016-03-05",
+  fromDate: "2015-03-31",
+  toDate: "2016-03-05",
   achievements: [
     "Supervised the IT team in creating mobile apps providing the best user experience for Apple's customers all over the world.",
 

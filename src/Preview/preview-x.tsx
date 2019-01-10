@@ -20,6 +20,12 @@ import {
   Ul,
   PersonalIcon
 } from "./preview-styles";
+import {
+  PersonalInfoInput,
+  CreateSkillInput,
+  CreateExperienceInput,
+  EducationInput
+} from "../graphql/apollo-gql";
 
 interface Props {
   values: FormValues;
@@ -29,22 +35,13 @@ interface Props {
 export class Preview extends React.Component<Props> {
   render() {
     const {
-      personalInfo: {
-        first_name,
-        last_name,
-        profession,
-        address,
-        phone,
-        email,
-        date_of_birth,
-        photo
-      },
       skills,
       experiences,
       additionalSkills,
       education,
       hobbies,
-      languages
+      languages,
+      personalInfo
     } = this.props.values;
 
     const { mode } = this.props;
@@ -52,59 +49,14 @@ export class Preview extends React.Component<Props> {
     return (
       <Container data-testid="preview-resume-section" mode={mode}>
         <Left>
-          <Section>
-            <NamePos>
-              <Name>{first_name}</Name>
-              <Name>{last_name}</Name>
-            </NamePos>
-
-            <Profession>{profession}</Profession>
-          </Section>
-
-          <Section>
-            <TitleLeft>Personal Info</TitleLeft>
-
-            {date_of_birth && (
-              <PersonalTitle>
-                Phone
-                <PersonalText>{date_of_birth}</PersonalText>
-              </PersonalTitle>
-            )}
-
-            <PersonalTitle>
-              <PersonalIcon name="map marker alternate" />
-
-              {address.split("\n").map((s, k) => (
-                <PersonalText key={k}>{s.trim()}</PersonalText>
-              ))}
-            </PersonalTitle>
-
-            <PersonalTitle>
-              <PersonalIcon name="phone" />
-
-              <PersonalText>{phone}</PersonalText>
-            </PersonalTitle>
-
-            <PersonalTitle>
-              <PersonalIcon name="mail" />
-
-              <PersonalText>{email}</PersonalText>
-            </PersonalTitle>
-          </Section>
-
-          {photo && (
-            <Img
-              backgroundImg={photo}
-              data-testid={`${first_name} ${last_name} photo`}
-            />
-          )}
+          {personalInfo && this.renderPersonalInfo(personalInfo)}
 
           {additionalSkills && additionalSkills.length && (
             <Section>
               <TitleLeft>Additional Skills</TitleLeft>
 
               {additionalSkills.map((s, index) => (
-                <span key={index}>{s.description}</span>
+                <span key={index}>{s && s.description}</span>
               ))}
             </Section>
           )}
@@ -115,7 +67,7 @@ export class Preview extends React.Component<Props> {
 
               {languages.map((s, index) => (
                 <span key={index}>
-                  {s.description} [{s.ratingDescription}]
+                  {s && s.description} [{s && s.level}]
                 </span>
               ))}
             </Section>
@@ -133,82 +85,183 @@ export class Preview extends React.Component<Props> {
         </Left>
 
         <Right>
-          <Section>
-            <TitleRight>Skills</TitleRight>
-
-            {skills.map(({ description, achievements }, index) => (
-              <React.Fragment key={index}>
-                <Description>{description}</Description>
-
-                <Ul>
-                  {achievements.map((achievement, ind) => (
-                    <li key={ind}>{achievement}</li>
-                  ))}
-                </Ul>
-              </React.Fragment>
-            ))}
-          </Section>
-
-          <Section>
-            <TitleRight>Experience</TitleRight>
-
-            {experiences.map(
-              (
-                { position, achievements, from_date, to_date, companyName },
-                index
-              ) => (
-                <div key={index} className="experience-container">
-                  <div className="left">
-                    {from_date} {(to_date && `-${to_date}`) || ""}
-                  </div>
-
-                  <div className="right">
-                    <Description className="position">{position}</Description>
-
-                    <div className="company">{companyName}</div>
-
-                    <Ul>
-                      {achievements.map((achievement, ind) => (
-                        <li key={ind}>{achievement}</li>
-                      ))}
-                    </Ul>
-                  </div>
-                </div>
-              )
-            )}
-          </Section>
-
-          <Section>
-            <TitleRight>Education</TitleRight>
-
-            {education.map(
-              ({ course, school, from_date, to_date, achievements }, index) => (
-                <div key={index} className="experience-container">
-                  <div className="left">
-                    {from_date} {(to_date && `-${to_date}`) || ""}
-                  </div>
-
-                  <div className="right">
-                    <Description className="position">{course}</Description>
-
-                    <div className="company">{school}</div>
-
-                    {achievements && achievements.length && (
-                      <Ul>
-                        {achievements.map((achievement, ind) => (
-                          <li key={ind}>{achievement}</li>
-                        ))}
-                      </Ul>
-                    )}
-                  </div>
-                </div>
-              )
-            )}
-          </Section>
+          {skills && this.renderSkills(skills)}
+          {experiences && this.renderExperiences(experiences)}
+          {education && this.renderEducation(education)}
         </Right>
       </Container>
     );
   }
+
+  private renderEducation = (education: Array<EducationInput | null>) => {
+    return (
+      <Section>
+        <TitleRight>Education</TitleRight>
+
+        {education.map((ed, index) => {
+          if (!ed) {
+            return;
+          }
+
+          const { course, school, fromDate, toDate, achievements } = ed;
+
+          return (
+            <div key={index} className="experience-container">
+              <div className="left">
+                {fromDate} {(toDate && `-${toDate}`) || ""}
+              </div>
+
+              <div className="right">
+                <Description className="position">{course}</Description>
+
+                <div className="company">{school}</div>
+
+                {achievements && achievements.length && (
+                  <Ul>
+                    {achievements.map((achievement, ind) => (
+                      <li key={ind}>{achievement}</li>
+                    ))}
+                  </Ul>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </Section>
+    );
+  };
+
+  private renderExperiences = (
+    experiences: Array<CreateExperienceInput | null>
+  ) => {
+    return (
+      <Section>
+        <TitleRight>Experience</TitleRight>
+
+        {experiences.map((exp, index) => {
+          if (!exp) {
+            return null;
+          }
+
+          const { position, achievements, fromDate, toDate, companyName } = exp;
+
+          return (
+            <div key={index} className="experience-container">
+              <div className="left">
+                {fromDate} {(toDate && `-${toDate}`) || ""}
+              </div>
+
+              <div className="right">
+                <Description className="position">{position}</Description>
+
+                <div className="company">{companyName}</div>
+
+                <Ul>
+                  {achievements &&
+                    achievements.map((achievement, ind) => (
+                      <li key={ind}>{achievement}</li>
+                    ))}
+                </Ul>
+              </div>
+            </div>
+          );
+        })}
+      </Section>
+    );
+  };
+
+  private renderSkills = (skills: Array<CreateSkillInput | null>) => {
+    return (
+      <Section>
+        <TitleRight>Skills</TitleRight>
+
+        {skills.map((skill, index) => {
+          if (!skill) {
+            return;
+          }
+
+          const { description, achievements } = skill;
+
+          return (
+            <React.Fragment key={index}>
+              <Description>{description}</Description>
+
+              <Ul>
+                {achievements &&
+                  achievements.map((achievement, ind) => (
+                    <li key={ind}>{achievement}</li>
+                  ))}
+              </Ul>
+            </React.Fragment>
+          );
+        })}
+      </Section>
+    );
+  };
+
+  private renderPersonalInfo = (personalInfo: PersonalInfoInput) => {
+    const {
+      firstName,
+      lastName,
+      profession,
+      address,
+      phone,
+      email,
+      dateOfBirth,
+      photo
+    } = personalInfo;
+
+    return (
+      <>
+        <Section>
+          <NamePos>
+            <Name>{firstName}</Name>
+            <Name>{lastName}</Name>
+          </NamePos>
+
+          <Profession>{profession}</Profession>
+        </Section>
+
+        <Section>
+          <TitleLeft>Personal Info</TitleLeft>
+
+          {dateOfBirth && (
+            <PersonalTitle>
+              Phone
+              <PersonalText>{dateOfBirth}</PersonalText>
+            </PersonalTitle>
+          )}
+
+          <PersonalTitle>
+            <PersonalIcon name="map marker alternate" />
+
+            {address.split("\n").map((s, k) => (
+              <PersonalText key={k}>{s.trim()}</PersonalText>
+            ))}
+          </PersonalTitle>
+
+          <PersonalTitle>
+            <PersonalIcon name="phone" />
+
+            <PersonalText>{phone}</PersonalText>
+          </PersonalTitle>
+
+          <PersonalTitle>
+            <PersonalIcon name="mail" />
+
+            <PersonalText>{email}</PersonalText>
+          </PersonalTitle>
+        </Section>
+
+        {photo && (
+          <Img
+            backgroundImg={photo}
+            data-testid={`${firstName} ${lastName} photo`}
+          />
+        )}
+      </>
+    );
+  };
 }
 
 export default Preview;

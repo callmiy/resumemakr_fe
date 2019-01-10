@@ -2,14 +2,16 @@ import React from "react";
 import { Icon, Card } from "semantic-ui-react";
 import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 
+import { EducationInput } from "../graphql/apollo-gql";
+
 import { Section } from "../ResumeForm/resume-form";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
-import { EducationVal, defaultVal } from "./education";
+import { emptyVal } from "./education";
 
 interface Props {
   label: Section;
-  values: EducationVal[];
+  values?: Array<EducationInput | null> | null;
 }
 
 export class Education extends React.Component<Props, {}> {
@@ -27,7 +29,7 @@ export class Education extends React.Component<Props, {}> {
         <FieldArray
           name="education"
           render={arrayHelper =>
-            values.map((edu, index) => (
+            (values || [{ ...emptyVal }]).map((edu, index) => (
               <School
                 key={index}
                 index={index}
@@ -46,11 +48,15 @@ export default Education;
 
 interface SchoolProps {
   index: number;
-  edu?: EducationVal;
+  edu?: EducationInput | null;
   arrayHelper: FieldArrayRenderProps;
 }
 
-function School({ index, edu = { ...defaultVal }, arrayHelper }: SchoolProps) {
+function School({ index, edu, arrayHelper }: SchoolProps) {
+  if (!edu) {
+    return null;
+  }
+
   return (
     <Card>
       <Card.Content>
@@ -73,16 +79,16 @@ function School({ index, edu = { ...defaultVal }, arrayHelper }: SchoolProps) {
         />
 
         <FastField
-          name={makeName(index, "from_date")}
+          name={makeName(index, "fromDate")}
           label="Date from"
-          defaultValue={edu.from_date}
+          defaultValue={edu.fromDate}
           component={RegularField}
         />
 
         <FastField
-          name={makeName(index, "to_date")}
+          name={makeName(index, "toDate")}
           label="Date to"
-          defaultValue={edu.to_date}
+          defaultValue={edu.toDate}
           component={RegularField}
         />
 
@@ -104,6 +110,6 @@ function School({ index, edu = { ...defaultVal }, arrayHelper }: SchoolProps) {
   );
 }
 
-function makeName(index: number, key: keyof EducationVal) {
+function makeName(index: number, key: keyof EducationInput) {
   return `education[${index}].${key}`;
 }

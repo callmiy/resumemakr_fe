@@ -5,11 +5,12 @@ import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 import { Section } from "../ResumeForm/resume-form";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
-import { LanguageVal, defaultVal } from "./languages";
+import { emptyVal } from "../Rated/rated";
+import { RatedInput } from "../graphql/apollo-gql";
 
 interface Props {
   label: Section;
-  values?: LanguageVal[];
+  values?: Array<RatedInput | null> | null;
 }
 
 export class Languages extends React.Component<Props, {}> {
@@ -27,7 +28,7 @@ export class Languages extends React.Component<Props, {}> {
         <FieldArray
           name="languages"
           render={arrayHelper =>
-            values.map((lang, index) => (
+            (values || [{ ...emptyVal }]).map((lang, index) => (
               <Language
                 key={index}
                 index={index}
@@ -46,11 +47,15 @@ export default Languages;
 
 interface LangProps {
   index: number;
-  lang?: LanguageVal;
+  lang: RatedInput | null;
   arrayHelper: FieldArrayRenderProps;
 }
 
-function Language({ index, lang = { ...defaultVal }, arrayHelper }: LangProps) {
+function Language({ index, lang, arrayHelper }: LangProps) {
+  if (!lang) {
+    return null;
+  }
+
   return (
     <Card>
       <Card.Content>
@@ -66,9 +71,9 @@ function Language({ index, lang = { ...defaultVal }, arrayHelper }: LangProps) {
         />
 
         <FastField
-          name={makeName(index, "ratingDescription")}
+          name={makeName(index, "level")}
           label="Rating description (e.g. Proficient) (optional)"
-          defaultValue={lang.ratingDescription}
+          defaultValue={lang.level}
           component={RegularField}
         />
       </Card.Content>
@@ -76,6 +81,6 @@ function Language({ index, lang = { ...defaultVal }, arrayHelper }: LangProps) {
   );
 }
 
-function makeName(index: number, key: keyof LanguageVal) {
+function makeName(index: number, key: keyof RatedInput) {
   return `languages[${index}].${key}`;
 }

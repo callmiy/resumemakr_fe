@@ -1,37 +1,32 @@
 import * as Yup from "yup";
 
-export interface EducationVal {
-  school: string;
-  course: string;
-  from_date?: string;
-  to_date?: string;
-  achievements?: string[];
-}
+import { EducationInput } from "../graphql/apollo-gql";
 
-export const emptyVal: EducationVal = {
+
+export const emptyVal: EducationInput = {
   school: "",
   course: "",
-  from_date: "",
-  to_date: "",
+  fromDate: "",
+  toDate: "",
   achievements: []
 };
 
-export const defaultVal: EducationVal = {
+export const defaultVal: EducationInput = {
   school: "The City College of New York, New York City, NY",
   course: "MS in Computer Science, Distinction",
-  from_date: "02/2013",
-  to_date: "03/2015",
+  fromDate: "02/2013",
+  toDate: "03/2015",
   achievements: ["Graduated summer cum laude", "President of student union"]
 };
 
-export const validationSchema = Yup.object<EducationVal>().shape({
+export const validationSchema = Yup.object<EducationInput>().shape({
   school: Yup.string()
     .required()
     .min(5),
   course: Yup.string()
     .required()
     .min(5),
-  from_date: Yup.string(),
-  to_date: Yup.string(),
+  fromDate: Yup.string(),
+  toDate: Yup.string(),
   achievements: Yup.array<string>()
 });
