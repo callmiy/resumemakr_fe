@@ -32,6 +32,7 @@
     "build-prod": "cross-env REACT_APP_API_URL=https://exceach.herokuapp.com/api  react-scripts build",
     "build-local-prod": "cross-env REACT_APP_API_URL=http://localhost:4026/api  react-scripts build",
     "test": "cross-env REACT_APP_API_URL=http://localhost:4025/api yarn react-scripts test",
+    "test-cover": "yarn test --coverage --coverageDirectory=./coverage",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -73,6 +74,13 @@
       "!src/SignUp/index.ts",
       "!src/State/**",
       "!src/graphql/**"
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "clover",
+      "html"
     ]
   }
 }
