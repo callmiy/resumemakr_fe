@@ -11,7 +11,7 @@ import {
   InputFile
 } from "./photo-field-styles";
 
-import { AppModal } from "../../styles/mixins";
+import { AppModal } from "../styles/mixins";
 interface Props<Values> extends FieldProps<Values> {
   removeFilePreview?: () => void;
 }

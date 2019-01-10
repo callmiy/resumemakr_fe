@@ -2,7 +2,7 @@ import React from "react";
 import { Icon, Card, TextArea } from "semantic-ui-react";
 import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 
-import { Section } from "../resume-form";
+import { Section } from "../ResumeForm/resume-form";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
 import { SkillVal } from "./skills";

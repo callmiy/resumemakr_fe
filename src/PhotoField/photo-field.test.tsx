@@ -6,7 +6,7 @@ import { getByText as domGetByText } from "dom-testing-library";
 import "jest-styled-components";
 
 import PhotoField from ".";
-import { createFile, uploadFile } from "../../test_utils";
+import { createFile, uploadFile } from "../test_utils";
 
 it("changes to preview on file select", async () => {
   const { ui } = setUp();

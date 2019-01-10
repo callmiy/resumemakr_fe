@@ -2,36 +2,36 @@ import React from "react";
 import { Icon, Card } from "semantic-ui-react";
 import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 
-import { Section } from "../resume-form";
+import { Section } from "../ResumeForm/resume-form";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
-import { LanguageVal, defaultVal } from "./languages";
+import { AdditionalSkillVal, defaultValue } from "./additional-skills";
 
 interface Props {
   label: Section;
-  values?: LanguageVal[];
+  values: AdditionalSkillVal[];
 }
 
-export class Languages extends React.Component<Props, {}> {
+export class AdditionalSkills extends React.Component<Props, {}> {
   render() {
-    const { label, values = [] } = this.props;
+    const { label, values } = this.props;
 
     return (
       <>
         <SectionLabel
           label={label}
           ico={<Icon name="won" />}
-          data-testid="languages-section"
+          data-testid="additional-skills-section"
         />
 
         <FieldArray
-          name="languages"
+          name="additionalSkills"
           render={arrayHelper =>
-            values.map((lang, index) => (
-              <Language
+            values.map((skill, index) => (
+              <Skill
                 key={index}
                 index={index}
-                lang={lang}
+                skill={skill}
                 arrayHelper={arrayHelper}
               />
             ))
@@ -42,33 +42,37 @@ export class Languages extends React.Component<Props, {}> {
   }
 }
 
-export default Languages;
+export default AdditionalSkills;
 
-interface LangProps {
+interface SkillProps {
   index: number;
-  lang?: LanguageVal;
+  skill?: AdditionalSkillVal;
   arrayHelper: FieldArrayRenderProps;
 }
 
-function Language({ index, lang = { ...defaultVal }, arrayHelper }: LangProps) {
+function Skill({
+  index,
+  skill = { ...defaultValue },
+  arrayHelper
+}: SkillProps) {
   return (
     <Card>
       <Card.Content>
-        <Card.Header>School #{index + 1}</Card.Header>
+        <Card.Header>#{index + 1}</Card.Header>
       </Card.Content>
 
       <Card.Content>
         <FastField
           name={makeName(index, "description")}
-          label="Language, description (e.g. Spanish - Certified)"
-          defaultValue={lang.description}
+          label="Skill, description (e.g. Editing skills)"
+          defaultValue={skill.description}
           component={RegularField}
         />
 
         <FastField
           name={makeName(index, "ratingDescription")}
-          label="Rating description (e.g. Proficient) (optional)"
-          defaultValue={lang.ratingDescription}
+          label="Rating description (e.g. Advanced) (optional)"
+          defaultValue={skill.ratingDescription}
           component={RegularField}
         />
       </Card.Content>
@@ -76,6 +80,6 @@ function Language({ index, lang = { ...defaultVal }, arrayHelper }: LangProps) {
   );
 }
 
-function makeName(index: number, key: keyof LanguageVal) {
-  return `languages[${index}].${key}`;
+function makeName(index: number, key: keyof AdditionalSkillVal) {
+  return `additionalSkills[${index}].${key}`;
 }

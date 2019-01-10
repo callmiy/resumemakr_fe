@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components/macro";
 
-import { VisuallyHidden } from "../../styles/mixins";
+import { VisuallyHidden } from "../styles/mixins";
 
 const Main = styled.div`
   width: 170px;

@@ -5,7 +5,7 @@ import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 import { ExperienceVal } from "./experiences";
 import RegularField from "../RegularField";
 import SectionLabel from "../SectionLabel";
-import { Section } from "../resume-form";
+import { Section } from "../ResumeForm/resume-form";
 
 interface Props {
   values: ExperienceVal[];

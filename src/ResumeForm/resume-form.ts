@@ -4,39 +4,39 @@ import {
   ExperienceVal,
   validationSchema as expSchema,
   defaultVal as experience
-} from "./Experiences/experiences";
+} from "../Experiences/experiences";
 
 import {
   PersonalInfoVal,
   defaultVal as personalInfo,
   validationSchema as piSchema
-} from "./PersonalInfo/personal-info";
+} from "../PersonalInfo/personal-info";
 
 import {
   EducationVal,
   validationSchema as edSchema,
   defaultVal as education
-} from "./Education/education";
+} from "../Education/education";
 
 import {
   AdditionalSkillVal,
   defaultValue as additionSkill,
   validationSchema as addSkillSchema
-} from "./AdditionalSkills/additional-skills";
+} from "../AdditionalSkills/additional-skills";
 
 import {
   LanguageVal,
   defaultVal as lang,
   validationSchema as langSchema
-} from "./Languages/languages";
+} from "../Languages/languages";
 
 import {
   SkillVal,
   defaultVal as skills,
   validationSchema as skillsSchema
-} from "./Skills/skills";
+} from "../Skills/skills";
 
-import { HobbyVal, defaultVal as hobby } from "./Hobbies/hobbies";
+import { HobbyVal, defaultVal as hobby } from "../Hobbies/hobbies";
 
 export interface FormValues {
   personalInfo: PersonalInfoVal;

@@ -27,13 +27,13 @@ import { noOp } from "../utils";
 import { ToolTip } from "../styles/mixins";
 import Preview from "../Preview";
 import { Mode as PreviewMode } from "../Preview/preview";
-import PersonalInfo from "./PersonalInfo";
-import Experiences from "./Experiences";
-import Education from "./Education";
-import AdditionalSkills from "./AdditionalSkills";
-import Languages from "./Languages";
-import Hobbies from "./Hobbies";
-import Skills from "./Skills";
+import PersonalInfo from "../PersonalInfo";
+import Experiences from "../Experiences";
+import Education from "../Education";
+import AdditionalSkills from "../AdditionalSkills";
+import Languages from "../Languages";
+import Hobbies from "../Hobbies";
+import Skills from "../Skills";
 import { FORM_VALUES_KEY } from "../constants";
 
 enum Action {

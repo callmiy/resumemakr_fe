@@ -6,7 +6,7 @@ import { PersonalInfoVal } from "./personal-info";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
 import PhotoField from "../PhotoField";
-import { Section } from "../resume-form";
+import { Section } from "../ResumeForm/resume-form";
 
 interface Props {
   values: PersonalInfoVal;
