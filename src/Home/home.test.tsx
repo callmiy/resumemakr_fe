@@ -11,7 +11,7 @@ import { Props } from "./home";
 
 import {
   CreateResumeTitle,
-  CreateResumeTitle_resume_resume,
+  CreateResumeTitle_createResume_resume,
   CreateResumeTitleVariables,
   ResumeTitles_resumes,
   ResumeTitles_resumes_edges_node,
@@ -171,10 +171,10 @@ it("creates resume title", async () => {
 
   const result: WithData<CreateResumeTitle> = {
     data: {
-      resume: {
+      createResume: {
         resume: {
           title
-        } as CreateResumeTitle_resume_resume
+        } as CreateResumeTitle_createResume_resume
       }
     }
   };
