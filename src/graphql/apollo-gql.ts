@@ -7,34 +7,34 @@
 // GraphQL mutation operation: CreateResumeTitle
 // ====================================================
 
-export interface CreateResumeTitle_resume_resume_additionalSkills {
+export interface CreateResumeTitle_createResume_resume_additionalSkills {
   description: string;
   level: string | null;
 }
 
-export interface CreateResumeTitle_resume_resume_languages {
+export interface CreateResumeTitle_createResume_resume_languages {
   description: string;
   level: string | null;
 }
 
-export interface CreateResumeTitle_resume_resume {
+export interface CreateResumeTitle_createResume_resume {
   id: string;  // The ID of an object
   title: string;
   description: string | null;
-  additionalSkills: (CreateResumeTitle_resume_resume_additionalSkills | null)[] | null;
-  languages: (CreateResumeTitle_resume_resume_languages | null)[] | null;
+  additionalSkills: (CreateResumeTitle_createResume_resume_additionalSkills | null)[] | null;
+  languages: (CreateResumeTitle_createResume_resume_languages | null)[] | null;
 }
 
-export interface CreateResumeTitle_resume {
-  resume: CreateResumeTitle_resume_resume | null;
+export interface CreateResumeTitle_createResume {
+  resume: CreateResumeTitle_createResume_resume | null;
 }
 
 export interface CreateResumeTitle {
-  resume: CreateResumeTitle_resume | null;
+  createResume: CreateResumeTitle_createResume | null;
 }
 
 export interface CreateResumeTitleVariables {
-  input: ResumeInput;
+  input: CreateResumeInput;
 }
 
 
@@ -233,7 +233,7 @@ export interface UserFragment {
 //==============================================================
 
 // null
-export interface ResumeInput {
+export interface CreateResumeInput {
   additionalSkills?: (RatedInput | null)[] | null;
   description?: string | null;
   education?: (EducationInput | null)[] | null;

@@ -5,8 +5,8 @@ import { resumeMinimalFrag } from "./resume_minimal.fragment";
 import { CreateResumeTitle, CreateResumeTitleVariables } from "./apollo-gql";
 
 export const createResumeTitle = gql`
-  mutation CreateResumeTitle($input: ResumeInput!) {
-    resume(input: $input) {
+  mutation CreateResumeTitle($input: CreateResumeInput!) {
+    createResume(input: $input) {
       resume {
         ...ResumeMinimalFrag
       }

@@ -259,6 +259,29 @@
           "possibleTypes": null
         },
         {
+          "description": null,
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "resume",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Resume",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "CreateResumePayload",
+          "possibleTypes": null
+        },
+        {
           "description": "The `Date` scalar type represents a date. The Date appears in a JSON\nresponse as an ISO8601 formatted string.",
           "enumValues": null,
           "fields": null,
@@ -909,6 +932,33 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
+                      "name": "CreateResumeInput",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "createResume",
+              "type": {
+                "kind": "OBJECT",
+                "name": "CreateResumePayload",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "input",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
                       "name": "DeleteResumeInput",
                       "ofType": null
                     }
@@ -976,33 +1026,6 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "RegistrationPayload",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "description": null,
-                  "name": "input",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "ResumeInput",
-                      "ofType": null
-                    }
-                  }
-                }
-              ],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "resume",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ResumePayload",
                 "ofType": null
               }
             },
@@ -1132,29 +1155,6 @@
         {
           "description": null,
           "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "resume",
-              "type": {
-                "kind": "OBJECT",
-                "name": "Resume",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "UpdateResumePayload",
-          "possibleTypes": null
-        },
-        {
-          "description": null,
-          "enumValues": null,
           "fields": null,
           "inputFields": [
             {
@@ -1264,7 +1264,30 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "ResumeInput",
+          "name": "CreateResumeInput",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "resume",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Resume",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "UpdateResumePayload",
           "possibleTypes": null
         },
         {
@@ -2271,29 +2294,6 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "LoginInput",
-          "possibleTypes": null
-        },
-        {
-          "description": null,
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "resume",
-              "type": {
-                "kind": "OBJECT",
-                "name": "Resume",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "ResumePayload",
           "possibleTypes": null
         },
         {

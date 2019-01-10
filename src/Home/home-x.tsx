@@ -369,13 +369,13 @@ export class Home extends React.Component<Props, State> {
         return;
       }
 
-      const { resume: payload } = data;
+      const { createResume } = data;
 
-      if (!payload) {
+      if (!createResume) {
         return;
       }
 
-      const { resume } = payload;
+      const { resume } = createResume;
 
       if (!resume) {
         return;
