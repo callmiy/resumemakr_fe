@@ -18,7 +18,7 @@ const resumeTitlesFrag = gql`
 
 export const resumeTitles = gql`
   query ResumeTitles($howMany: Int!) {
-    resumes(first: $howMany) {
+    listResumes(first: $howMany) {
       ...ResumeTitlesFrag
       __typename
     }

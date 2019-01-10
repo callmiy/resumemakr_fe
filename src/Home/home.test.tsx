@@ -13,8 +13,8 @@ import {
   CreateResumeTitle,
   CreateResumeTitle_createResume_resume,
   CreateResumeTitleVariables,
-  ResumeTitles_resumes,
-  ResumeTitles_resumes_edges_node,
+  ResumeTitles_listResumes,
+  ResumeTitles_listResumes_edges_node,
   DeleteResume
 } from "../graphql/apollo-gql";
 
@@ -88,7 +88,7 @@ it("renders message if user has not created resume", () => {
   /**
    * Given a user has not created any resumes previously
    */
-  const resumes: ResumeTitles_resumes = {
+  const resumes: ResumeTitles_listResumes = {
     edges: [],
     __typename: "ResumeConnection"
   };
@@ -98,7 +98,7 @@ it("renders message if user has not created resume", () => {
    */
   const { Ui } = renderWithRouter(HomeP);
 
-  const { getByText, getByLabelText } = render(<Ui resumes={resumes} />);
+  const { getByText, getByLabelText } = render(<Ui listResumes={resumes} />);
 
   /**
    * Then she sees a message that she has not created any resumes previously
@@ -122,20 +122,20 @@ it("renders resume titles", () => {
    */
   const titles = ["My awesome title 1", "My awesome title 2"];
 
-  const resumes: ResumeTitles_resumes = {
+  const resumes: ResumeTitles_listResumes = {
     edges: [
       {
         node: {
           title: titles[0],
           id: "1"
-        } as ResumeTitles_resumes_edges_node
+        } as ResumeTitles_listResumes_edges_node
       },
 
       {
         node: {
           title: titles[1],
           id: "2"
-        } as ResumeTitles_resumes_edges_node
+        } as ResumeTitles_listResumes_edges_node
       }
     ],
     __typename: "ResumeConnection"
@@ -146,7 +146,7 @@ it("renders resume titles", () => {
    */
   const mockPush = jest.fn();
   const { Ui } = renderWithRouter(HomeP, { push: mockPush });
-  const { getByText } = render(<Ui resumes={resumes} />);
+  const { getByText } = render(<Ui listResumes={resumes} />);
 
   /**
    * Then she should see her resumes' titles
@@ -243,13 +243,13 @@ it("renders error if deleteResume prop not injected", async () => {
    * Given there are resumes in the system
    */
 
-  const resumes: ResumeTitles_resumes = {
+  const resumes: ResumeTitles_listResumes = {
     edges: [
       {
         node: {
           title: "Title 1",
           id: "1"
-        } as ResumeTitles_resumes_edges_node
+        } as ResumeTitles_listResumes_edges_node
       }
     ],
     __typename: "ResumeConnection"
@@ -261,7 +261,7 @@ it("renders error if deleteResume prop not injected", async () => {
   const { Ui } = renderWithRouter(HomeP);
 
   const { getByText, queryByText, getByTestId } = render(
-    <Ui resumes={resumes} />
+    <Ui listResumes={resumes} />
   );
 
   /**
@@ -288,20 +288,20 @@ it("deletes resume", async () => {
 
   const titles = ["My awesome title 1", "My awesome title 2"];
 
-  const resumes: ResumeTitles_resumes = {
+  const resumes: ResumeTitles_listResumes = {
     edges: [
       {
         node: {
           title: titles[0],
           id: "1"
-        } as ResumeTitles_resumes_edges_node
+        } as ResumeTitles_listResumes_edges_node
       },
 
       {
         node: {
           title: titles[1],
           id: "2"
-        } as ResumeTitles_resumes_edges_node
+        } as ResumeTitles_listResumes_edges_node
       }
     ],
     __typename: "ResumeConnection"
@@ -327,7 +327,7 @@ it("deletes resume", async () => {
   const { Ui } = renderWithRouter(HomeP);
 
   const { getByText, queryByText, getByTestId } = render(
-    <Ui resumes={resumes} deleteResume={deleteResume} />
+    <Ui listResumes={resumes} deleteResume={deleteResume} />
   );
 
   const successRegexp = new RegExp(`${titles[1]} deleted`, "i");

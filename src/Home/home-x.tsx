@@ -21,7 +21,7 @@ import {
   ResumeTitles,
   ResumeTitlesVariables,
   DeleteResume,
-  ResumeTitles_resumes_edges_node
+  ResumeTitles_listResumes_edges_node
 } from "../graphql/apollo-gql";
 import resumeTitles from "../graphql/resume-titles.query";
 
@@ -121,13 +121,13 @@ export class Home extends React.Component<Props, State> {
   };
 
   private renderTitles = () => {
-    const { resumes } = this.props;
+    const { listResumes } = this.props;
 
-    if (!resumes) {
+    if (!listResumes) {
       return null;
     }
 
-    const { edges } = resumes;
+    const { edges } = listResumes;
 
     if (!edges) {
       return null;
@@ -244,7 +244,7 @@ export class Home extends React.Component<Props, State> {
   private renderDeleteError = ({
     id,
     title
-  }: ResumeTitles_resumes_edges_node) => {
+  }: ResumeTitles_listResumes_edges_node) => {
     const { deleteError } = this.state;
 
     if (!deleteError) {
@@ -275,7 +275,7 @@ export class Home extends React.Component<Props, State> {
   private renderConfirmDelete = ({
     id,
     title
-  }: ResumeTitles_resumes_edges_node) => {
+  }: ResumeTitles_listResumes_edges_node) => {
     const { confirmDeleteId } = this.state;
 
     if (confirmDeleteId !== id) {
@@ -491,13 +491,13 @@ export class Home extends React.Component<Props, State> {
       return;
     }
 
-    const { resumes } = readData;
+    const { listResumes } = readData;
 
-    if (!resumes) {
+    if (!listResumes) {
       return;
     }
 
-    const { edges } = resumes;
+    const { edges } = listResumes;
 
     if (!edges) {
       return;
@@ -511,7 +511,7 @@ export class Home extends React.Component<Props, State> {
       },
 
       data: {
-        resumes: {
+        listResumes: {
           edges: edges.filter(e => {
             return e && e.node && e.node.id !== resumeToBeRemovedId;
           }),

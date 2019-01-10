@@ -102,24 +102,24 @@ export interface LoginMutationVariables {
 // GraphQL query operation: ResumeTitles
 // ====================================================
 
-export interface ResumeTitles_resumes_edges_node {
+export interface ResumeTitles_listResumes_edges_node {
   id: string;  // The ID of an object
   title: string;
   updatedAt: any;
   __typename: "Resume";
 }
 
-export interface ResumeTitles_resumes_edges {
-  node: ResumeTitles_resumes_edges_node | null;  // The item at the end of the edge
+export interface ResumeTitles_listResumes_edges {
+  node: ResumeTitles_listResumes_edges_node | null;  // The item at the end of the edge
 }
 
-export interface ResumeTitles_resumes {
-  edges: (ResumeTitles_resumes_edges | null)[] | null;
+export interface ResumeTitles_listResumes {
+  edges: (ResumeTitles_listResumes_edges | null)[] | null;
   __typename: "ResumeConnection";
 }
 
 export interface ResumeTitles {
-  resumes: ResumeTitles_resumes | null;  // query a resume
+  listResumes: ResumeTitles_listResumes | null;  // query a resume
 }
 
 export interface ResumeTitlesVariables {
@@ -261,6 +261,81 @@ export interface ResumeTitlesFrag_edges {
 
 export interface ResumeTitlesFrag {
   edges: (ResumeTitlesFrag_edges | null)[] | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: ResumeFullFrag
+// ====================================================
+
+export interface ResumeFullFrag_additionalSkills {
+  id: string;
+  description: string;
+  level: string | null;
+  __typename: "Rated";
+}
+
+export interface ResumeFullFrag_languages {
+  id: string;
+  description: string;
+  level: string | null;
+  __typename: "Rated";
+}
+
+export interface ResumeFullFrag_personalInfo {
+  id: string;
+  address: string | null;
+  dateOfBirth: any | null;
+  email: string | null;
+  firstName: string;
+  lastName: string;
+  phone: string | null;
+  photo: string | null;
+  profession: string | null;
+  __typename: "PersonalInfo";
+}
+
+export interface ResumeFullFrag_experiences {
+  id: string;
+  achievements: (string | null)[] | null;
+  companyName: string;
+  fromDate: string;
+  position: string;
+  toDate: string | null;
+  __typename: "ResumeExperience";
+}
+
+export interface ResumeFullFrag_skills {
+  id: string;
+  description: string;
+  achievements: (string | null)[] | null;
+  __typename: "Skill";
+}
+
+export interface ResumeFullFrag_education {
+  id: string;
+  course: string;
+  fromDate: string;
+  toDate: string | null;
+  school: string;
+  achievements: (string | null)[] | null;
+  __typename: "Education";
+}
+
+export interface ResumeFullFrag {
+  id: string;  // The ID of an object
+  title: string;
+  description: string | null;
+  __typename: "Resume";
+  additionalSkills: (ResumeFullFrag_additionalSkills | null)[] | null;
+  languages: (ResumeFullFrag_languages | null)[] | null;
+  personalInfo: ResumeFullFrag_personalInfo | null;
+  experiences: (ResumeFullFrag_experiences | null)[] | null;
+  skills: (ResumeFullFrag_skills | null)[] | null;
+  education: (ResumeFullFrag_education | null)[] | null;
 }
 
 
