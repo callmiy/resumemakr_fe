@@ -13,6 +13,7 @@ export const resumeMinimalFrag = gql`
     id
     title
     description
+    hobbies
     __typename
 
     additionalSkills {

@@ -13,15 +13,17 @@ export function RegularField<Values>({
   label,
   comp: Component = Input
 }: Props<Values>) {
+  const { value, name } = field;
+
   return (
     <Form.Field>
       {"string" === typeof label ? (
-        <label htmlFor={field.name}>{label}</label>
+        <label htmlFor={name}>{label}</label>
       ) : (
         label
       )}
 
-      <Component {...field} id={field.name} />
+      <Component {...field} value={value || ""} id={field.name} />
     </Form.Field>
   );
 }

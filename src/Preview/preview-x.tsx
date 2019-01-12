@@ -1,7 +1,7 @@
 import React from "react";
 
-import { FormValues } from "../ResumeForm/resume-form";
-import { Mode } from "./preview";
+// import { FormValues } from "../ResumeForm/resume-form";
+import { Props } from "./preview";
 
 import {
   Container,
@@ -21,19 +21,20 @@ import {
   PersonalIcon
 } from "./preview-styles";
 import {
-  PersonalInfoInput,
   CreateSkillInput,
   CreateExperienceInput,
-  EducationInput
+  EducationInput,
+  GetResume_getResume_personalInfo
 } from "../graphql/apollo-gql";
-
-interface Props {
-  values: FormValues;
-  mode: Mode;
-}
 
 export class Preview extends React.Component<Props> {
   render() {
+    const { getResume } = this.props;
+
+    if (!getResume) {
+      return;
+    }
+
     const {
       skills,
       experiences,
@@ -42,7 +43,7 @@ export class Preview extends React.Component<Props> {
       hobbies,
       languages,
       personalInfo
-    } = this.props.values;
+    } = getResume;
 
     const { mode } = this.props;
 
@@ -199,7 +200,9 @@ export class Preview extends React.Component<Props> {
     );
   };
 
-  private renderPersonalInfo = (personalInfo: PersonalInfoInput) => {
+  private renderPersonalInfo = (
+    personalInfo: GetResume_getResume_personalInfo
+  ) => {
     const {
       firstName,
       lastName,
@@ -235,9 +238,10 @@ export class Preview extends React.Component<Props> {
           <PersonalTitle>
             <PersonalIcon name="map marker alternate" />
 
-            {address.split("\n").map((s, k) => (
-              <PersonalText key={k}>{s.trim()}</PersonalText>
-            ))}
+            {address &&
+              address
+                .split("\n")
+                .map((s, k) => <PersonalText key={k}>{s.trim()}</PersonalText>)}
           </PersonalTitle>
 
           <PersonalTitle>

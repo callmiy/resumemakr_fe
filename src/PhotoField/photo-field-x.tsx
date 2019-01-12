@@ -12,7 +12,11 @@ import {
 } from "./photo-field-styles";
 
 import { AppModal } from "../styles/mixins";
-interface Props<Values> extends FieldProps<Values> {
+import { getBackendUrls } from "../State/get-backend-urls";
+
+const backEndUrl = getBackendUrls().root;
+
+export interface Props<Values> extends FieldProps<Values> {
   removeFilePreview?: () => void;
 }
 interface State {
@@ -28,20 +32,42 @@ enum FileState {
   deleted = "deleted"
 }
 
+let serverValue: string | null = null;
+
 export class PhotoField<Values> extends React.Component<Props<Values>, State> {
+  state: State = {
+    fileState: FileState.clean
+  };
+
   inputRef = createRef<HTMLInputElement>();
 
   constructor(props: Props<Values>) {
     super(props);
+  }
 
+  componentDidMount() {
     const {
       field: { value }
     } = this.props;
 
-    this.state = {
-      fileState: value ? FileState.previewing : FileState.clean,
-      url: value
-    };
+    this.toUrl(value);
+    serverValue = value;
+  }
+
+  componentDidUpdate() {
+    const {
+      field: { value }
+    } = this.props;
+
+    /**
+     * Means we received the value from the server, otherwise it will be a file
+     * instance
+     */
+    if ("string" === typeof value && serverValue !== value) {
+      this.toUrl(value);
+    }
+
+    serverValue = value;
   }
 
   render() {
@@ -169,16 +195,39 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
 
   private handleFileUpload = (evt: React.SyntheticEvent<HTMLInputElement>) => {
     const file = (evt.currentTarget.files || [])[0];
+
     if (!file) {
       return;
     }
 
+    this.toUrl(file);
+    this.props.form.setFieldValue(this.props.field.name, file);
+  };
+
+  private toUrl = (file: File | null | string) => {
+    if (!file) {
+      return;
+    }
+
+    /**
+     * If we are loading the file from the server, then we get a string that
+     * points to the path of the file on the server
+     */
+    if ("string" === typeof file) {
+      const url = new URL(file, backEndUrl);
+      this.setState({ url: `url(${url})`, fileState: FileState.previewing });
+      return;
+    }
+
+    /**
+     * If we are selecting using browser file picker, then we get a File
+     * instance
+     */
     const reader = new FileReader();
 
     reader.onloadend = () => {
       const url = `url(${reader.result as string})`;
       this.setState({ url, fileState: FileState.previewing });
-      this.props.form.setFieldValue(this.props.field.name, url);
     };
 
     reader.readAsDataURL(file);

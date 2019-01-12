@@ -1,11 +1,13 @@
 import React from "react";
 import { Form } from "semantic-ui-react";
-import { Formik, FormikProps } from "formik";
+import { Cancelable } from "lodash";
+import lodashDebounce from "lodash/debounce";
+import lodashIsEqual from "lodash/isEqual";
+import lodashIsEmpty from "lodash/isEmpty";
+import update from "immutability-helper";
 
 import {
   FormValues,
-  initialFormValues,
-  validationSchema,
   Section,
   toSection,
   sectionsList,
@@ -24,7 +26,6 @@ import {
   Container
 } from "./resume-form-styles";
 
-import { noOp } from "../utils";
 import { ToolTip } from "../styles/mixins";
 import Preview from "../Preview";
 import { Mode as PreviewMode } from "../Preview/preview";
@@ -35,7 +36,9 @@ import AdditionalSkills from "../AdditionalSkills";
 import Languages from "../Languages";
 import Hobbies from "../Hobbies";
 import Skills from "../Skills";
-import { FORM_VALUES_KEY } from "../constants";
+import Loading from "../Loading";
+import { ALREADY_UPLOADED } from "../constants";
+import { UpdateResumeInput } from "../graphql/apollo-gql";
 
 enum Action {
   editing = "editing",
@@ -47,107 +50,144 @@ interface State {
   section: Section;
 }
 
+let valuesTracker: FormValues | null = null;
+
+let debounceUpdateResume: (ResumeForm["updateResume"] & Cancelable) | undefined;
+
 export class ResumeForm extends React.Component<Props, State> {
   state: State = {
     action: Action.editing,
     section: Section.personalInfo
   };
 
-  values: FormValues = this.props.initialValues || initialFormValues;
+  constructor(props: Props) {
+    super(props);
 
-  getValues = () => this.values;
+    debounceUpdateResume = lodashDebounce<ResumeForm["updateResume"]>(
+      this.updateResume,
+      500
+    );
+  }
 
-  setValues = async (values: FormValues) => {
-    localStorage.setItem(FORM_VALUES_KEY, JSON.stringify(values));
-    this.values = values;
-  };
+  componentDidMount() {
+    valuesTracker = this.props.values;
+  }
+
+  componentWillMount() {
+    if (debounceUpdateResume) {
+      debounceUpdateResume.cancel();
+    }
+  }
+
+  componentDidUpdate() {
+    if (debounceUpdateResume) {
+      debounceUpdateResume();
+    }
+  }
 
   render() {
+    const { loading, error: graphQlLoadingError, values } = this.props;
+
+    if (!lodashIsEmpty(graphQlLoadingError)) {
+      return <div>{JSON.stringify(graphQlLoadingError)}</div>;
+    }
+
+    const { action, section } = this.state;
+    const sectionIndex = sectionsList.indexOf(section);
+
+    if (loading || lodashIsEmpty(values)) {
+      return (
+        <Container>
+          <Loading />
+        </Container>
+      );
+    }
+
     return (
       <Container>
-        <Formik
-          initialValues={this.props.initialValues || initialFormValues}
-          onSubmit={noOp}
-          render={this.renderForm}
-          validationSchema={validationSchema}
-          validateOnChange={false}
-        />
+        <Form>
+          {this.renderCurrEditingSection(values)}
+
+          {action === Action.previewing && (
+            <Preview mode={PreviewMode.preview} />
+          )}
+
+          <BottomNavs>
+            {action === Action.editing && (
+              <>
+                {sectionIndex !== lastSectionIndex && (
+                  <PreviewBtn
+                    onClick={() => {
+                      this.setState({ action: Action.previewing });
+                    }}
+                  >
+                    <ToolTip>Partial: preview your resume</ToolTip>
+
+                    <PreviewBtnIcon />
+
+                    <span>Preview</span>
+                  </PreviewBtn>
+                )}
+
+                {sectionIndex > 0 && (
+                  <EditBtn
+                    onClick={() =>
+                      this.setState({ section: toSection(section, "prev") })
+                    }
+                  >
+                    <ToolTip>
+                      {`Previous resume section ${toSection(
+                        section,
+                        "prev"
+                      ).toLowerCase()}`}
+                    </ToolTip>
+
+                    <PrevBtnIcon />
+
+                    <span>Previous</span>
+                  </EditBtn>
+                )}
+
+                {sectionIndex < lastSectionIndex && (
+                  <NextBtn
+                    onClick={() =>
+                      this.setState({ section: toSection(section, "next") })
+                    }
+                  >
+                    <ToolTip>
+                      {`Next resume section ${toSection(
+                        section,
+                        "next"
+                      ).toLowerCase()}`}
+                    </ToolTip>
+
+                    <span>Next</span>
+
+                    <NextBtnIcon />
+                  </NextBtn>
+                )}
+
+                {this.renderPreviewFinalBtn(sectionIndex)}
+              </>
+            )}
+
+            {action === Action.previewing && (
+              <EditBtn
+                onClick={() => this.setState({ action: Action.editing })}
+              >
+                <ToolTip>Show resume editor</ToolTip>
+
+                <PrevBtnIcon />
+
+                <span>Back to Editor</span>
+              </EditBtn>
+            )}
+          </BottomNavs>
+        </Form>
       </Container>
     );
   }
 
-  private renderForm = ({ values, ...props }: FormikProps<FormValues>) => {
-    this.setValues(values);
-    const { action, section } = this.state;
-    const sectionIndex = sectionsList.indexOf(section);
-
-    return (
-      <Form>
-        {this.renderCurrEditingSection(values)}
-
-        {action === Action.previewing && (
-          <Preview values={values} mode={PreviewMode.preview} />
-        )}
-        <BottomNavs>
-          {action === Action.editing && (
-            <>
-              {this.renderPreviewPartialBtn(sectionIndex)}
-
-              {sectionIndex > 0 && (
-                <EditBtn
-                  onClick={() =>
-                    this.setState({ section: toSection(section, "prev") })
-                  }
-                >
-                  <ToolTip>
-                    {`Previous resume section ${toSection(
-                      section,
-                      "prev"
-                    ).toLowerCase()}`}
-                  </ToolTip>
-
-                  <PrevBtnIcon />
-
-                  <span>Previous</span>
-                </EditBtn>
-              )}
-
-              {sectionIndex < lastSectionIndex && (
-                <NextBtn
-                  onClick={() =>
-                    this.setState({ section: toSection(section, "next") })
-                  }
-                >
-                  <ToolTip>
-                    {`Next resume section ${toSection(
-                      section,
-                      "next"
-                    ).toLowerCase()}`}
-                  </ToolTip>
-
-                  <span>Next</span>
-
-                  <NextBtnIcon />
-                </NextBtn>
-              )}
-
-              {this.renderPreviewFinalBtn(sectionIndex)}
-            </>
-          )}
-
-          {action === Action.previewing && (
-            <EditBtn onClick={() => this.setState({ action: Action.editing })}>
-              <ToolTip>Show resume editor</ToolTip>
-
-              <PrevBtnIcon />
-
-              <span>Back to Editor</span>
-            </EditBtn>
-          )}
-        </BottomNavs>
-      </Form>
-    );
-  };
   private renderPreviewFinalBtn = (sectionIndex: number) => {
     if (sectionIndex === lastSectionIndex) {
       return (
@@ -211,24 +251,102 @@ export class ResumeForm extends React.Component<Props, State> {
     return null;
   };
 
-  private renderPreviewPartialBtn = (sectionIndex: number) => {
-    if (sectionIndex !== lastSectionIndex) {
-      return (
-        <PreviewBtn
-          onClick={() => {
-            this.setState({ action: Action.previewing });
-          }}
-        >
-          <ToolTip>Partial: preview your resume</ToolTip>
+  private updateResume = async () => {
+    let values = this.props.values;
 
-          <PreviewBtnIcon />
-
-          <span>Preview</span>
-        </PreviewBtn>
-      );
+    /**
+     * if valuesTracker is empty (null or {}), then it means we are probably
+     * on a render before getResume from apollo is resolved and we don't
+     * save the form.
+     */
+    if (!valuesTracker || lodashIsEmpty(valuesTracker)) {
+      valuesTracker = values;
+      return;
     }
 
-    return null;
+    const errors = await this.props.validateForm(values);
+
+    // tslint:disable-next-line:no-console
+    console.log(
+      "\n\t\tLogging start\n\n\n\n errors\n",
+      errors,
+      "\n\n\n\n\t\tLogging ends\n"
+    );
+
+    // tslint:disable-next-line:no-console
+    console.log(
+      "\n\t\tLogging start\n\n\n\n this.props\n",
+      this.props,
+      "\n\n\n\n\t\tLogging ends\n"
+    );
+
+    const isStringPhoto =
+      "string" === typeof (values.personalInfo && values.personalInfo.photo);
+
+    /**
+     * If we are not uploading a fresh file, tell the server so.
+     */
+    if (isStringPhoto) {
+      values = update(values, {
+        personalInfo: {
+          photo: {
+            $set: ALREADY_UPLOADED
+          }
+        }
+      });
+
+      valuesTracker = update(valuesTracker, {
+        personalInfo: {
+          photo: {
+            $set: ALREADY_UPLOADED
+          }
+        }
+      });
+    }
+
+    if (lodashIsEqual(values, valuesTracker)) {
+      return;
+    }
+
+    /**
+     * Immediately after user updates photo, value tracker will have type File
+     * but a string will be returned from the server.  This mismatch i.e.
+     * string/File will cause re-update. So we prevent this here.
+     */
+
+    const photoTracking =
+      // tslint:disable-next-line:no-any
+      valuesTracker.personalInfo && (valuesTracker.personalInfo.photo as any);
+
+    if (photoTracking instanceof File && isStringPhoto) {
+      valuesTracker = { ...values };
+      return;
+    }
+
+    const { updateResume } = this.props;
+
+    if (!updateResume) {
+      return;
+    }
+
+    valuesTracker = { ...values };
+
+    try {
+      updateResume({
+        variables: {
+          input: {
+            ...(values as UpdateResumeInput)
+          }
+        }
+      });
+    } catch (error) {
+      // tslint:disable-next-line:no-console
+      console.log(
+        "\n\t\tLogging start\n\n\n\n update catch error\n",
+        error,
+        "\n\n\n\n\t\tLogging ends\n"
+      );
+    }
   };
 }
 

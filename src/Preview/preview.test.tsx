@@ -8,12 +8,16 @@ import {
   CreateExperienceInput,
   PersonalInfoInput,
   CreateSkillInput,
-  RatedInput
+  RatedInput,
+  GetResume_getResume
 } from "../graphql/apollo-gql";
 
 import Preview from ".";
-import { Mode } from "./preview";
+import { Mode, Props } from "./preview";
 import { HobbyVal } from "../Hobbies/hobbies";
+import { renderWithRouter, renderWithApollo } from "../test_utils";
+
+const PreviewP = Preview as React.ComponentClass<Partial<Props>>;
 
 it("renders form preview", () => {
   const personalInfoOthers = {
@@ -76,10 +80,13 @@ it("renders form preview", () => {
     additionalSkills: [additionalSkill],
     hobbies,
     languages: [language]
-  };
+  } as GetResume_getResume;
+
+  const { Ui: ui } = renderWithRouter(PreviewP);
+  const { Ui } = renderWithApollo(ui);
 
   const { getByText, getByTestId } = render(
-    <Preview values={values} mode={Mode.download} />
+    <Ui mode={Mode.download} getResume={values} />
   );
 
   expect(

@@ -25,6 +25,7 @@ export interface CreateResumeTitle_createResume_resume {
   id: string;  // The ID of an object
   title: string;
   description: string | null;
+  hobbies: (string | null)[] | null;
   __typename: "Resume";
   additionalSkills: (CreateResumeTitle_createResume_resume_additionalSkills | null)[] | null;
   languages: (CreateResumeTitle_createResume_resume_languages | null)[] | null;
@@ -65,6 +66,90 @@ export interface DeleteResume {
 
 export interface DeleteResumeVariables {
   input: DeleteResumeInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetResume
+// ====================================================
+
+export interface GetResume_getResume_additionalSkills {
+  id: string;
+  description: string;
+  level: string | null;
+  __typename: "Rated";
+}
+
+export interface GetResume_getResume_languages {
+  id: string;
+  description: string;
+  level: string | null;
+  __typename: "Rated";
+}
+
+export interface GetResume_getResume_personalInfo {
+  id: string;
+  address: string | null;
+  dateOfBirth: any | null;
+  email: string | null;
+  firstName: string;
+  lastName: string;
+  phone: string | null;
+  photo: string | null;
+  profession: string | null;
+  __typename: "PersonalInfo";
+}
+
+export interface GetResume_getResume_experiences {
+  id: string;
+  achievements: (string | null)[] | null;
+  companyName: string;
+  fromDate: string;
+  position: string;
+  toDate: string | null;
+  __typename: "ResumeExperience";
+}
+
+export interface GetResume_getResume_skills {
+  id: string;
+  description: string;
+  achievements: (string | null)[] | null;
+  __typename: "Skill";
+}
+
+export interface GetResume_getResume_education {
+  id: string;
+  course: string;
+  fromDate: string;
+  toDate: string | null;
+  school: string;
+  achievements: (string | null)[] | null;
+  __typename: "Education";
+}
+
+export interface GetResume_getResume {
+  id: string;  // The ID of an object
+  title: string;
+  description: string | null;
+  hobbies: (string | null)[] | null;
+  __typename: "Resume";
+  additionalSkills: (GetResume_getResume_additionalSkills | null)[] | null;
+  languages: (GetResume_getResume_languages | null)[] | null;
+  personalInfo: GetResume_getResume_personalInfo | null;
+  experiences: (GetResume_getResume_experiences | null)[] | null;
+  skills: (GetResume_getResume_skills | null)[] | null;
+  education: (GetResume_getResume_education | null)[] | null;
+}
+
+export interface GetResume {
+  getResume: GetResume_getResume | null;  // Get a resume
+}
+
+export interface GetResumeVariables {
+  input: GetResumeInput;
 }
 
 
@@ -192,6 +277,7 @@ export interface UpdateResume_updateResume_resume {
   id: string;  // The ID of an object
   title: string;
   description: string | null;
+  hobbies: (string | null)[] | null;
   __typename: "Resume";
   additionalSkills: (UpdateResume_updateResume_resume_additionalSkills | null)[] | null;
   languages: (UpdateResume_updateResume_resume_languages | null)[] | null;
@@ -329,6 +415,7 @@ export interface ResumeFullFrag {
   id: string;  // The ID of an object
   title: string;
   description: string | null;
+  hobbies: (string | null)[] | null;
   __typename: "Resume";
   additionalSkills: (ResumeFullFrag_additionalSkills | null)[] | null;
   languages: (ResumeFullFrag_languages | null)[] | null;
@@ -378,6 +465,7 @@ export interface ResumeMinimalFrag {
   id: string;  // The ID of an object
   title: string;
   description: string | null;
+  hobbies: (string | null)[] | null;
   __typename: "Resume";
   additionalSkills: (ResumeMinimalFrag_additionalSkills | null)[] | null;
   languages: (ResumeMinimalFrag_languages | null)[] | null;
@@ -411,6 +499,7 @@ export interface CreateResumeInput {
   description?: string | null;
   education?: (EducationInput | null)[] | null;
   experiences?: (CreateExperienceInput | null)[] | null;
+  hobbies?: (string | null)[] | null;
   languages?: (RatedInput | null)[] | null;
   personalInfo?: PersonalInfoInput | null;
   skills?: (CreateSkillInput | null)[] | null;
@@ -469,6 +558,12 @@ export interface DeleteResumeInput {
   id: string;
 }
 
+// Variables for getting a Resume
+export interface GetResumeInput {
+  id?: string | null;
+  title?: string | null;
+}
+
 // null
 export interface LoginInput {
   email: string;
@@ -481,6 +576,7 @@ export interface UpdateResumeInput {
   description?: string | null;
   education?: (EducationInput | null)[] | null;
   experiences?: (CreateExperienceInput | null)[] | null;
+  hobbies?: (string | null)[] | null;
   id: string;
   languages?: (RatedInput | null)[] | null;
   personalInfo?: PersonalInfoInput | null;

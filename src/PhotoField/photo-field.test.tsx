@@ -17,7 +17,9 @@ it("changes to preview on file select", async () => {
     getByTestId
   } = render(ui);
 
-  expect(queryByTestId("photo-preview")).not.toBeInTheDocument();
+  await wait(() =>
+    expect(queryByTestId("photo-preview")).not.toBeInTheDocument()
+  );
 
   uploadFile(
     getByLabelText(/Upload Photo/),
@@ -66,12 +68,13 @@ it("shows edit buttons when preview clicked", async () => {
     createFile("dog.jpg", 1234, "image/jpeg")
   );
 
-  expect(queryByTestId("edit-btns")).not.toBeInTheDocument();
   await wait(() => {
-    const $preview = getByTestId("photo-preview");
-    fireEvent.click($preview);
-    expect(getByTestId("edit-btns")).toBeInTheDocument();
+    expect(queryByTestId("edit-btns")).not.toBeInTheDocument();
   });
+
+  const $preview = getByTestId("photo-preview");
+  fireEvent.click($preview);
+  expect(getByTestId("edit-btns")).toBeInTheDocument();
 });
 
 it("deletes photo", async () => {
@@ -125,14 +128,15 @@ it("changes photo", async () => {
   uploadFile(getByLabelText("Upload Photo"), file1);
 
   await wait(() =>
-    expect(mockSetFieldValue.mock.calls[0][0]).toEqual(fieldName)
+    expect(mockSetFieldValue.mock.calls[0]).toEqual([fieldName, file1])
   );
 
-  fireEvent.mouseEnter(getByTestId("photo-preview"));
+  await wait(() => fireEvent.mouseEnter(getByTestId("photo-preview")));
+
   uploadFile(getByLabelText("Change photo"), file2);
 
   await wait(() =>
-    expect(mockSetFieldValue.mock.calls[1][0]).toEqual(fieldName)
+    expect(mockSetFieldValue.mock.calls[1]).toEqual([fieldName, file2])
   );
 });
 

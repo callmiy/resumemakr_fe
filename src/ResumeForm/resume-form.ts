@@ -1,4 +1,7 @@
 import * as Yup from "yup";
+import { RouteComponentProps } from "react-router-dom";
+import { FormikProps } from "formik";
+import { WithFormikConfig } from "formik";
 
 import {
   validationSchema as expSchema,
@@ -29,15 +32,22 @@ import {
   CreateExperienceInput,
   CreateSkillInput,
   RatedInput,
-  UpdateResumeInput
+  UpdateResumeInput,
+  GetResume_getResume
 } from "../graphql/apollo-gql";
 
 import { HobbyVal, defaultVal as hobby } from "../Hobbies/hobbies";
 import { validationSchema as ratedSchema } from "../Rated/rated";
+import { UpdateResumeProps } from "../graphql/update-resume.mutation";
+import { GetResumeProps } from "../graphql/get-resume.query";
+import { stripTypeName } from "../utils";
 
-export interface Props {
-  initialValues?: FormValues;
-}
+export interface OwnProps extends RouteComponentProps<{ title: string }> {}
+
+export type Props = OwnProps &
+  UpdateResumeProps &
+  GetResumeProps &
+  FormikProps<FormValues>;
 
 export type FormValues = Partial<UpdateResumeInput> & {
   hobbies: HobbyVal[];
@@ -100,3 +110,43 @@ export const toSection = (current: Section, to: "next" | "prev") => {
 };
 
 export const lastSectionIndex = sectionsLen - 1;
+
+export function getInitialValues(
+  getResume: GetResume_getResume | undefined | null
+) {
+  const initial = { ...initialFormValues };
+
+  if (!getResume) {
+    return initial;
+  }
+
+  return Object.entries(getResume).reduce((acc, [k, v]) => {
+    if (k === "__typename") {
+      return acc;
+    }
+
+    if (!v) {
+      acc[k] = initial[k];
+      return acc;
+    }
+
+    acc[k] = stripTypeName(v);
+    return acc;
+  }, {});
+}
+
+export const formikConfig: WithFormikConfig<Props, FormValues> = {
+  validationSchema,
+
+  handleSubmit: () => null,
+
+  mapPropsToValues: ({ getResume }) => {
+    return getResume as FormValues;
+  },
+
+  enableReinitialize: false,
+
+  validateOnChange: false,
+
+  validateOnBlur: false
+};

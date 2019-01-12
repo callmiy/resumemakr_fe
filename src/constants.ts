@@ -4,4 +4,4 @@ export const SCHEMA_VERSION_KEY = "resume_build-apollo-schema-version";
 export const SCHEMA_KEY = "resume_build-apollo-cache-persist";
 export const FIRST_LEVEL_CLASS = "app-container";
 export const SECOND_LEVEL_CLASS = "app-main";
-export const FORM_VALUES_KEY = "form-values";
+export const ALREADY_UPLOADED = "___ALREADY_UPLOADED___"

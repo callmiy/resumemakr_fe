@@ -2,15 +2,36 @@ import React from "react";
 import "jest-dom/extend-expect";
 import "react-testing-library/cleanup-after-each";
 import { render, fireEvent } from "react-testing-library";
+import { withFormik } from "formik";
 
-import ResumeForm from ".";
+import ResumeForm from "./resume-form-x";
+import { Props, initialFormValues, formikConfig } from "./resume-form";
+import { renderWithApollo } from "../test_utils";
+import { GetResume_getResume } from "../graphql/apollo-gql";
+
+type P = React.ComponentClass<Partial<Props>>;
+const ResumeFormP = ResumeForm as P;
+
+/**
+ * Mock out the Preview component
+ */
+
+jest.mock("../Preview", () => {
+  return () => <div data-testid="preview-resume-section">1</div>;
+});
 
 it("navigates forward", () => {
   /**
    * Given she is on the resume builder page
    */
+  const { Ui: ui } = renderWithApollo(ResumeFormP);
+  const Ui = withFormik(formikConfig)(ui) as P;
+
   const { getByTestId, queryByTestId, getByText, queryByText } = render(
-    <ResumeForm />
+    <Ui
+      getResume={initialFormValues as GetResume_getResume}
+      values={initialFormValues}
+    />
   );
 
   /**

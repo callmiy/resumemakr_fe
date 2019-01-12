@@ -11,7 +11,7 @@ export const defaultVal: PersonalInfoInput = {
 77654 Offenburg
 Germany`,
   email: "maneptha@gmail.com",
-  dateOfBirth: "",
+  dateOfBirth: "2015-05-06",
   photo: ""
 };
 
