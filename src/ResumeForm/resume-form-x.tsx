@@ -257,25 +257,18 @@ export class ResumeForm extends React.Component<Props, State> {
     /**
      * if valuesTracker is empty (null or {}), then it means we are probably
      * on a render before getResume from apollo is resolved and we don't
-     * save the form.
+     * want to save the form.
      */
     if (!valuesTracker || lodashIsEmpty(valuesTracker)) {
       valuesTracker = values;
       return;
     }
 
-    // tslint:disable-next-line:no-console
-    console.log(
-      "\n\t\tLogging start\n\n\n\n this.props\n",
-      this.props,
-      "\n\n\n\n\t\tLogging ends\n"
-    );
-
     const isStringPhoto =
       "string" === typeof (values.personalInfo && values.personalInfo.photo);
 
     /**
-     * If we are not uploading a fresh file, tell the server so.
+     * If we are not uploading a fresh photo file, tell the server so.
      */
     if (isStringPhoto) {
       values = update(values, {
@@ -302,7 +295,7 @@ export class ResumeForm extends React.Component<Props, State> {
     /**
      * Immediately after user updates photo, value tracker will have type File
      * but a string will be returned from the server.  This mismatch i.e.
-     * string/File will cause re-update. So we prevent this here.
+     * string<->File will cause re-update. So we prevent this here.
      */
 
     const photoTracking =
