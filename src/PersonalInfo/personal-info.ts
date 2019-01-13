@@ -12,7 +12,7 @@ export const defaultVal: PersonalInfoInput = {
 Germany`,
   email: "maneptha@gmail.com",
   dateOfBirth: "2015-05-06",
-  photo: ""
+  photo: null
 };
 
 export const validationSchema = Yup.object<PersonalInfoInput>().shape({
@@ -31,7 +31,7 @@ export const emptyVals: PersonalInfoInput = {
   lastName: "",
   profession: "",
   phone: "",
-  photo: "",
+  photo: null,
   address: "",
   email: "",
   dateOfBirth: ""

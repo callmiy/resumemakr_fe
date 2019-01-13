@@ -12,22 +12,24 @@ import {
   DeleteResumeSuccess
 } from "./home-styles";
 
-import { AppModal } from "../styles/mixins";
-import { makeResumeRoute } from "../routing";
-import { Props } from "./home";
-import Loading from "../Loading";
-import Header from "../Header";
 import {
   ResumeTitles,
   ResumeTitlesVariables,
   DeleteResume,
   ResumeTitles_listResumes_edges_node
 } from "../graphql/apollo-gql";
+
+import { AppModal } from "../styles/mixins";
+import { makeResumeRoute } from "../routing";
+import { Props } from "./home";
+import Loading from "../Loading";
+import Header from "../Header";
 import resumeTitles from "../graphql/resume-titles.query";
+import { initialFormValues } from "../ResumeForm/resume-form";
 
 interface State {
   openModal?: boolean;
-  resumeTitle: string;
+  title: string;
   graphQlError?: ApolloError;
   deleteError?: {
     id: string;
@@ -40,7 +42,7 @@ interface State {
 
 export class Home extends React.Component<Props, State> {
   state: State = {
-    resumeTitle: ""
+    title: ""
   };
 
   deleteTriggerRefs: { id?: undefined | HTMLElement } = {};
@@ -104,7 +106,7 @@ export class Home extends React.Component<Props, State> {
             labelPosition="right"
             content="No"
             onClick={() => {
-              this.setState({ openModal: false, resumeTitle: "" });
+              this.setState({ openModal: false, title: "" });
             }}
           />
 
@@ -334,28 +336,29 @@ export class Home extends React.Component<Props, State> {
   private openModal = () => this.setState({ openModal: true });
 
   private onChange = (evt: React.SyntheticEvent<HTMLInputElement>) => {
-    this.setState({ resumeTitle: evt.currentTarget.value });
+    this.setState({ title: evt.currentTarget.value });
   };
 
   private createResume = async () => {
-    const { resumeTitle = "" } = this.state;
-    const title = resumeTitle.trim();
+    const title = this.state.title.trim();
 
     if (!title) {
       this.setState({ openModal: false });
       return;
     }
 
-    const { setCurrentResumeTitle, createResumeTitle } = this.props;
+    const { createResumeTitle } = this.props;
 
     if (!createResumeTitle) {
       return;
     }
 
+    const input = { ...initialFormValues, title };
+
     try {
       const result = await createResumeTitle({
         variables: {
-          input: { title }
+          input
         }
       });
 
@@ -379,14 +382,6 @@ export class Home extends React.Component<Props, State> {
 
       if (!resume) {
         return;
-      }
-
-      if (setCurrentResumeTitle) {
-        setCurrentResumeTitle({
-          variables: {
-            title: resume.title
-          }
-        });
       }
 
       this.goToResume(resume.title);

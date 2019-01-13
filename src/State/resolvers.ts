@@ -13,18 +13,6 @@ type ClientStateFn<TVariables> = (
   context: { cache: InMemoryCache }
 ) => void;
 
-const setCurrentResumeTitle: ClientStateFn<{
-  title: string;
-}> = (_, { title }, { cache }) => {
-  const currentResumeTitle = {
-    __typename: "CurrentResumeTitle",
-    title
-  };
-
-  cache.writeData({ data: { currentResumeTitle } });
-  return currentResumeTitle;
-};
-
 const userMutation: ClientStateFn<UserMutationVar> = async (
   _,
   { user },
@@ -72,15 +60,13 @@ export default (cache: InMemoryCache) => {
     cache,
     resolvers: {
       Mutation: {
-        currentResumeTitle: setCurrentResumeTitle,
         user: userMutation
       }
     },
     defaults: {
       staleToken: getToken(),
       user: null,
-      loggedOutUser: null,
-      currentResumeTitle: null
+      loggedOutUser: null
     }
   });
 };

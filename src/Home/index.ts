@@ -1,17 +1,14 @@
 import { graphql, compose } from "react-apollo";
 
 import Home from "./home-x";
-import { OwnProps } from "./home";
-
-import { currentResumeTitleLocalMutationGql } from "../State/current-resume-title.local.mutation";
 
 import CREATE_RESUME_TITLE, {
-  CreateResumeTitleProps
-} from "../graphql/create-resume-title.mutation";
+  CreateResumeProps
+} from "../graphql/create-resume.mutation";
 
 import {
-  CreateResumeTitle,
-  CreateResumeTitleVariables,
+  CreateResume,
+  CreateResumeVariables,
   ResumeTitles,
   ResumeTitlesVariables
 } from "../graphql/apollo-gql";
@@ -22,11 +19,11 @@ import RESUME_TITLES_QUERY, {
 
 import { deleteResumeGql } from "../graphql/delete-resume.mutation";
 
-const createResumeTitleGql = graphql<
+const createResumeGql = graphql<
   {},
-  CreateResumeTitle,
-  CreateResumeTitleVariables,
-  CreateResumeTitleProps | void
+  CreateResume,
+  CreateResumeVariables,
+  CreateResumeProps | void
 >(CREATE_RESUME_TITLE, {
   props: ({ mutate }) => {
     if (!mutate) {
@@ -58,7 +55,6 @@ const resumeTitlesGql = graphql<
 
 export default compose(
   resumeTitlesGql,
-  currentResumeTitleLocalMutationGql<OwnProps>(),
-  createResumeTitleGql,
+  createResumeGql,
   deleteResumeGql
 )(Home);

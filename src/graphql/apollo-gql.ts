@@ -4,42 +4,42 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: CreateResumeTitle
+// GraphQL mutation operation: CreateResume
 // ====================================================
 
-export interface CreateResumeTitle_createResume_resume_additionalSkills {
+export interface CreateResume_createResume_resume_additionalSkills {
   id: string;
   description: string;
   level: string | null;
   __typename: "Rated";
 }
 
-export interface CreateResumeTitle_createResume_resume_languages {
+export interface CreateResume_createResume_resume_languages {
   id: string;
   description: string;
   level: string | null;
   __typename: "Rated";
 }
 
-export interface CreateResumeTitle_createResume_resume {
+export interface CreateResume_createResume_resume {
   id: string;  // The ID of an object
   title: string;
   description: string | null;
   hobbies: (string | null)[] | null;
   __typename: "Resume";
-  additionalSkills: (CreateResumeTitle_createResume_resume_additionalSkills | null)[] | null;
-  languages: (CreateResumeTitle_createResume_resume_languages | null)[] | null;
+  additionalSkills: (CreateResume_createResume_resume_additionalSkills | null)[] | null;
+  languages: (CreateResume_createResume_resume_languages | null)[] | null;
 }
 
-export interface CreateResumeTitle_createResume {
-  resume: CreateResumeTitle_createResume_resume | null;
+export interface CreateResume_createResume {
+  resume: CreateResume_createResume_resume | null;
 }
 
-export interface CreateResumeTitle {
-  createResume: CreateResumeTitle_createResume | null;
+export interface CreateResume {
+  createResume: CreateResume_createResume | null;
 }
 
-export interface CreateResumeTitleVariables {
+export interface CreateResumeVariables {
   input: CreateResumeInput;
 }
 
