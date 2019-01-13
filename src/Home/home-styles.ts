@@ -3,7 +3,7 @@ import { lighten } from "polished";
 
 import {
   AppContainer,
-  VisuallyHidden as visuallyHidden,
+  visuallyHidden,
   AppMain,
   appBgColor
 } from "../styles/mixins";

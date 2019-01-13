@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components/macro";
 
-import { VisuallyHidden } from "../styles/mixins";
+import { visuallyHidden } from "../styles/mixins";
 
 const Main = styled.div`
   width: 170px;
@@ -69,5 +69,5 @@ export const InputFile = styled.input.attrs({
   type: "file",
   accept: "image/*"
 })`
-  ${VisuallyHidden}
+  ${visuallyHidden}
 `;
