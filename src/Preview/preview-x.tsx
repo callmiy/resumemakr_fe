@@ -20,12 +20,15 @@ import {
   Ul,
   PersonalIcon
 } from "./preview-styles";
+
 import {
   CreateSkillInput,
   CreateExperienceInput,
   EducationInput,
   GetResume_getResume_personalInfo
 } from "../graphql/apollo-gql";
+
+import { toServerUrl } from "../utils";
 
 export class Preview extends React.Component<Props> {
   render() {
@@ -259,7 +262,7 @@ export class Preview extends React.Component<Props> {
 
         {photo && (
           <Img
-            backgroundImg={photo}
+            backgroundImg={`url(${toServerUrl(photo)})`}
             data-testid={`${firstName} ${lastName} photo`}
           />
         )}

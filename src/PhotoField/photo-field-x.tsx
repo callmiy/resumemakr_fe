@@ -12,9 +12,7 @@ import {
 } from "./photo-field-styles";
 
 import { AppModal } from "../styles/mixins";
-import { getBackendUrls } from "../State/get-backend-urls";
-
-const backEndUrl = getBackendUrls().root;
+import { toServerUrl } from "../utils";
 
 export interface Props extends FieldProps<{ photo: string | null }> {
   removeFilePreview?: () => void;
@@ -211,8 +209,10 @@ export class PhotoField extends React.Component<Props, State> {
      * points to the path of the file on the server
      */
     if ("string" === typeof file) {
-      const url = new URL(file, backEndUrl);
-      this.setState({ url: `url(${url})`, fileState: FileState.previewing });
+      this.setState({
+        url: `url(${toServerUrl(file)})`,
+        fileState: FileState.previewing
+      });
       return;
     }
 

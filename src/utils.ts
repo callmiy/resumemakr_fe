@@ -1,3 +1,5 @@
+import { getBackendUrls } from "./State/get-backend-urls";
+
 // tslint:disable-next-line:no-empty
 export function noOp() {}
 
@@ -23,4 +25,8 @@ export function stripTypeName(value: any) {
     // tslint:disable-next-line:no-any
     {} as any
   );
+}
+
+export function toServerUrl(url: string) {
+  return new URL(url, getBackendUrls().root);
 }
