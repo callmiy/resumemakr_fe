@@ -49,9 +49,7 @@ export type Props = OwnProps &
   GetResumeProps &
   FormikProps<FormValues>;
 
-export type FormValues = Partial<UpdateResumeInput> & {
-  hobbies: HobbyVal[];
-};
+export type FormValues = Partial<UpdateResumeInput>;
 
 export const initialFormValues: FormValues = {
   personalInfo,
@@ -77,13 +75,14 @@ export const validationSchema = Yup.object<FormValues>().shape({
 
 // sections by string key
 export enum Section {
-  personalInfo = "Personal Information",
-  experiences = "Experiences",
-  education = "Education",
-  addSkills = "Additional Skills",
-  langs = "Languages",
-  hobbies = "Hobbies",
-  skills = "Skills Summary"
+  personalInfo = "personal-information",
+  experiences = "experiences",
+  education = "education",
+  addSkills = "additional-skills",
+  langs = "languages",
+  hobbies = "hobbies",
+  skills = "skill-summary",
+  preview = "preview"
 }
 
 export const [sectionsList, sectionsLen]: [Section[], number] = (function() {
@@ -132,8 +131,6 @@ export function getInitialValues(
 }
 
 export const formikConfig: WithFormikConfig<Props, FormValues> = {
-  // validationSchema,
-
   handleSubmit: () => null,
 
   mapPropsToValues: ({ getResume }) => {

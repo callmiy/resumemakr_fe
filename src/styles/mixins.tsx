@@ -96,7 +96,7 @@ export const navBtn = css`
   }
 `;
 
-export const NavBtn = styled.div.attrs({
+export const NavBtn = styled.a.attrs({
   tabIndex: 0,
   "aria-haspopup": "true"
 })`

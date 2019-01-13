@@ -9,12 +9,12 @@ import { HobbyVal, defaultVal } from "./hobbies";
 
 interface Props {
   label: Section;
-  values?: HobbyVal[];
+  values?: HobbyVal[] | null;
 }
 
 export class Hobbies extends React.Component<Props, {}> {
   render() {
-    const { label, values = [] } = this.props;
+    const { label, values } = this.props;
 
     return (
       <>
@@ -27,7 +27,7 @@ export class Hobbies extends React.Component<Props, {}> {
         <FieldArray
           name="hobbies"
           render={arrayHelper =>
-            values.map((hobby, index) => (
+            (values || []).map((hobby, index) => (
               <Hobby
                 key={index}
                 index={index}

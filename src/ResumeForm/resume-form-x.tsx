@@ -39,27 +39,16 @@ import Skills from "../Skills";
 import Loading from "../Loading";
 import { ALREADY_UPLOADED } from "../constants";
 import { UpdateResumeInput } from "../graphql/apollo-gql";
-
-enum Action {
-  editing = "editing",
-  previewing = "previewing"
-}
-
-interface State {
-  action: Action;
-  section: Section;
-}
+import { ResumePathHash } from "../routing";
 
 let valuesTracker: FormValues | null = null;
 
 let debounceUpdateResume: (ResumeForm["updateResume"] & Cancelable) | undefined;
 
-export class ResumeForm extends React.Component<Props, State> {
-  state: State = {
-    action: Action.editing,
-    section: Section.personalInfo
-  };
+let currentSection: Section = Section.personalInfo;
+let backToSection: Section = Section.personalInfo;
 
+export class ResumeForm extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
 
@@ -88,14 +77,11 @@ export class ResumeForm extends React.Component<Props, State> {
   render() {
     const { loading, error: graphQlLoadingError, values } = this.props;
 
-    if (!lodashIsEmpty(graphQlLoadingError)) {
+    if (graphQlLoadingError) {
       return <div>{JSON.stringify(graphQlLoadingError)}</div>;
     }
 
-    const { action, section } = this.state;
-
-    const sectionIndex = sectionsList.indexOf(section);
-    if (loading || lodashIsEmpty(values)) {
+    if (loading) {
       return (
         <Container>
           <Loading />
@@ -103,24 +89,25 @@ export class ResumeForm extends React.Component<Props, State> {
       );
     }
 
+    currentSection = this.sectionFromUrl();
+    const prevSection = toSection(currentSection, "prev");
+    const nextSection = toSection(currentSection, "next");
+    const sectionIndex = sectionsList.indexOf(currentSection);
+
     return (
       <Container>
         <Form>
           {this.renderCurrEditingSection(values)}
 
-          {action === Action.previewing && (
+          {currentSection === Section.preview && (
             <Preview mode={PreviewMode.preview} />
           )}
 
           <BottomNavs>
-            {action === Action.editing && (
+            {currentSection !== Section.preview ? (
               <>
                 {sectionIndex !== lastSectionIndex && (
-                  <PreviewBtn
-                    onClick={() => {
-                      this.setState({ action: Action.previewing });
-                    }}
-                  >
+                  <PreviewBtn href={this.urlFromSection(Section.preview)}>
                     <ToolTip>Partial: preview your resume</ToolTip>
 
                     <PreviewBtnIcon />
@@ -130,16 +117,9 @@ export class ResumeForm extends React.Component<Props, State> {
                 )}
 
                 {sectionIndex > 0 && (
-                  <EditBtn
-                    onClick={() =>
-                      this.setState({ section: toSection(section, "prev") })
-                    }
-                  >
+                  <EditBtn href={this.urlFromSection(prevSection)}>
                     <ToolTip>
-                      {`Previous resume section ${toSection(
-                        section,
-                        "prev"
-                      ).toLowerCase()}`}
+                      {`Previous resume section ${prevSection.toLowerCase()}`}
                     </ToolTip>
 
                     <PrevBtnIcon />
@@ -149,16 +129,9 @@ export class ResumeForm extends React.Component<Props, State> {
                 )}
 
                 {sectionIndex < lastSectionIndex && (
-                  <NextBtn
-                    onClick={() =>
-                      this.setState({ section: toSection(section, "next") })
-                    }
-                  >
+                  <NextBtn href={this.urlFromSection(nextSection)}>
                     <ToolTip>
-                      {`Next resume section ${toSection(
-                        section,
-                        "next"
-                      ).toLowerCase()}`}
+                      {`Next resume section ${nextSection.toLowerCase()}`}
                     </ToolTip>
 
                     <span>Next</span>
@@ -167,14 +140,18 @@ export class ResumeForm extends React.Component<Props, State> {
                   </NextBtn>
                 )}
 
-                {this.renderPreviewFinalBtn(sectionIndex)}
-              </>
-            )}
+                {sectionIndex === lastSectionIndex && (
+                  <NextBtn href={this.urlFromSection(Section.preview)}>
+                    <ToolTip>End: preview your resume</ToolTip>
 
-            {action === Action.previewing && (
-              <EditBtn
-                onClick={() => this.setState({ action: Action.editing })}
-              >
+                    <span>Preview Your resume</span>
+
+                    <NextBtnIcon />
+                  </NextBtn>
+                )}
+              </>
+            ) : (
+              <EditBtn href={this.urlFromSection(backToSection)}>
                 <ToolTip>Show resume editor</ToolTip>
 
                 <PrevBtnIcon />
@@ -188,64 +165,43 @@ export class ResumeForm extends React.Component<Props, State> {
     );
   }
 
-  private renderPreviewFinalBtn = (sectionIndex: number) => {
-    if (sectionIndex === lastSectionIndex) {
-      return (
-        <NextBtn
-          onClick={() => {
-            this.setState({ action: Action.previewing });
-          }}
-        >
-          <ToolTip>End: preview your resume</ToolTip>
-
-          <span>Preview Your resume</span>
-
-          <NextBtnIcon />
-        </NextBtn>
-      );
-    }
-
-    return null;
-  };
-
   private renderCurrEditingSection = (values: FormValues) => {
-    const { action, section } = this.state;
+    const label = currentSection
+      .split("-")
+      .map(s => s[0].toUpperCase() + s.slice(1))
+      .join(" ") as Section;
 
-    if (action !== Action.editing) {
-      return null;
+    if (currentSection === Section.personalInfo) {
+      return <PersonalInfo values={values.personalInfo} label={label} />;
     }
 
-    if (section === Section.personalInfo) {
-      return <PersonalInfo values={values.personalInfo} label={section} />;
+    if (currentSection === Section.experiences) {
+      return <Experiences values={values.experiences} label={label} />;
     }
 
-    if (section === Section.experiences) {
-      return <Experiences values={values.experiences} label={section} />;
+    if (currentSection === Section.education) {
+      return <Education label={label} values={values.education} />;
     }
 
-    if (section === Section.education) {
-      return <Education label={section} values={values.education} />;
-    }
-
-    if (section === Section.addSkills) {
+    if (currentSection === Section.addSkills) {
       return (
         <AdditionalSkills
-          label={section}
+          label={label}
           values={values.additionalSkills || []}
         />
       );
     }
 
-    if (section === Section.langs) {
-      return <Languages label={section} values={values.languages} />;
+    if (currentSection === Section.langs) {
+      return <Languages label={label} values={values.languages} />;
     }
 
-    if (section === Section.hobbies) {
-      return <Hobbies label={section} values={values.hobbies} />;
+    if (currentSection === Section.hobbies) {
+      return <Hobbies label={label} values={values.hobbies} />;
     }
 
-    if (section === Section.skills) {
-      return <Skills label={section} values={values.skills} />;
+    if (currentSection === Section.skills) {
+      return <Skills label={label} values={values.skills} />;
     }
 
     return null;
@@ -331,6 +287,32 @@ export class ResumeForm extends React.Component<Props, State> {
         "\n\n\n\n\t\tLogging ends\n"
       );
     }
+  };
+
+  private urlFromSection = (section: Section) => {
+    const {
+      location: { pathname }
+    } = this.props;
+
+    return `${pathname}${ResumePathHash.edit}/${section}`;
+  };
+
+  private sectionFromUrl = (): Section => {
+    const {
+      location: { hash }
+    } = this.props;
+
+    const section = hash.split("/")[1];
+
+    currentSection = (section
+      ? section
+      : Section.personalInfo
+    ).toLowerCase() as Section;
+
+    backToSection =
+      currentSection !== Section.preview ? currentSection : backToSection;
+
+    return currentSection;
   };
 }
 

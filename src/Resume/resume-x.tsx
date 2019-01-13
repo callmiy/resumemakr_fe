@@ -19,7 +19,7 @@ export class Resume extends React.Component<Props> {
 
     return (
       <Container>
-        {hash === ResumePathHash.edit && (
+        {hash.startsWith(ResumePathHash.edit) && (
           <>
             <Header
               rightMenuItems={[
@@ -43,7 +43,7 @@ export class Resume extends React.Component<Props> {
           </>
         )}
 
-        {hash === ResumePathHash.preview && (
+        {hash.startsWith(ResumePathHash.preview) && (
           <div className="main-container preview">
             <Preview mode={PreviewMode.download} />
           </div>

@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 
-export type HobbyVal = string;
+export type HobbyVal = string | null;
 
 export const defaultVal: HobbyVal = "Swimming";
 
