@@ -194,3 +194,9 @@ export const CircularLabel = styled(wrappedLabel).attrs({
     font-size: 0.8em !important;
   }
 `;
+
+export const withControls = css`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;

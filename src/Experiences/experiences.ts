@@ -7,7 +7,7 @@ export const emptyVals: CreateExperienceInput = {
   companyName: "",
   fromDate: "",
   toDate: "",
-  achievements: []
+  achievements: [""]
 };
 
 export const validationSchema = Yup.object<CreateExperienceInput>().shape({
