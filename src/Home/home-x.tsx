@@ -19,7 +19,7 @@ import {
   ResumeTitles_listResumes_edges_node
 } from "../graphql/apollo-gql";
 
-import { AppModal } from "../styles/mixins";
+import { AppModal, CircularLabel } from "../styles/mixins";
 import { makeResumeRoute } from "../routing";
 import { Props } from "./home";
 import Loading from "../Loading";
@@ -189,26 +189,22 @@ export class Home extends React.Component<Props, State> {
                 )}
 
                 <Grid.Column className="controls">
-                  <Label
+                  <CircularLabel
                     color="blue"
-                    circular={true}
                     onClick={() => this.goToResume(title)}
                   >
                     <Icon name="pencil" />
-                  </Label>
+                  </CircularLabel>
 
-                  <Label
+                  <CircularLabel
                     color="green"
-                    circular={true}
                     onClick={() => this.goToResume(title)}
                   >
                     <Icon name="cloud download" />
-                  </Label>
+                  </CircularLabel>
 
-                  <Label
-                    style={{ position: "relative" }}
+                  <CircularLabel
                     color="red"
-                    circular={true}
                     onClick={() => {
                       this.setState({ confirmDeleteId: id });
                     }}
@@ -222,7 +218,7 @@ export class Home extends React.Component<Props, State> {
                     {this.renderConfirmDelete(node)}
 
                     {this.renderDeleteError(node)}
-                  </Label>
+                  </CircularLabel>
                 </Grid.Column>
 
                 <Grid.Column onClick={() => this.goToResume(title)}>

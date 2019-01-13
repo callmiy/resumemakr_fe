@@ -93,25 +93,6 @@ export const Titles = styled.div`
   .clickable {
     cursor: pointer;
   }
-
-  .ui.circular.label {
-    min-width: 1.5em;
-    min-height: 1.5em;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 1.5em;
-    height: 1.5em;
-    border-radius: 50%;
-    margin-right: 10px;
-    cursor: pointer;
-
-    .icon {
-      margin: 0 0 2.8px 1px !important;
-      opacity: 1;
-      font-size: 0.8em;
-    }
-  }
 `;
 
 export const CtrlLabelText = styled.span`

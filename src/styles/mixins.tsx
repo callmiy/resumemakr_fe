@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components/macro";
-import { Modal, ModalProps } from "semantic-ui-react";
+import { Modal, ModalProps, Label, LabelProps } from "semantic-ui-react";
 
 export function wrapped<T>(
   Component: React.ComponentClass<T> | React.FunctionComponent<T>
@@ -169,5 +169,28 @@ export const AppModal = styled(Modal1)`
     .ui.button {
       font-size: 1.5rem;
     }
+  }
+`;
+
+const wrappedLabel = wrapped<LabelProps>(Label);
+export const CircularLabel = styled(wrappedLabel).attrs({
+  circular: true
+})`
+  position: relative !important;
+  min-width: 21px !important;
+  min-height: 21px !important;
+  width: 21px !important;
+  height: 21px !important;
+  border-radius: 50% !important;
+  margin-right: 10px !important;
+  display: inline-flex !important;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  .icon {
+    margin: 0 0 2.8px 1px !important;
+    opacity: 1;
+    font-size: 0.8em !important;
   }
 `;
