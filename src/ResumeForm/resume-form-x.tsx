@@ -171,12 +171,20 @@ export class ResumeForm extends React.Component<Props> {
       .map(s => s[0].toUpperCase() + s.slice(1))
       .join(" ") as Section;
 
+    const { setFieldValue } = this.props;
+
     if (currentSection === Section.personalInfo) {
       return <PersonalInfo values={values.personalInfo} label={label} />;
     }
 
     if (currentSection === Section.experiences) {
-      return <Experiences values={values.experiences} label={label} />;
+      return (
+        <Experiences
+          setFieldValue={setFieldValue}
+          values={values.experiences}
+          label={label}
+        />
+      );
     }
 
     if (currentSection === Section.education) {

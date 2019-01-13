@@ -7,7 +7,8 @@ export const emptyVals: CreateExperienceInput = {
   companyName: "",
   fromDate: "",
   toDate: "",
-  achievements: [""]
+  achievements: [""],
+  index: 1
 };
 
 export const validationSchema = Yup.object<CreateExperienceInput>().shape({
@@ -15,7 +16,10 @@ export const validationSchema = Yup.object<CreateExperienceInput>().shape({
   companyName: Yup.string(),
   fromDate: Yup.string(),
   toDate: Yup.string(),
-  achievements: Yup.array<string>()
+  achievements: Yup.array<string>(),
+  index: Yup.number()
+    .required()
+    .min(1)
 });
 
 export const defaultVal: CreateExperienceInput = {
@@ -29,5 +33,6 @@ export const defaultVal: CreateExperienceInput = {
     "Developed, reviewed, and tested innovative and visionary new applications using emerging technologies.",
 
     "Guided talent that provides technical support and training while working in partnership with the business team."
-  ]
+  ],
+  index: 1
 };

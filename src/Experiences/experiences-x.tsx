@@ -2,10 +2,7 @@ import React from "react";
 import { TextArea, Card, Icon } from "semantic-ui-react";
 import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 
-import {
-  CreateExperienceInput,
-  GetResume_getResume_experiences
-} from "../graphql/apollo-gql";
+import { CreateExperienceInput } from "../graphql/apollo-gql";
 import RegularField from "../RegularField";
 import SectionLabel from "../SectionLabel";
 import { Section } from "../ResumeForm/resume-form";
@@ -13,33 +10,43 @@ import { emptyVals } from "./experiences";
 import { CircularLabel } from "../styles/mixins";
 import { ExperienceHeader, ExperienceContainer } from "./experience.style";
 
+type SetFieldValue = (
+  field: string,
+  value: Array<CreateExperienceInput | null>
+) => void;
+
 interface Props {
   values: Array<CreateExperienceInput | null> | null | undefined;
   label: Section;
+  setFieldValue: SetFieldValue;
 }
+
+let allExperiences: Array<CreateExperienceInput | null> = [];
 
 export class Experiences extends React.Component<Props, {}> {
   render() {
     const { label } = this.props;
     const values = (this.props.values || [{ ...emptyVals }]).sort((a, b) => {
-      if (!(a || b)) {
+      if (!a) {
         return 0;
       }
 
-      const aId = Number((a as GetResume_getResume_experiences).id);
-
-      if (!aId) {
-        return 1;
+      if (!b) {
+        return 0;
       }
 
-      const bId = Number((b as GetResume_getResume_experiences).id);
-
-      if (!bId) {
-        return -1;
-      }
-
-      return aId - bId;
+      return a.index - b.index;
     });
+
+    allExperiences = values;
+    const { setFieldValue } = this.props;
+
+    // tslint:disable-next-line:no-console
+    console.log(
+      "\n\t\tLogging start\n\n\n\n allExperiences\n",
+      allExperiences,
+      "\n\n\n\n\t\tLogging ends\n"
+    );
 
     return (
       <>
@@ -59,6 +66,7 @@ export class Experiences extends React.Component<Props, {}> {
                 exp={exp}
                 arrayHelper={arrayHelper}
                 len={values.length}
+                setFieldValue={setFieldValue}
               />
             ))
           }
@@ -75,9 +83,16 @@ interface ExperienceProps {
   exp: CreateExperienceInput | null;
   arrayHelper: FieldArrayRenderProps;
   len: number;
+  setFieldValue: SetFieldValue;
 }
 
-function Experience({ index, exp, arrayHelper, len }: ExperienceProps) {
+function Experience({
+  index,
+  exp,
+  arrayHelper,
+  len,
+  setFieldValue
+}: ExperienceProps) {
   if (!exp) {
     return null;
   }
@@ -97,7 +112,12 @@ function Experience({ index, exp, arrayHelper, len }: ExperienceProps) {
 
         <div>
           {len > 1 && (
-            <CircularLabel color="blue">
+            <CircularLabel
+              color="blue"
+              onClick={function onSwapExperienceDown() {
+                setFieldValue("experiences", swap(index, index1));
+              }}
+            >
               <Icon name="arrow down" />
             </CircularLabel>
           )}
@@ -116,14 +136,19 @@ function Experience({ index, exp, arrayHelper, len }: ExperienceProps) {
           <CircularLabel
             color="green"
             onClick={function onAddEmployee() {
-              arrayHelper.insert(index1, { ...emptyVals });
+              arrayHelper.insert(index1, { ...emptyVals, index: len + 1 });
             }}
           >
             <Icon name="add" />
           </CircularLabel>
 
           {index1 > 1 && (
-            <CircularLabel color="blue">
+            <CircularLabel
+              color="blue"
+              onClick={function onSwapExperienceUp() {
+                setFieldValue("experiences", swap(index, index - 1));
+              }}
+            >
               <Icon name="arrow up" />
             </CircularLabel>
           )}
@@ -216,7 +241,12 @@ function Achievement({
 
           <div>
             {len > 1 && (
-              <CircularLabel color="blue">
+              <CircularLabel
+                color="blue"
+                onClick={function onSwapAchievementsUp() {
+                  arrayHelper.swap(index, index1);
+                }}
+              >
                 <Icon name="arrow down" />
               </CircularLabel>
             )}
@@ -242,7 +272,12 @@ function Achievement({
             </CircularLabel>
 
             {index1 > 1 && (
-              <CircularLabel color="blue">
+              <CircularLabel
+                color="blue"
+                onClick={function onSwapAchievementsUp() {
+                  arrayHelper.swap(index, index - 1);
+                }}
+              >
                 <Icon name="arrow up" />
               </CircularLabel>
             )}
@@ -262,4 +297,22 @@ function Achievement({
 
 function makeName(index: number, key: keyof CreateExperienceInput) {
   return `experiences[${index}].${key}`;
+}
+
+function swap(indexA: number, indexB: number) {
+  return allExperiences.map(e => {
+    if (!e) {
+      return e;
+    }
+
+    const index = e.index - 1;
+
+    if (index === indexA) {
+      e.index = indexB + 1;
+    } else if (index === indexB) {
+      e.index = indexA + 1;
+    }
+
+    return e;
+  });
 }

@@ -21,6 +21,7 @@ export const resumeFullFrag = gql`
 
     experiences {
       id
+      index
       achievements
       companyName
       fromDate

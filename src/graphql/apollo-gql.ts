@@ -9,14 +9,14 @@
 
 export interface CreateResume_createResume_resume_additionalSkills {
   id: string;
-  description: string;
+  description: string | null;
   level: string | null;
   __typename: "Rated";
 }
 
 export interface CreateResume_createResume_resume_languages {
   id: string;
-  description: string;
+  description: string | null;
   level: string | null;
   __typename: "Rated";
 }
@@ -78,14 +78,14 @@ export interface DeleteResumeVariables {
 
 export interface GetResume_getResume_additionalSkills {
   id: string;
-  description: string;
+  description: string | null;
   level: string | null;
   __typename: "Rated";
 }
 
 export interface GetResume_getResume_languages {
   id: string;
-  description: string;
+  description: string | null;
   level: string | null;
   __typename: "Rated";
 }
@@ -95,8 +95,8 @@ export interface GetResume_getResume_personalInfo {
   address: string | null;
   dateOfBirth: string | null;
   email: string | null;
-  firstName: string;
-  lastName: string;
+  firstName: string | null;
+  lastName: string | null;
   phone: string | null;
   photo: string | null;
   profession: string | null;
@@ -105,27 +105,28 @@ export interface GetResume_getResume_personalInfo {
 
 export interface GetResume_getResume_experiences {
   id: string;
+  index: number;
   achievements: (string | null)[] | null;
-  companyName: string;
-  fromDate: string;
-  position: string;
+  companyName: string | null;
+  fromDate: string | null;
+  position: string | null;
   toDate: string | null;
   __typename: "ResumeExperience";
 }
 
 export interface GetResume_getResume_skills {
   id: string;
-  description: string;
+  description: string | null;
   achievements: (string | null)[] | null;
   __typename: "Skill";
 }
 
 export interface GetResume_getResume_education {
   id: string;
-  course: string;
-  fromDate: string;
+  course: string | null;
+  fromDate: string | null;
   toDate: string | null;
-  school: string;
+  school: string | null;
   achievements: (string | null)[] | null;
   __typename: "Education";
 }
@@ -221,14 +222,14 @@ export interface ResumeTitlesVariables {
 
 export interface UpdateResume_updateResume_resume_additionalSkills {
   id: string;
-  description: string;
+  description: string | null;
   level: string | null;
   __typename: "Rated";
 }
 
 export interface UpdateResume_updateResume_resume_languages {
   id: string;
-  description: string;
+  description: string | null;
   level: string | null;
   __typename: "Rated";
 }
@@ -238,8 +239,8 @@ export interface UpdateResume_updateResume_resume_personalInfo {
   address: string | null;
   dateOfBirth: string | null;
   email: string | null;
-  firstName: string;
-  lastName: string;
+  firstName: string | null;
+  lastName: string | null;
   phone: string | null;
   photo: string | null;
   profession: string | null;
@@ -248,27 +249,28 @@ export interface UpdateResume_updateResume_resume_personalInfo {
 
 export interface UpdateResume_updateResume_resume_experiences {
   id: string;
+  index: number;
   achievements: (string | null)[] | null;
-  companyName: string;
-  fromDate: string;
-  position: string;
+  companyName: string | null;
+  fromDate: string | null;
+  position: string | null;
   toDate: string | null;
   __typename: "ResumeExperience";
 }
 
 export interface UpdateResume_updateResume_resume_skills {
   id: string;
-  description: string;
+  description: string | null;
   achievements: (string | null)[] | null;
   __typename: "Skill";
 }
 
 export interface UpdateResume_updateResume_resume_education {
   id: string;
-  course: string;
-  fromDate: string;
+  course: string | null;
+  fromDate: string | null;
   toDate: string | null;
-  school: string;
+  school: string | null;
   achievements: (string | null)[] | null;
   __typename: "Education";
 }
@@ -359,14 +361,14 @@ export interface ResumeTitlesFrag {
 
 export interface ResumeFullFrag_additionalSkills {
   id: string;
-  description: string;
+  description: string | null;
   level: string | null;
   __typename: "Rated";
 }
 
 export interface ResumeFullFrag_languages {
   id: string;
-  description: string;
+  description: string | null;
   level: string | null;
   __typename: "Rated";
 }
@@ -376,8 +378,8 @@ export interface ResumeFullFrag_personalInfo {
   address: string | null;
   dateOfBirth: string | null;
   email: string | null;
-  firstName: string;
-  lastName: string;
+  firstName: string | null;
+  lastName: string | null;
   phone: string | null;
   photo: string | null;
   profession: string | null;
@@ -386,27 +388,28 @@ export interface ResumeFullFrag_personalInfo {
 
 export interface ResumeFullFrag_experiences {
   id: string;
+  index: number;
   achievements: (string | null)[] | null;
-  companyName: string;
-  fromDate: string;
-  position: string;
+  companyName: string | null;
+  fromDate: string | null;
+  position: string | null;
   toDate: string | null;
   __typename: "ResumeExperience";
 }
 
 export interface ResumeFullFrag_skills {
   id: string;
-  description: string;
+  description: string | null;
   achievements: (string | null)[] | null;
   __typename: "Skill";
 }
 
 export interface ResumeFullFrag_education {
   id: string;
-  course: string;
-  fromDate: string;
+  course: string | null;
+  fromDate: string | null;
   toDate: string | null;
-  school: string;
+  school: string | null;
   achievements: (string | null)[] | null;
   __typename: "Education";
 }
@@ -435,7 +438,7 @@ export interface ResumeFullFrag {
 
 export interface RatedFrag {
   id: string;
-  description: string;
+  description: string | null;
   level: string | null;
 }
 
@@ -449,14 +452,14 @@ export interface RatedFrag {
 
 export interface ResumeMinimalFrag_additionalSkills {
   id: string;
-  description: string;
+  description: string | null;
   level: string | null;
   __typename: "Rated";
 }
 
 export interface ResumeMinimalFrag_languages {
   id: string;
-  description: string;
+  description: string | null;
   level: string | null;
   __typename: "Rated";
 }
@@ -508,7 +511,7 @@ export interface CreateResumeInput {
 
 // Variables for creating an object with a rating
 export interface RatedInput {
-  description: string;
+  description?: string | null;
   id?: string | null;
   level?: string | null;
 }
@@ -516,40 +519,41 @@ export interface RatedInput {
 // Variables for creating resume education
 export interface EducationInput {
   achievements?: (string | null)[] | null;
-  course: string;
-  fromDate: string;
+  course?: string | null;
+  fromDate?: string | null;
   id?: string | null;
-  school: string;
+  school?: string | null;
   toDate?: string | null;
 }
 
 // Variables for creating resume experience
 export interface CreateExperienceInput {
   achievements?: (string | null)[] | null;
-  companyName: string;
-  fromDate: string;
+  companyName?: string | null;
+  fromDate?: string | null;
   id?: string | null;
-  position: string;
+  index: number;
+  position?: string | null;
   toDate?: string | null;
 }
 
 // Variables for creating Personal Info
 export interface PersonalInfoInput {
-  address: string;
+  address?: string | null;
   dateOfBirth?: string | null;
-  email: string;
-  firstName: string;
+  email?: string | null;
+  firstName?: string | null;
   id?: string | null;
-  lastName: string;
-  phone: string;
+  lastName?: string | null;
+  phone?: string | null;
   photo?: any | null;
-  profession: string;
+  profession?: string | null;
 }
 
 // A resume skill
 export interface CreateSkillInput {
   achievements?: (string | null)[] | null;
-  description: string;
+  description?: string | null;
   id?: string | null;
 }
 
