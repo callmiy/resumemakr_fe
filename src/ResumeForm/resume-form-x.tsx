@@ -93,8 +93,8 @@ export class ResumeForm extends React.Component<Props, State> {
     }
 
     const { action, section } = this.state;
-    const sectionIndex = sectionsList.indexOf(section);
 
+    const sectionIndex = sectionsList.indexOf(section);
     if (loading || lodashIsEmpty(values)) {
       return (
         <Container>
@@ -263,15 +263,6 @@ export class ResumeForm extends React.Component<Props, State> {
       valuesTracker = values;
       return;
     }
-
-    const errors = await this.props.validateForm(values);
-
-    // tslint:disable-next-line:no-console
-    console.log(
-      "\n\t\tLogging start\n\n\n\n errors\n",
-      errors,
-      "\n\n\n\n\t\tLogging ends\n"
-    );
 
     // tslint:disable-next-line:no-console
     console.log(

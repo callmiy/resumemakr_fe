@@ -8,8 +8,6 @@ export const emptyVal: RatedInput = {
 };
 
 export const validationSchema = Yup.object<RatedInput>().shape({
-  description: Yup.string()
-    .required()
-    .min(2),
+  description: Yup.string(),
   level: Yup.string()
 });

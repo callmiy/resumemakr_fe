@@ -2,7 +2,6 @@ import * as Yup from "yup";
 
 import { EducationInput } from "../graphql/apollo-gql";
 
-
 export const emptyVal: EducationInput = {
   school: "",
   course: "",
@@ -20,12 +19,8 @@ export const defaultVal: EducationInput = {
 };
 
 export const validationSchema = Yup.object<EducationInput>().shape({
-  school: Yup.string()
-    .required()
-    .min(5),
-  course: Yup.string()
-    .required()
-    .min(5),
+  school: Yup.string(),
+  course: Yup.string(),
   fromDate: Yup.string(),
   toDate: Yup.string(),
   achievements: Yup.array<string>()

@@ -10,7 +10,7 @@ import {
 
 import {
   defaultVal as personalInfo,
-  validationSchema as piSchema
+  validationSchema as personalInfoSchema
 } from "../PersonalInfo/personal-info";
 
 import {
@@ -64,16 +64,12 @@ export const initialFormValues: FormValues = {
 };
 
 export const validationSchema = Yup.object<FormValues>().shape({
-  personalInfo: piSchema,
-  experiences: Yup.array<CreateExperienceInput>()
-    .of<CreateExperienceInput>(expSchema)
-    .required(),
-  education: Yup.array<EducationInput>()
-    .of<EducationInput>(edSchema)
-    .required(),
-  skills: Yup.array<CreateSkillInput>()
-    .of<CreateSkillInput>(skillsSchema)
-    .required(),
+  personalInfo: personalInfoSchema,
+  experiences: Yup.array<CreateExperienceInput>().of<CreateExperienceInput>(
+    expSchema
+  ),
+  education: Yup.array<EducationInput>().of<EducationInput>(edSchema),
+  skills: Yup.array<CreateSkillInput>().of<CreateSkillInput>(skillsSchema),
   additionalSkills: Yup.array<RatedInput>().of<RatedInput>(ratedSchema),
   languages: Yup.array<RatedInput>().of<RatedInput>(ratedSchema),
   hobbies: Yup.array<HobbyVal>()
@@ -136,7 +132,7 @@ export function getInitialValues(
 }
 
 export const formikConfig: WithFormikConfig<Props, FormValues> = {
-  validationSchema,
+  // validationSchema,
 
   handleSubmit: () => null,
 
@@ -144,7 +140,7 @@ export const formikConfig: WithFormikConfig<Props, FormValues> = {
     return getResume as FormValues;
   },
 
-  enableReinitialize: false,
+  enableReinitialize: true,
 
   validateOnChange: false,
 

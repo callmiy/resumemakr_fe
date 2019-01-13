@@ -93,7 +93,7 @@ export interface GetResume_getResume_languages {
 export interface GetResume_getResume_personalInfo {
   id: string;
   address: string | null;
-  dateOfBirth: any | null;
+  dateOfBirth: string | null;
   email: string | null;
   firstName: string;
   lastName: string;
@@ -236,7 +236,7 @@ export interface UpdateResume_updateResume_resume_languages {
 export interface UpdateResume_updateResume_resume_personalInfo {
   id: string;
   address: string | null;
-  dateOfBirth: any | null;
+  dateOfBirth: string | null;
   email: string | null;
   firstName: string;
   lastName: string;
@@ -374,7 +374,7 @@ export interface ResumeFullFrag_languages {
 export interface ResumeFullFrag_personalInfo {
   id: string;
   address: string | null;
-  dateOfBirth: any | null;
+  dateOfBirth: string | null;
   email: string | null;
   firstName: string;
   lastName: string;
@@ -536,13 +536,13 @@ export interface CreateExperienceInput {
 // Variables for creating Personal Info
 export interface PersonalInfoInput {
   address: string;
-  dateOfBirth?: any | null;
+  dateOfBirth?: string | null;
   email: string;
   firstName: string;
   id?: string | null;
   lastName: string;
   phone: string;
-  photo?: string | null;
+  photo?: any | null;
   profession: string;
 }
 

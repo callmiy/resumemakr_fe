@@ -16,7 +16,7 @@ import { getBackendUrls } from "../State/get-backend-urls";
 
 const backEndUrl = getBackendUrls().root;
 
-export interface Props<Values> extends FieldProps<Values> {
+export interface Props extends FieldProps<{ photo: string | null }> {
   removeFilePreview?: () => void;
 }
 interface State {
@@ -34,14 +34,14 @@ enum FileState {
 
 let serverValue: string | null = null;
 
-export class PhotoField<Values> extends React.Component<Props<Values>, State> {
+export class PhotoField extends React.Component<Props, State> {
   state: State = {
     fileState: FileState.clean
   };
 
   inputRef = createRef<HTMLInputElement>();
 
-  constructor(props: Props<Values>) {
+  constructor(props: Props) {
     super(props);
   }
 
@@ -175,10 +175,7 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
             icon="checkmark"
             labelPosition="right"
             content="Yes"
-            onClick={() => {
-              this.setState({ fileState: FileState.deleted, url: undefined });
-              this.setState({ open: false });
-            }}
+            onClick={this.onDelete}
           />
         </Modal.Actions>
       </AppModal>
@@ -231,6 +228,15 @@ export class PhotoField<Values> extends React.Component<Props<Values>, State> {
     };
 
     reader.readAsDataURL(file);
+  };
+
+  private onDelete = () => {
+    this.setState({
+      fileState: FileState.deleted,
+      url: undefined,
+      open: false
+    });
+    this.props.form.setFieldValue(this.props.field.name, null);
   };
 }
 

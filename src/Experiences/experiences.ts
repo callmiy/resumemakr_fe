@@ -11,21 +11,11 @@ export const emptyVals: CreateExperienceInput = {
 };
 
 export const validationSchema = Yup.object<CreateExperienceInput>().shape({
-  position: Yup.string()
-    .required()
-    .min(2),
-  companyName: Yup.string()
-    .required()
-    .min(2),
-  fromDate: Yup.string()
-    .required()
-    .min(2),
-  toDate: Yup.string()
-    .required()
-    .min(2),
+  position: Yup.string(),
+  companyName: Yup.string(),
+  fromDate: Yup.string(),
+  toDate: Yup.string(),
   achievements: Yup.array<string>()
-    .required()
-    .min(1)
 });
 
 export const defaultVal: CreateExperienceInput = {

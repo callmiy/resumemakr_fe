@@ -40,10 +40,6 @@ export const emptyVals: CreateSkillInput[] = [
 ];
 
 export const validationSchema = Yup.object<CreateSkillInput>().shape({
-  description: Yup.string()
-    .required()
-    .min(2),
+  description: Yup.string(),
   achievements: Yup.array<string>()
-    .required()
-    .min(1)
 });

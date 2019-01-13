@@ -16,26 +16,13 @@ Germany`,
 };
 
 export const validationSchema = Yup.object<PersonalInfoInput>().shape({
-  phone: Yup.string()
-    .required()
-    .min(2),
-  firstName: Yup.string()
-    .required()
-    .min(2),
-  lastName: Yup.string()
-    .required()
-    .min(2),
-  profession: Yup.string()
-    .required()
-    .min(2),
-  address: Yup.string()
-    .required()
-    .min(2),
-  email: Yup.string()
-    .email()
-    .required()
-    .min(2),
-  dateOfBirth: Yup.string().min(2),
+  phone: Yup.string(),
+  firstName: Yup.string(),
+  lastName: Yup.string(),
+  profession: Yup.string(),
+  address: Yup.string(),
+  email: Yup.string().email(),
+  dateOfBirth: Yup.string(),
   photo: Yup.string()
 });
 
