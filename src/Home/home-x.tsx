@@ -24,7 +24,7 @@ import { makeResumeRoute } from "../routing";
 import { Props } from "./home";
 import Loading from "../Loading";
 import Header from "../Header";
-import resumeTitles from "../graphql/resume-titles.query";
+import RESUME_TITLES_QUERY from "../graphql/resume-titles.query";
 import { initialFormValues } from "../ResumeForm/resume-form";
 
 interface State {
@@ -471,7 +471,7 @@ export class Home extends React.Component<Props, State> {
       (resumeToBeRemoved.resume && resumeToBeRemoved.resume.id) || "";
 
     const readData = cache.readQuery<ResumeTitles, ResumeTitlesVariables>({
-      query: resumeTitles,
+      query: RESUME_TITLES_QUERY,
 
       variables: {
         howMany: 10
@@ -495,7 +495,7 @@ export class Home extends React.Component<Props, State> {
     }
 
     cache.writeQuery<ResumeTitles, ResumeTitlesVariables>({
-      query: resumeTitles,
+      query: RESUME_TITLES_QUERY,
 
       variables: {
         howMany: 10

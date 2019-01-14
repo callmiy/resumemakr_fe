@@ -16,7 +16,7 @@ const resumeTitlesFrag = gql`
   }
 `;
 
-export const resumeTitles = gql`
+export const resumeTitlesQuery = gql`
   query ResumeTitles($howMany: Int!) {
     listResumes(first: $howMany) {
       ...ResumeTitlesFrag
@@ -27,6 +27,6 @@ export const resumeTitles = gql`
   ${resumeTitlesFrag}
 `;
 
-export default resumeTitles;
+export default resumeTitlesQuery;
 
 export type ResumeTitlesProps = DataValue<ResumeTitles, ResumeTitlesVariables>;
