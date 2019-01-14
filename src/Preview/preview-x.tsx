@@ -1,6 +1,5 @@
 import React from "react";
 
-// import { FormValues } from "../ResumeForm/resume-form";
 import { Props } from "./preview";
 
 import {
@@ -152,7 +151,7 @@ export class Preview extends React.Component<Props> {
           return (
             <div key={index} className="experience-container">
               <div className="left">
-                {fromDate} {(toDate && `-${toDate}`) || ""}
+                {fromDate} {`- ${toDate || "present"}`}
               </div>
 
               <div className="right">
