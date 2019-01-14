@@ -66,7 +66,7 @@ export class Experiences extends React.Component<Props, {}> {
     const fieldName = "experiences";
 
     return (
-      <div key={index}>
+      <Card key={index}>
         <ListIndexHeader
           index={index}
           label={HeaderLabelText}
@@ -124,7 +124,7 @@ export class Experiences extends React.Component<Props, {}> {
             }}
           />
         </Card.Content>
-      </div>
+      </Card>
     );
   };
 
