@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { NavBtn, EpicBtnIcon } from "../styles/mixins";
+import { NavBtn, EpicBtnIcon, withControls } from "../styles/mixins";
 
 export const Container = styled.div`
   form {
@@ -24,6 +24,14 @@ export const Container = styled.div`
       &:first-of-type {
         margin-right: 4%;
       }
+    }
+  }
+
+  .with-controls {
+    ${withControls}
+
+    &.list-string-header {
+      padding-bottom: 5px;
     }
   }
 `;

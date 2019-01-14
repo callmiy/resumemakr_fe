@@ -1,14 +1,13 @@
 import React from "react";
-import { TextArea, Card, Icon } from "semantic-ui-react";
-import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
+import { Card, Icon } from "semantic-ui-react";
+import { FastField, FieldArray } from "formik";
 
 import { CreateExperienceInput } from "../graphql/apollo-gql";
 import RegularField from "../RegularField";
 import SectionLabel from "../SectionLabel";
 import { emptyVals, Props } from "./experiences";
-import { CircularLabel } from "../styles/mixins";
-import { ExperienceContainer } from "./experience.style";
 import ListIndexHeader from "../ListIndexHeader";
+import ListStrings from "../ListStrings";
 
 let cachedValues: CreateExperienceInput[] = [];
 const HeaderLabelText = "Company";
@@ -67,7 +66,7 @@ export class Experiences extends React.Component<Props, {}> {
     const fieldName = "experiences";
 
     return (
-      <ExperienceContainer key={index}>
+      <div key={index}>
         <ListIndexHeader
           index={index}
           label={HeaderLabelText}
@@ -108,29 +107,24 @@ export class Experiences extends React.Component<Props, {}> {
 
           <FieldArray
             name={makeName(index, "achievements")}
-            render={helper => (
-              <div>
-                <div>
-                  Achievements
-                  <span> (responsibilities, activities)</span>
-                </div>
-
-                {achievements.map((achievement, ind) => (
-                  <Achievement
-                    key={ind}
-                    achievement={achievement}
-                    index={ind}
-                    fieldName={makeName(index, "achievements")}
-                    arrayHelper={helper}
-                    expIndex1={index}
-                    achievementsLen={achievements.length}
-                  />
-                ))}
-              </div>
-            )}
+            render={helper => {
+              return (
+                <ListStrings
+                  values={achievements as string[]}
+                  arrayHelper={helper}
+                  header={
+                    <div>
+                      Achievements
+                      <span> (responsibilities, activities)</span>
+                    </div>
+                  }
+                  fieldName={makeName(index, "achievements")}
+                />
+              );
+            }}
           />
         </Card.Content>
-      </ExperienceContainer>
+      </div>
     );
   };
 
@@ -160,89 +154,6 @@ export class Experiences extends React.Component<Props, {}> {
 }
 
 export default Experiences;
-
-interface AchievementProps {
-  index: number;
-  achievement: string | null;
-  fieldName: string;
-  arrayHelper: FieldArrayRenderProps;
-  expIndex1: number;
-  achievementsLen: number;
-}
-
-function Achievement({
-  index,
-  achievement,
-  fieldName: expFieldName,
-  expIndex1,
-  arrayHelper,
-  achievementsLen
-}: AchievementProps) {
-  const fieldName = `${expFieldName}[${index}]`;
-  const index1 = index + 1;
-
-  return (
-    <FastField
-      name={fieldName}
-      label={
-        <div className="with-controls achievement-header ">
-          {`# ${index1}`}
-
-          <div>
-            {achievementsLen > 1 && (
-              <CircularLabel
-                color="blue"
-                onClick={function onSwapAchievementsUp() {
-                  arrayHelper.swap(index, index1);
-                }}
-              >
-                <Icon name="arrow down" />
-              </CircularLabel>
-            )}
-
-            {achievementsLen > 1 && (
-              <CircularLabel
-                color="red"
-                onClick={function onRemoveAchievement() {
-                  arrayHelper.remove(index);
-                }}
-              >
-                <Icon name="remove" />
-              </CircularLabel>
-            )}
-
-            <CircularLabel
-              color="green"
-              onClick={function onAddAchievement() {
-                arrayHelper.insert(index1, "");
-              }}
-            >
-              <Icon name="add" />
-            </CircularLabel>
-
-            {index1 > 1 && (
-              <CircularLabel
-                color="blue"
-                onClick={function onSwapAchievementsUp() {
-                  arrayHelper.swap(index, index - 1);
-                }}
-              >
-                <Icon name="arrow up" />
-              </CircularLabel>
-            )}
-          </div>
-
-          <label className="visually-hidden" htmlFor={fieldName}>
-            Experience {expIndex1} achievement {index1}
-          </label>
-        </div>
-      }
-      defaultValue={achievement}
-      comp={TextArea}
-      component={RegularField}
-    />
-  );
-}
 
 /**
  * index is 1-based
