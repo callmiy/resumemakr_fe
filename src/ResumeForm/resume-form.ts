@@ -41,6 +41,7 @@ import { validationSchema as ratedSchema } from "../Rated/rated";
 import { UpdateResumeProps } from "../graphql/update-resume.mutation";
 import { GetResumeProps } from "../graphql/get-resume.query";
 import { stripTypeName } from "../utils";
+import { SetFieldValue } from "../utils";
 
 export interface OwnProps extends RouteComponentProps<{ title: string }> {}
 
@@ -143,3 +144,7 @@ export const formikConfig: WithFormikConfig<Props, FormValues> = {
 
   validateOnBlur: false
 };
+
+export interface ChildProps {
+  setFieldValue: SetFieldValue<CreateExperienceInput>;
+}
