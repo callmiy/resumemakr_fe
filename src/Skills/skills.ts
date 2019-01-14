@@ -4,6 +4,7 @@ import { CreateSkillInput } from "../graphql/apollo-gql";
 
 export const defaultVal: CreateSkillInput[] = [
   {
+    index: 1,
     description: "Programming and App Development",
     achievements: [
       "Developed and built 20+ mobile apps and 30+ websites providing exceptional user experience.",
@@ -14,6 +15,7 @@ export const defaultVal: CreateSkillInput[] = [
   },
 
   {
+    index: 2,
     description: "Leadership",
     achievements: [
       "8+ years experience in team management (teams of 10-50 colleagues) and project coordination.",
@@ -23,6 +25,7 @@ export const defaultVal: CreateSkillInput[] = [
   },
 
   {
+    index: 3,
     description: "Business Management",
     achievements: [
       "Coordinated 20+ projects with a budget over $200,000.",
@@ -34,6 +37,7 @@ export const defaultVal: CreateSkillInput[] = [
 
 export const emptyVals: CreateSkillInput[] = [
   {
+    index: 1,
     description: "",
     achievements: []
   }
@@ -41,5 +45,8 @@ export const emptyVals: CreateSkillInput[] = [
 
 export const validationSchema = Yup.object<CreateSkillInput>().shape({
   description: Yup.string(),
-  achievements: Yup.array<string>()
+  achievements: Yup.array<string>(),
+  index: Yup.number()
+    .required()
+    .min(1)
 });

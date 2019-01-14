@@ -1,6 +1,6 @@
 import React from "react";
 import { Icon, Card } from "semantic-ui-react";
-import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
+import { FastField, FieldArray } from "formik";
 
 import { EducationInput } from "../graphql/apollo-gql";
 
@@ -8,15 +8,27 @@ import { Section } from "../ResumeForm/resume-form";
 import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
 import { emptyVal } from "./education";
+import { ChildProps } from "../ResumeForm/resume-form";
+import ListIndexHeader from "../ListIndexHeader";
 
-interface Props {
+let cachedValues: EducationInput[] = [];
+const headerLabelText = "School";
+const eduFieldName = "education";
+
+interface Props extends ChildProps {
   label: Section;
   values?: Array<EducationInput | null> | null;
 }
 
 export class Education extends React.Component<Props, {}> {
+  componentWillUnmount() {
+    cachedValues = (null as unknown) as EducationInput[];
+  }
+
   render() {
-    const { label, values } = this.props;
+    const { label } = this.props;
+    const values = (this.props.values || [{ ...emptyVal }]) as EducationInput[];
+    cachedValues = values;
 
     return (
       <>
@@ -27,89 +39,83 @@ export class Education extends React.Component<Props, {}> {
         />
 
         <FieldArray
-          name="education"
-          render={arrayHelper =>
-            (values || [{ ...emptyVal }]).map((edu, index) => (
-              <School
-                key={index}
-                index={index}
-                edu={edu}
-                arrayHelper={arrayHelper}
-              />
-            ))
-          }
+          name={eduFieldName}
+          render={arrayHelper => values.map(this.renderSchool)}
         />
       </>
     );
   }
+
+  private renderSchool = (edu: EducationInput) => {
+    const { setFieldValue } = this.props;
+    const { index } = edu;
+    let achievements = edu.achievements || [""];
+
+    if (achievements.length === 0) {
+      achievements = [""];
+    }
+
+    return (
+      <Card key={index}>
+        <ListIndexHeader
+          index={index}
+          label={headerLabelText}
+          fieldName={eduFieldName}
+          setFieldValue={setFieldValue}
+          values={cachedValues as EducationInput[]}
+          empty={emptyVal}
+        />
+
+        <Card.Content>
+          <FastField
+            name={makeName(index, "school")}
+            label="School name, location"
+            defaultValue={edu.school}
+            component={RegularField}
+          />
+
+          <FastField
+            name={makeName(index, "course")}
+            label="Major, minor, degree"
+            defaultValue={edu.course}
+            component={RegularField}
+          />
+
+          <FastField
+            name={makeName(index, "fromDate")}
+            label="Date from"
+            defaultValue={edu.fromDate}
+            component={RegularField}
+          />
+
+          <FastField
+            name={makeName(index, "toDate")}
+            label="Date to"
+            defaultValue={edu.toDate}
+            component={RegularField}
+          />
+
+          <FieldArray
+            name={makeName(index, "achievements")}
+            render={helper =>
+              achievements.map((achievement, ind) => (
+                <FastField
+                  name={`${makeName(index, "achievements")}.${ind}`}
+                  key={ind}
+                  defaultValue={achievement}
+                  component={RegularField}
+                />
+              ))
+            }
+          />
+        </Card.Content>
+      </Card>
+    );
+  };
 }
 
 export default Education;
 
-interface SchoolProps {
-  index: number;
-  edu?: EducationInput | null;
-  arrayHelper: FieldArrayRenderProps;
-}
-
-function School({ index, edu, arrayHelper }: SchoolProps) {
-  if (!edu) {
-    return null;
-  }
-
-  return (
-    <Card>
-      <Card.Content>
-        <Card.Header>School #{index + 1}</Card.Header>
-      </Card.Content>
-
-      <Card.Content>
-        <FastField
-          name={makeName(index, "school")}
-          label="School name, location"
-          defaultValue={edu.school}
-          component={RegularField}
-        />
-
-        <FastField
-          name={makeName(index, "course")}
-          label="Major, minor, degree"
-          defaultValue={edu.course}
-          component={RegularField}
-        />
-
-        <FastField
-          name={makeName(index, "fromDate")}
-          label="Date from"
-          defaultValue={edu.fromDate}
-          component={RegularField}
-        />
-
-        <FastField
-          name={makeName(index, "toDate")}
-          label="Date to"
-          defaultValue={edu.toDate}
-          component={RegularField}
-        />
-
-        <FieldArray
-          name={makeName(index, "achievements")}
-          render={helper =>
-            (edu.achievements || []).map((achievement, ind) => (
-              <FastField
-                name={`${makeName(index, "achievements")}.${ind}`}
-                key={ind}
-                defaultValue={achievement}
-                component={RegularField}
-              />
-            ))
-          }
-        />
-      </Card.Content>
-    </Card>
-  );
-}
-
 function makeName(index: number, key: keyof EducationInput) {
-  return `education[${index}].${key}`;
+  return `${eduFieldName}[${index - 1}].${key}`;
 }

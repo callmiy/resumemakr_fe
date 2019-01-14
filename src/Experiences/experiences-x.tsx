@@ -64,12 +64,14 @@ export class Experiences extends React.Component<Props, {}> {
       achievements = [""];
     }
 
+    const fieldName = "experiences";
+
     return (
       <ExperienceContainer key={index}>
         <ListIndexHeader
           index={index}
           label={HeaderLabelText}
-          fieldName="experiences"
+          fieldName={fieldName}
           setFieldValue={setFieldValue}
           values={cachedValues as CreateExperienceInput[]}
           empty={emptyVals}

@@ -32,6 +32,7 @@ export const resumeFullFrag = gql`
 
     skills {
       id
+      index
       description
       achievements
       __typename
@@ -39,6 +40,7 @@ export const resumeFullFrag = gql`
 
     education {
       id
+      index
       course
       fromDate
       toDate

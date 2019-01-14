@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import { EducationInput } from "../graphql/apollo-gql";
 
 export const emptyVal: EducationInput = {
+  index: 1,
   school: "",
   course: "",
   fromDate: "",
@@ -11,6 +12,7 @@ export const emptyVal: EducationInput = {
 };
 
 export const defaultVal: EducationInput = {
+  index: 1,
   school: "The City College of New York, New York City, NY",
   course: "MS in Computer Science, Distinction",
   fromDate: "02/2013",
@@ -23,5 +25,8 @@ export const validationSchema = Yup.object<EducationInput>().shape({
   course: Yup.string(),
   fromDate: Yup.string(),
   toDate: Yup.string(),
-  achievements: Yup.array<string>()
+  achievements: Yup.array<string>(),
+  index: Yup.number()
+    .required()
+    .min(1)
 });

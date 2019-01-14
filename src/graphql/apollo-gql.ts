@@ -116,6 +116,7 @@ export interface GetResume_getResume_experiences {
 
 export interface GetResume_getResume_skills {
   id: string;
+  index: number;
   description: string | null;
   achievements: (string | null)[] | null;
   __typename: "Skill";
@@ -123,6 +124,7 @@ export interface GetResume_getResume_skills {
 
 export interface GetResume_getResume_education {
   id: string;
+  index: number;
   course: string | null;
   fromDate: string | null;
   toDate: string | null;
@@ -260,6 +262,7 @@ export interface UpdateResume_updateResume_resume_experiences {
 
 export interface UpdateResume_updateResume_resume_skills {
   id: string;
+  index: number;
   description: string | null;
   achievements: (string | null)[] | null;
   __typename: "Skill";
@@ -267,6 +270,7 @@ export interface UpdateResume_updateResume_resume_skills {
 
 export interface UpdateResume_updateResume_resume_education {
   id: string;
+  index: number;
   course: string | null;
   fromDate: string | null;
   toDate: string | null;
@@ -399,6 +403,7 @@ export interface ResumeFullFrag_experiences {
 
 export interface ResumeFullFrag_skills {
   id: string;
+  index: number;
   description: string | null;
   achievements: (string | null)[] | null;
   __typename: "Skill";
@@ -406,6 +411,7 @@ export interface ResumeFullFrag_skills {
 
 export interface ResumeFullFrag_education {
   id: string;
+  index: number;
   course: string | null;
   fromDate: string | null;
   toDate: string | null;
@@ -522,6 +528,7 @@ export interface EducationInput {
   course?: string | null;
   fromDate?: string | null;
   id?: string | null;
+  index: number;
   school?: string | null;
   toDate?: string | null;
 }
@@ -555,6 +562,7 @@ export interface CreateSkillInput {
   achievements?: (string | null)[] | null;
   description?: string | null;
   id?: string | null;
+  index: number;
 }
 
 // null
