@@ -1,7 +1,12 @@
 import React from "react";
+
 import { Modal, Button, Grid, Label, Icon, Popup } from "semantic-ui-react";
+
 import { ApolloError, MutationUpdaterFn } from "apollo-client";
 import dateFormat from "date-fns/format";
+import { Formik, FastField, FormikProps, FormikErrors } from "formik";
+import * as Yup from "yup";
+import lodashIsEmpty from "lodash/isEmpty";
 
 import {
   HomeContainer,
@@ -9,14 +14,16 @@ import {
   HomeMain,
   Titles,
   CtrlLabelText,
-  DeleteResumeSuccess
+  DeleteResumeSuccess,
+  FormField
 } from "./home-styles";
 
 import {
   ResumeTitles,
   ResumeTitlesVariables,
   DeleteResume,
-  ResumeTitles_listResumes_edges_node
+  ResumeTitles_listResumes_edges_node,
+  CreateResumeInput
 } from "../graphql/apollo-gql";
 
 import { AppModal, CircularLabel } from "../styles/mixins";
@@ -27,6 +34,13 @@ import Header from "../Header";
 import RESUME_TITLES_QUERY from "../graphql/resume-titles.query";
 import { initialFormValues } from "../ResumeForm/resume-form";
 import { Mode as PreviewMode } from "../Preview/preview";
+
+const validationSchema = Yup.object<CreateResumeInput>().shape({
+  title: Yup.string()
+    .required()
+    .min(2),
+  description: Yup.string()
+});
 
 interface State {
   openModal?: boolean;
@@ -39,6 +53,7 @@ interface State {
   deletedResume?: string;
   deletingResume?: string;
   confirmDeleteId?: string;
+  formErrors?: FormikErrors<CreateResumeInput>;
 }
 
 export class Home extends React.Component<Props, State> {
@@ -82,43 +97,74 @@ export class Home extends React.Component<Props, State> {
   private renderModal = () => {
     return (
       <AppModal open={this.state.openModal}>
-        <Modal.Header>
-          Enter resume title e.g name of company to send to
-        </Modal.Header>
+        <Modal.Header>Create new resume</Modal.Header>
 
-        <Modal.Content>
-          <Modal.Description>
-            <div>
-              <InputLabel htmlFor="resume-title">Enter resume title</InputLabel>
+        <Formik<CreateResumeInput>
+          validationSchema={validationSchema}
+          onSubmit={() => null}
+          initialValues={{ title: "", description: "" }}
+          render={formikProps => {
+            const { formErrors } = this.state;
+            const titleError = (formErrors && formErrors.title) || "";
 
-              <input
-                id="resume-title"
-                name="resume-title"
-                onChange={this.onChange}
-              />
-            </div>
-          </Modal.Description>
-        </Modal.Content>
+            return (
+              <>
+                <Modal.Content>
+                  <Modal.Description>
+                    <FormField className={`field ${titleError ? "error" : ""}`}>
+                      <InputLabel htmlFor="resume-title">
+                        Title e.g. name of company to send to
+                      </InputLabel>
 
-        <Modal.Actions>
-          <Button
-            negative={true}
-            icon="remove"
-            labelPosition="right"
-            content="No"
-            onClick={() => {
-              this.setState({ openModal: false, title: "" });
-            }}
-          />
+                      <FastField
+                        component={"input"}
+                        id="resume-title"
+                        name="title"
+                      />
 
-          <Button
-            positive={true}
-            icon="checkmark"
-            labelPosition="right"
-            content="Yes"
-            onClick={this.createResume}
-          />
-        </Modal.Actions>
+                      {titleError && <div>{titleError}</div>}
+                    </FormField>
+
+                    <FormField className="field" style={{ marginTop: "15px" }}>
+                      <InputLabel htmlFor="resume-description">
+                        Description{" "}
+                        <span style={{ opacity: 0.6 }}>(optional)</span>
+                      </InputLabel>
+
+                      <FastField
+                        component={"textarea"}
+                        id="resume-description"
+                        name="description"
+                      />
+                    </FormField>
+                  </Modal.Description>
+                </Modal.Content>
+
+                <Modal.Actions>
+                  <Button
+                    type="button"
+                    negative={true}
+                    icon="remove"
+                    labelPosition="right"
+                    content="No"
+                    onClick={() => {
+                      this.setState({ openModal: false });
+                    }}
+                  />
+
+                  <Button
+                    type="button"
+                    positive={true}
+                    icon="checkmark"
+                    labelPosition="right"
+                    content="Yes"
+                    onClick={() => this.createResume(formikProps)}
+                  />
+                </Modal.Actions>
+              </>
+            );
+          }}
+        />
       </AppModal>
     );
   };
@@ -332,15 +378,17 @@ export class Home extends React.Component<Props, State> {
 
   private openModal = () => this.setState({ openModal: true });
 
-  private onChange = (evt: React.SyntheticEvent<HTMLInputElement>) => {
-    this.setState({ title: evt.currentTarget.value });
-  };
+  private createResume = async ({
+    values,
+    validateForm
+  }: FormikProps<CreateResumeInput>) => {
+    this.setState({ formErrors: undefined });
 
-  private createResume = async () => {
-    const title = this.state.title.trim();
+    const errors = await validateForm(values);
 
-    if (!title) {
-      this.setState({ openModal: false });
+    if (!lodashIsEmpty(errors)) {
+      this.setState({ formErrors: errors });
+
       return;
     }
 
@@ -350,7 +398,7 @@ export class Home extends React.Component<Props, State> {
       return;
     }
 
-    const input = { ...initialFormValues, title };
+    const input = { ...initialFormValues, ...values };
 
     try {
       const result = await createResumeTitle({

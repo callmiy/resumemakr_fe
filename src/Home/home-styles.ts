@@ -8,6 +8,21 @@ import {
   appBgColor
 } from "../styles/mixins";
 
+export const FormField = styled.div`
+  &.error {
+    color: red;
+  }
+
+  textarea,
+  input {
+    display: block;
+    min-width: 100%;
+    font-size: 1em;
+    padding: 0.7em 0.5em 0.3em 0.5em;
+    margin: 5px 0 5px 0;
+  }
+`;
+
 export const HomeContainer = styled(AppContainer)`
   position: relative;
 
@@ -32,9 +47,7 @@ export const HomeContainer = styled(AppContainer)`
   }
 `;
 
-export const InputLabel = styled.label`
-  ${visuallyHidden}
-`;
+export const InputLabel = styled.label``;
 
 export const HomeMain = styled(AppMain)`
   font-size: 1.4em;
