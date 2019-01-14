@@ -202,7 +202,13 @@ export class ResumeForm extends React.Component<Props> {
     }
 
     if (currentSection === Section.skills) {
-      return <Skills label={label} values={values.skills} />;
+      return (
+        <Skills
+          label={label}
+          values={values.skills}
+          setFieldValue={setFieldValue}
+        />
+      );
     }
 
     if (currentSection === Section.addSkills) {

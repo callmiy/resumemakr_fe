@@ -35,13 +35,11 @@ export const defaultVal: CreateSkillInput[] = [
   }
 ];
 
-export const emptyVals: CreateSkillInput[] = [
-  {
-    index: 1,
-    description: "",
-    achievements: []
-  }
-];
+export const emptyVal: CreateSkillInput = {
+  index: 1,
+  description: "",
+  achievements: []
+};
 
 export const validationSchema = Yup.object<CreateSkillInput>().shape({
   description: Yup.string(),
