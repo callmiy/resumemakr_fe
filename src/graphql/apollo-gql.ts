@@ -4,6 +4,97 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: CloneResume
+// ====================================================
+
+export interface CloneResume_cloneResume_resume_additionalSkills {
+  id: string;
+  description: string | null;
+  level: string | null;
+  __typename: "Rated";
+}
+
+export interface CloneResume_cloneResume_resume_languages {
+  id: string;
+  description: string | null;
+  level: string | null;
+  __typename: "Rated";
+}
+
+export interface CloneResume_cloneResume_resume_personalInfo {
+  id: string;
+  address: string | null;
+  dateOfBirth: string | null;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  photo: string | null;
+  profession: string | null;
+  __typename: "PersonalInfo";
+}
+
+export interface CloneResume_cloneResume_resume_experiences {
+  id: string;
+  index: number;
+  achievements: (string | null)[] | null;
+  companyName: string | null;
+  fromDate: string | null;
+  position: string | null;
+  toDate: string | null;
+  __typename: "ResumeExperience";
+}
+
+export interface CloneResume_cloneResume_resume_skills {
+  id: string;
+  index: number;
+  description: string | null;
+  achievements: (string | null)[] | null;
+  __typename: "Skill";
+}
+
+export interface CloneResume_cloneResume_resume_education {
+  id: string;
+  index: number;
+  course: string | null;
+  fromDate: string | null;
+  toDate: string | null;
+  school: string | null;
+  achievements: (string | null)[] | null;
+  __typename: "Education";
+}
+
+export interface CloneResume_cloneResume_resume {
+  id: string;  // The ID of an object
+  title: string;
+  description: string | null;
+  hobbies: (string | null)[] | null;
+  __typename: "Resume";
+  additionalSkills: (CloneResume_cloneResume_resume_additionalSkills | null)[] | null;
+  languages: (CloneResume_cloneResume_resume_languages | null)[] | null;
+  personalInfo: CloneResume_cloneResume_resume_personalInfo | null;
+  experiences: (CloneResume_cloneResume_resume_experiences | null)[] | null;
+  skills: (CloneResume_cloneResume_resume_skills | null)[] | null;
+  education: (CloneResume_cloneResume_resume_education | null)[] | null;
+}
+
+export interface CloneResume_cloneResume {
+  resume: CloneResume_cloneResume_resume | null;
+}
+
+export interface CloneResume {
+  cloneResume: CloneResume_cloneResume | null;
+}
+
+export interface CloneResumeVariables {
+  input: CloneResumeInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: CreateResume
 // ====================================================
 
@@ -518,6 +609,13 @@ export interface UserFragment {
 //==============================================================
 // START Enums and Input Objects
 //==============================================================
+
+// null
+export interface CloneResumeInput {
+  description?: string | null;
+  id: string;
+  title?: string | null;
+}
 
 // null
 export interface CreateResumeInput {

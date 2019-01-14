@@ -42,9 +42,15 @@ const validationSchema = Yup.object<CreateResumeInput>().shape({
   description: Yup.string()
 });
 
+enum Action {
+  createResume = "CreateResume",
+  cloneResume = "CloneResume"
+}
+
+const emptyVal = { title: "", description: "" };
+
 interface State {
   openModal?: boolean;
-  title: string;
   graphQlError?: ApolloError;
   deleteError?: {
     id: string;
@@ -57,11 +63,13 @@ interface State {
 }
 
 export class Home extends React.Component<Props, State> {
-  state: State = {
-    title: ""
-  };
+  state: State = {};
 
   deleteTriggerRefs: { id?: undefined | HTMLElement } = {};
+  initialValues = emptyVal;
+  action = Action.createResume;
+  idToClone = "0";
+  titleToClone = "";
 
   render() {
     const { loading, error } = this.props;
@@ -84,7 +92,7 @@ export class Home extends React.Component<Props, State> {
 
           {this.renderTitles()}
 
-          <div className="new" onClick={this.openModal}>
+          <div className="new" onClick={this.openModalForCreate}>
             <span>+</span>
           </div>
         </HomeMain>
@@ -97,12 +105,16 @@ export class Home extends React.Component<Props, State> {
   private renderModal = () => {
     return (
       <AppModal open={this.state.openModal}>
-        <Modal.Header>Create new resume</Modal.Header>
+        <Modal.Header>
+          {this.action === Action.createResume
+            ? "Create new resume"
+            : `Clone from: "${this.titleToClone}"?`}
+        </Modal.Header>
 
         <Formik<CreateResumeInput>
           validationSchema={validationSchema}
           onSubmit={() => null}
-          initialValues={{ title: "", description: "" }}
+          initialValues={this.initialValues}
           render={formikProps => {
             const { formErrors } = this.state;
             const titleError = (formErrors && formErrors.title) || "";
@@ -183,7 +195,7 @@ export class Home extends React.Component<Props, State> {
     }
 
     if (!edges.length) {
-      return <div onClick={this.openModal}>You have no resumes</div>;
+      return <div onClick={this.openModalForCreate}>You have no resumes</div>;
     }
 
     const { deletedResume } = this.state;
@@ -226,7 +238,7 @@ export class Home extends React.Component<Props, State> {
               return null;
             }
 
-            const { id, title, updatedAt } = node;
+            const { id, title, updatedAt, description } = node;
             const { deletingResume } = this.state;
 
             return (
@@ -236,6 +248,23 @@ export class Home extends React.Component<Props, State> {
                 )}
 
                 <Grid.Column className="controls">
+                  <CircularLabel
+                    color="teal"
+                    onClick={() => {
+                      this.initialValues = {
+                        title,
+                        description: description || ""
+                      };
+
+                      this.idToClone = id;
+                      this.titleToClone = title;
+                      this.action = Action.cloneResume;
+                      this.openModal();
+                    }}
+                  >
+                    <Icon name="copy outline" />
+                  </CircularLabel>
+
                   <CircularLabel
                     color="blue"
                     onClick={() => this.goToResume(title)}
@@ -376,7 +405,15 @@ export class Home extends React.Component<Props, State> {
     });
   };
 
-  private openModal = () => this.setState({ openModal: true });
+  private openModal = () => {
+    this.setState({ openModal: true, formErrors: undefined });
+  };
+
+  private openModalForCreate = () => {
+    this.initialValues = emptyVal;
+    this.action = Action.createResume;
+    this.openModal();
+  };
 
   private createResume = async ({
     values,
@@ -392,38 +429,32 @@ export class Home extends React.Component<Props, State> {
       return;
     }
 
-    const { createResumeTitle } = this.props;
+    const { createResume, cloneResume } = this.props;
 
-    if (!createResumeTitle) {
-      return;
+    let input;
+    // tslint:disable-next-line:no-any
+    let fun: any;
+    let path;
+
+    if (this.action === Action.createResume) {
+      input = { ...initialFormValues, ...values };
+      fun = createResume;
+      path = "createResume";
+    } else {
+      input = { ...values, id: this.idToClone };
+      fun = cloneResume;
+      path = "cloneResume";
     }
 
-    const input = { ...initialFormValues, ...values };
-
     try {
-      const result = await createResumeTitle({
+      const result = await fun({
         variables: {
           input
         }
       });
 
-      if (!result) {
-        return;
-      }
-
-      const { data } = result;
-
-      if (!data) {
-        return;
-      }
-
-      const { createResume } = data;
-
-      if (!createResume) {
-        return;
-      }
-
-      const { resume } = createResume;
+      const resume =
+        result && result.data && result.data[path] && result.data[path].resume;
 
       if (!resume) {
         return;

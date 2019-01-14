@@ -18,6 +18,8 @@ export const createResume = gql`
 
 export default createResume;
 
+export type CreateResumeFn = MutationFn<CreateResume, CreateResumeVariables>;
+
 export interface CreateResumeProps {
-  createResumeTitle?: MutationFn<CreateResume, CreateResumeVariables>;
+  createResume?: CreateResumeFn;
 }

@@ -6,11 +6,17 @@ import CREATE_RESUME_TITLE, {
   CreateResumeProps
 } from "../graphql/create-resume.mutation";
 
+import CLONE_RESUME, {
+  CloneResumeProps
+} from "../graphql/clone-resume.mutation";
+
 import {
   CreateResume,
   CreateResumeVariables,
   ResumeTitles,
-  ResumeTitlesVariables
+  ResumeTitlesVariables,
+  CloneResume,
+  CloneResumeVariables
 } from "../graphql/apollo-gql";
 
 import RESUME_TITLES_QUERY, {
@@ -31,7 +37,7 @@ const createResumeGql = graphql<
     }
 
     return {
-      createResumeTitle: mutate
+      createResume: mutate
     };
   }
 });
@@ -53,8 +59,22 @@ const resumeTitlesGql = graphql<
   })
 });
 
+const cloneResumeGql = graphql<
+  {},
+  CloneResume,
+  CloneResumeVariables,
+  CloneResumeProps
+>(CLONE_RESUME, {
+  props: ({ mutate }) => {
+    return {
+      cloneResume: mutate
+    };
+  }
+});
+
 export default compose(
   resumeTitlesGql,
   createResumeGql,
-  deleteResumeGql
+  deleteResumeGql,
+  cloneResumeGql
 )(Home);
