@@ -10,7 +10,7 @@ export enum ResumePathHash {
 
 export function makeResumeRoute(
   title: string,
-  hash: ResumePathHash = ResumePathHash.edit
+  hash: ResumePathHash | "" = ResumePathHash.edit
 ) {
   return RESUME_PATH.replace(":title", encodeURIComponent(title)) + hash;
 }

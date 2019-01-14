@@ -26,6 +26,7 @@ import Loading from "../Loading";
 import Header from "../Header";
 import RESUME_TITLES_QUERY from "../graphql/resume-titles.query";
 import { initialFormValues } from "../ResumeForm/resume-form";
+import { Mode as PreviewMode } from "../Preview/preview";
 
 interface State {
   openModal?: boolean;
@@ -198,7 +199,7 @@ export class Home extends React.Component<Props, State> {
 
                   <CircularLabel
                     color="green"
-                    onClick={() => this.goToResume(title)}
+                    onClick={() => this.downloadResume(title)}
                   >
                     <Icon name="cloud download" />
                   </CircularLabel>
@@ -388,6 +389,11 @@ export class Home extends React.Component<Props, State> {
 
   private goToResume = (title: string) =>
     this.props.history.push(makeResumeRoute(title));
+
+  private downloadResume = (title: string) =>
+    this.props.history.push(
+      makeResumeRoute(title, "") + "#" + PreviewMode.preview
+    );
 
   private deleteResume = async (id: string) => {
     const { deleteResume } = this.props;
