@@ -22,7 +22,7 @@ export class Experiences extends React.Component<Props, {}> {
   }
 
   componentWillUnmount() {
-    allExperiences = (undefined as unknown) as Array<CreateExperienceInput | null>;
+    allExperiences = (null as unknown) as Array<CreateExperienceInput | null>;
   }
 
   render() {

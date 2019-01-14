@@ -44,9 +44,7 @@ import { ResumePathHash } from "../routing";
 import logger from "../logger";
 
 let valuesTracker: FormValues | null = null;
-
 let debounceUpdateResume: (ResumeForm["updateResume"] & Cancelable) | undefined;
-
 let currentSection: Section = Section.personalInfo;
 let backToSection: Section = Section.personalInfo;
 
@@ -64,10 +62,14 @@ export class ResumeForm extends React.Component<Props> {
     valuesTracker = this.props.values;
   }
 
-  componentWillMount() {
+  componentWillUnmount() {
     if (debounceUpdateResume) {
       debounceUpdateResume.cancel();
     }
+
+    valuesTracker = null;
+    currentSection = (null as unknown) as Section;
+    backToSection = (null as unknown) as Section;
   }
 
   componentDidUpdate() {
