@@ -46,8 +46,6 @@ export type SetFieldValue = (
 
 export interface ChildProps {
   setFieldValue: SetFieldValue;
-  updatePageUrl: (url: string) => void;
-  makePageUrl: (url: string) => string;
 }
 
 export interface Props extends RouteComponentProps, ChildProps {

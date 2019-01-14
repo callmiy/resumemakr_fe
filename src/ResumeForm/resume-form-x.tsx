@@ -187,8 +187,6 @@ export class ResumeForm extends React.Component<Props> {
           setFieldValue={setFieldValue}
           values={values.experiences}
           label={label}
-          updatePageUrl={this.updatePageUrl}
-          makePageUrl={this.makePageUrl}
         />
       );
     }
@@ -329,14 +327,6 @@ export class ResumeForm extends React.Component<Props> {
       currentSection !== Section.preview ? currentSection : backToSection;
 
     return currentSection;
-  };
-
-  private updatePageUrl = (url: string) => {
-    this.props.history.push(url);
-  };
-
-  private makePageUrl = (url: string) => {
-    return this.urlFromSection(currentSection) + "/" + url;
   };
 }
 
