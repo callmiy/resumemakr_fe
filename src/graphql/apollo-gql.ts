@@ -21,6 +21,49 @@ export interface CreateResume_createResume_resume_languages {
   __typename: "Rated";
 }
 
+export interface CreateResume_createResume_resume_personalInfo {
+  id: string;
+  address: string | null;
+  dateOfBirth: string | null;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  photo: string | null;
+  profession: string | null;
+  __typename: "PersonalInfo";
+}
+
+export interface CreateResume_createResume_resume_experiences {
+  id: string;
+  index: number;
+  achievements: (string | null)[] | null;
+  companyName: string | null;
+  fromDate: string | null;
+  position: string | null;
+  toDate: string | null;
+  __typename: "ResumeExperience";
+}
+
+export interface CreateResume_createResume_resume_skills {
+  id: string;
+  index: number;
+  description: string | null;
+  achievements: (string | null)[] | null;
+  __typename: "Skill";
+}
+
+export interface CreateResume_createResume_resume_education {
+  id: string;
+  index: number;
+  course: string | null;
+  fromDate: string | null;
+  toDate: string | null;
+  school: string | null;
+  achievements: (string | null)[] | null;
+  __typename: "Education";
+}
+
 export interface CreateResume_createResume_resume {
   id: string;  // The ID of an object
   title: string;
@@ -29,6 +72,10 @@ export interface CreateResume_createResume_resume {
   __typename: "Resume";
   additionalSkills: (CreateResume_createResume_resume_additionalSkills | null)[] | null;
   languages: (CreateResume_createResume_resume_languages | null)[] | null;
+  personalInfo: CreateResume_createResume_resume_personalInfo | null;
+  experiences: (CreateResume_createResume_resume_experiences | null)[] | null;
+  skills: (CreateResume_createResume_resume_skills | null)[] | null;
+  education: (CreateResume_createResume_resume_education | null)[] | null;
 }
 
 export interface CreateResume_createResume {
@@ -193,6 +240,7 @@ export interface LoginMutationVariables {
 export interface ResumeTitles_listResumes_edges_node {
   id: string;  // The ID of an object
   title: string;
+  description: string | null;
   updatedAt: any;
   __typename: "Resume";
 }
@@ -343,6 +391,7 @@ export interface UserRegMutationVariables {
 export interface ResumeTitlesFrag_edges_node {
   id: string;  // The ID of an object
   title: string;
+  description: string | null;
   updatedAt: any;
   __typename: "Resume";
 }
@@ -353,6 +402,20 @@ export interface ResumeTitlesFrag_edges {
 
 export interface ResumeTitlesFrag {
   edges: (ResumeTitlesFrag_edges | null)[] | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: RatedFrag
+// ====================================================
+
+export interface RatedFrag {
+  id: string;
+  description: string | null;
+  level: string | null;
 }
 
 
@@ -432,52 +495,6 @@ export interface ResumeFullFrag {
   experiences: (ResumeFullFrag_experiences | null)[] | null;
   skills: (ResumeFullFrag_skills | null)[] | null;
   education: (ResumeFullFrag_education | null)[] | null;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL fragment: RatedFrag
-// ====================================================
-
-export interface RatedFrag {
-  id: string;
-  description: string | null;
-  level: string | null;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL fragment: ResumeMinimalFrag
-// ====================================================
-
-export interface ResumeMinimalFrag_additionalSkills {
-  id: string;
-  description: string | null;
-  level: string | null;
-  __typename: "Rated";
-}
-
-export interface ResumeMinimalFrag_languages {
-  id: string;
-  description: string | null;
-  level: string | null;
-  __typename: "Rated";
-}
-
-export interface ResumeMinimalFrag {
-  id: string;  // The ID of an object
-  title: string;
-  description: string | null;
-  hobbies: (string | null)[] | null;
-  __typename: "Resume";
-  additionalSkills: (ResumeMinimalFrag_additionalSkills | null)[] | null;
-  languages: (ResumeMinimalFrag_languages | null)[] | null;
 }
 
 

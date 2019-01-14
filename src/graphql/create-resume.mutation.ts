@@ -1,19 +1,19 @@
 import gql from "graphql-tag";
 import { MutationFn } from "react-apollo";
 
-import { resumeMinimalFrag } from "./resume_minimal.fragment";
+import { resumeFullFrag } from "./resume_full.fragment";
 import { CreateResume, CreateResumeVariables } from "./apollo-gql";
 
 export const createResume = gql`
   mutation CreateResume($input: CreateResumeInput!) {
     createResume(input: $input) {
       resume {
-        ...ResumeMinimalFrag
+        ...ResumeFullFrag
       }
     }
   }
 
-  ${resumeMinimalFrag}
+  ${resumeFullFrag}
 `;
 
 export default createResume;

@@ -1,10 +1,30 @@
 import gql from "graphql-tag";
 
-import { resumeMinimalFrag } from "./resume_minimal.fragment";
+const ratedFrag = gql`
+  fragment RatedFrag on Rated {
+    id
+    description
+    level
+  }
+`;
 
 export const resumeFullFrag = gql`
   fragment ResumeFullFrag on Resume {
-    ...ResumeMinimalFrag
+    id
+    title
+    description
+    hobbies
+    __typename
+
+    additionalSkills {
+      ...RatedFrag
+      __typename
+    }
+
+    languages {
+      ...RatedFrag
+      __typename
+    }
 
     personalInfo {
       id
@@ -50,7 +70,7 @@ export const resumeFullFrag = gql`
     }
   }
 
-  ${resumeMinimalFrag}
+  ${ratedFrag}
 `;
 
 export default resumeFullFrag;

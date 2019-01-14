@@ -9,6 +9,7 @@ const resumeTitlesFrag = gql`
       node {
         id
         title
+        description
         updatedAt
         __typename
       }
