@@ -27,7 +27,9 @@ export function ListIndexHeader<TValues extends { index: number }>({
 
   return (
     <Container>
-      <Card.Header id={id}>Company #{index}</Card.Header>
+      <Card.Header id={id}>
+        {label} #{index}
+      </Card.Header>
 
       <div>
         {len > index && (
