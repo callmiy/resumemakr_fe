@@ -30,3 +30,5 @@ export function stripTypeName(value: any) {
 export function toServerUrl(url: string) {
   return new URL(url, getBackendUrls().root);
 }
+
+export type SetFieldValue<T> = (field: string, value: Array<T | null>) => void;

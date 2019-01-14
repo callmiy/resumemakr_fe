@@ -7,10 +7,11 @@ import RegularField from "../RegularField";
 import SectionLabel from "../SectionLabel";
 import { emptyVals, Props } from "./experiences";
 import { CircularLabel } from "../styles/mixins";
-import { ExperienceHeader, ExperienceContainer } from "./experience.style";
+import { ExperienceContainer } from "./experience.style";
+import ListIndexHeader from "../ListIndexHeader";
 
 let allExperiences: Array<CreateExperienceInput | null> = [];
-let len = 0;
+const HeaderLabelText = "Company";
 
 export class Experiences extends React.Component<Props, {}> {
   componentDidMount() {
@@ -29,7 +30,6 @@ export class Experiences extends React.Component<Props, {}> {
     const { label } = this.props;
     const values = this.props.values || [{ ...emptyVals }];
     allExperiences = values;
-    len = values.length;
 
     return (
       <>
@@ -41,18 +41,14 @@ export class Experiences extends React.Component<Props, {}> {
 
         <FieldArray
           name="experiences"
-          render={arrayHelper => values.map(this.renderExperience(arrayHelper))}
+          render={arrayHelper => values.map(this.renderExperience)}
         />
       </>
     );
   }
 
-  private renderExperience = (arrayHelper: FieldArrayRenderProps) => (
-    exp: CreateExperienceInput | null
-  ) => {
-    if (!exp) {
-      return null;
-    }
+  private renderExperience = (exp: CreateExperienceInput | null) => {
+    exp = exp as CreateExperienceInput;
 
     const { setFieldValue } = this.props;
     /**
@@ -66,57 +62,16 @@ export class Experiences extends React.Component<Props, {}> {
       achievements = [""];
     }
 
-    const id = "company-" + index;
-
     return (
-      <ExperienceContainer key={id}>
-        <ExperienceHeader>
-          <Card.Header id={id}>Company #{index}</Card.Header>
-
-          <div>
-            {len > index && (
-              <CircularLabel
-                color="blue"
-                onClick={function onSwapExperienceDown() {
-                  setFieldValue("experiences", swap(index, index + 1));
-                }}
-              >
-                <Icon name="arrow down" />
-              </CircularLabel>
-            )}
-
-            {len > 1 && (
-              <CircularLabel
-                color="red"
-                onClick={function onRemoveEmployee() {
-                  setFieldValue("experiences", remove(index));
-                }}
-              >
-                <Icon name="remove" />
-              </CircularLabel>
-            )}
-
-            <CircularLabel
-              color="green"
-              onClick={function onAddEmployee() {
-                setFieldValue("experiences", add(index));
-              }}
-            >
-              <Icon name="add" />
-            </CircularLabel>
-
-            {index > 1 && (
-              <CircularLabel
-                color="blue"
-                onClick={function onSwapExperienceUp() {
-                  setFieldValue("experiences", swap(index, index - 1));
-                }}
-              >
-                <Icon name="arrow up" />
-              </CircularLabel>
-            )}
-          </div>
-        </ExperienceHeader>
+      <ExperienceContainer key={index}>
+        <ListIndexHeader
+          index={index}
+          label={HeaderLabelText}
+          fieldName="experiences"
+          setFieldValue={setFieldValue}
+          values={allExperiences as CreateExperienceInput[]}
+          empty={emptyVals}
+        />
 
         <Card.Content>
           <FastField
@@ -290,73 +245,4 @@ function Achievement({
  */
 function makeName(index: number, key: keyof CreateExperienceInput) {
   return `experiences[${index - 1}].${key}`;
-}
-
-function swap(indexA: number, indexB: number) {
-  return allExperiences.map(e => {
-    if (!e) {
-      return e;
-    }
-
-    const index = e.index;
-
-    if (index === indexA) {
-      e.index = indexB;
-    } else if (index === indexB) {
-      e.index = indexA;
-    }
-
-    return e;
-  });
-}
-
-function remove(index: number) {
-  return allExperiences.reduce(
-    (acc, exp, ind) => {
-      if (!exp) {
-        return acc;
-      }
-
-      const expInd = exp.index;
-
-      if (expInd < index) {
-        acc[ind] = exp;
-      } else if (expInd > index) {
-        exp.index = ind;
-        acc[ind - 1] = exp;
-      }
-
-      return acc;
-    },
-    [] as Array<CreateExperienceInput | null>
-  );
-}
-
-function add(index: number) {
-  if (len === index) {
-    return [...allExperiences, { ...emptyVals, index: index + 1 }];
-  }
-
-  return allExperiences.reduce(
-    (acc, exp, ind) => {
-      if (!exp) {
-        return acc;
-      }
-
-      const expInd = exp.index;
-
-      if (expInd < index) {
-        acc[ind] = exp;
-      } else if (expInd === index) {
-        acc[ind] = exp;
-        acc[ind + 1] = { ...emptyVals, index: index + 1 };
-      } else if (expInd > index) {
-        exp.index = expInd + 1;
-        acc[ind + 1] = exp;
-      }
-
-      return acc;
-    },
-    [] as Array<CreateExperienceInput | null>
-  );
 }

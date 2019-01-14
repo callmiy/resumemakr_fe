@@ -3,6 +3,7 @@ import { RouteComponentProps } from "react-router-dom";
 
 import { CreateExperienceInput } from "../graphql/apollo-gql";
 import { Section } from "../ResumeForm/resume-form";
+import { SetFieldValue } from "../utils";
 
 export const emptyVals: CreateExperienceInput = {
   position: "",
@@ -39,13 +40,8 @@ export const defaultVal: CreateExperienceInput = {
   index: 1
 };
 
-export type SetFieldValue = (
-  field: string,
-  value: Array<CreateExperienceInput | null>
-) => void;
-
 export interface ChildProps {
-  setFieldValue: SetFieldValue;
+  setFieldValue: SetFieldValue<CreateExperienceInput>;
 }
 
 export interface Props extends RouteComponentProps, ChildProps {
