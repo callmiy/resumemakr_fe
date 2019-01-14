@@ -5,7 +5,7 @@ import { CreateExperienceInput } from "../graphql/apollo-gql";
 import { Section } from "../ResumeForm/resume-form";
 import { ChildProps } from "../ResumeForm/resume-form";
 
-export const emptyVals: CreateExperienceInput = {
+export const emptyVal: CreateExperienceInput = {
   position: "",
   companyName: "",
   fromDate: "",

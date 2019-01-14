@@ -7,7 +7,7 @@ import SectionLabel from "../SectionLabel";
 import RegularField from "../RegularField";
 import PhotoField from "../PhotoField";
 import { Section } from "../ResumeForm/resume-form";
-import { emptyVals } from "./personal-info";
+import { emptyVal } from "./personal-info";
 
 interface Props {
   values: PersonalInfoInput | null | undefined;
@@ -20,7 +20,7 @@ export class PersonalInfo extends React.Component<Props, {}> {
     let values = this.props.values;
 
     if (!values) {
-      values = emptyVals;
+      values = emptyVal;
     }
 
     return (

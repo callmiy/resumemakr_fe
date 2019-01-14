@@ -5,7 +5,7 @@ import { FastField, FieldArray } from "formik";
 import { CreateExperienceInput } from "../graphql/apollo-gql";
 import RegularField from "../RegularField";
 import SectionLabel from "../SectionLabel";
-import { emptyVals, Props } from "./experiences";
+import { emptyVal, Props } from "./experiences";
 import ListIndexHeader from "../ListIndexHeader";
 import ListStrings from "../ListStrings";
 
@@ -29,7 +29,7 @@ export class Experiences extends React.Component<Props, {}> {
     const { label } = this.props;
 
     const values = (this.props.values || [
-      { ...emptyVals }
+      { ...emptyVal }
     ]) as CreateExperienceInput[];
 
     cachedValues = values;
@@ -73,7 +73,7 @@ export class Experiences extends React.Component<Props, {}> {
           fieldName={fieldName}
           setFieldValue={setFieldValue}
           values={cachedValues as CreateExperienceInput[]}
-          empty={emptyVals}
+          empty={emptyVal}
         />
 
         <Card.Content>

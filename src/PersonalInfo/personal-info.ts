@@ -26,7 +26,7 @@ export const validationSchema = Yup.object<PersonalInfoInput>().shape({
   photo: Yup.string()
 });
 
-export const emptyVals: PersonalInfoInput = {
+export const emptyVal: PersonalInfoInput = {
   firstName: "",
   lastName: "",
   profession: "",
