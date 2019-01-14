@@ -1,5 +1,9 @@
-// tslint:disable-next-line:no-any
-export const logger = async (prefix: string, tag: string, ...data: any) => {
+export const logger = async (
+  prefix: keyof Console,
+  tag: string,
+  // tslint:disable-next-line:no-any
+  ...data: any
+) => {
   if (process.env.NODE_ENV === "development") {
     // tslint:disable-next-line:no-console
     console[prefix](

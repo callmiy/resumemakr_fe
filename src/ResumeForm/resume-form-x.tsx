@@ -12,7 +12,8 @@ import {
   toSection,
   sectionsList,
   lastSectionIndex,
-  Props
+  Props,
+  getInitialValues
 } from "./resume-form";
 
 import {
@@ -40,6 +41,7 @@ import Loading from "../Loading";
 import { ALREADY_UPLOADED } from "../constants";
 import { UpdateResumeInput } from "../graphql/apollo-gql";
 import { ResumePathHash } from "../routing";
+import logger from "../logger";
 
 let valuesTracker: FormValues | null = null;
 
@@ -183,6 +185,8 @@ export class ResumeForm extends React.Component<Props> {
           setFieldValue={setFieldValue}
           values={values.experiences}
           label={label}
+          updatePageUrl={this.updatePageUrl}
+          makePageUrl={this.makePageUrl}
         />
       );
     }
@@ -256,44 +260,46 @@ export class ResumeForm extends React.Component<Props> {
       return;
     }
 
-    /**
-     * Immediately after user updates photo, value tracker will have type File
-     * but a string will be returned from the server.  This mismatch i.e.
-     * string<->File will cause re-update. So we prevent this here.
-     */
-
-    const photoTracking =
-      // tslint:disable-next-line:no-any
-      valuesTracker.personalInfo && (valuesTracker.personalInfo.photo as any);
-
-    if (photoTracking instanceof File && isStringPhoto) {
-      valuesTracker = { ...values };
-      return;
-    }
-
     const { updateResume } = this.props;
 
     if (!updateResume) {
       return;
     }
 
-    valuesTracker = { ...values };
-
     try {
-      updateResume({
+      const result = await updateResume({
         variables: {
           input: {
             ...(values as UpdateResumeInput)
           }
         }
       });
+
+      if (!result) {
+        return;
+      }
+
+      const { data } = result;
+
+      if (!data) {
+        return;
+      }
+
+      const updatedResumeResume = data.updateResume;
+
+      if (!updatedResumeResume) {
+        return;
+      }
+
+      const { resume } = updatedResumeResume;
+
+      if (!resume) {
+        return;
+      }
+
+      valuesTracker = getInitialValues(resume);
     } catch (error) {
-      // tslint:disable-next-line:no-console
-      console.log(
-        "\n\t\tLogging start\n\n\n\n update catch error\n",
-        error,
-        "\n\n\n\n\t\tLogging ends\n"
-      );
+      logger("error", "update catch error", error);
     }
   };
 
@@ -321,6 +327,14 @@ export class ResumeForm extends React.Component<Props> {
       currentSection !== Section.preview ? currentSection : backToSection;
 
     return currentSection;
+  };
+
+  private updatePageUrl = (url: string) => {
+    this.props.history.push(url);
+  };
+
+  private makePageUrl = (url: string) => {
+    return this.urlFromSection(currentSection) + "/" + url;
   };
 }
 

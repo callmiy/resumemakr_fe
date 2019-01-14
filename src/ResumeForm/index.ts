@@ -43,7 +43,9 @@ const getResumeGql = graphql<
         input: {
           title: match.params.title
         }
-      }
+      },
+
+      fetchPolicy: "cache-and-network"
     };
   }
 });

@@ -1,3 +1,5 @@
+import { withRouter } from "react-router-dom";
+
 import { Experiences } from "./experiences-x";
 
-export default Experiences;
+export default withRouter(Experiences);
