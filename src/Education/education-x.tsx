@@ -10,6 +10,7 @@ import RegularField from "../RegularField";
 import { emptyVal } from "./education";
 import { ChildProps } from "../ResumeForm/resume-form";
 import ListIndexHeader from "../ListIndexHeader";
+import ListStrings from "../ListStrings";
 
 let cachedValues: EducationInput[] = [];
 const headerLabelText = "School";
@@ -97,16 +98,21 @@ export class Education extends React.Component<Props, {}> {
 
           <FieldArray
             name={makeName(index, "achievements")}
-            render={helper =>
-              achievements.map((achievement, ind) => (
-                <FastField
-                  name={`${makeName(index, "achievements")}.${ind}`}
-                  key={ind}
-                  defaultValue={achievement}
-                  component={RegularField}
+            render={helper => {
+              return (
+                <ListStrings
+                  values={achievements as string[]}
+                  arrayHelper={helper}
+                  header={
+                    <div>
+                      Achievements
+                      <span> (responsibilities, activities)</span>
+                    </div>
+                  }
+                  fieldName={makeName(index, "achievements")}
                 />
-              ))
-            }
+              );
+            }}
           />
         </Card.Content>
       </Card>
