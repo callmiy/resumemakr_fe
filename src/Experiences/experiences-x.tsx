@@ -10,7 +10,7 @@ import { CircularLabel } from "../styles/mixins";
 import { ExperienceContainer } from "./experience.style";
 import ListIndexHeader from "../ListIndexHeader";
 
-let allExperiences: Array<CreateExperienceInput | null> = [];
+let cachedValues: CreateExperienceInput[] = [];
 const HeaderLabelText = "Company";
 
 export class Experiences extends React.Component<Props, {}> {
@@ -23,13 +23,17 @@ export class Experiences extends React.Component<Props, {}> {
   }
 
   componentWillUnmount() {
-    allExperiences = (null as unknown) as Array<CreateExperienceInput | null>;
+    cachedValues = (null as unknown) as CreateExperienceInput[];
   }
 
   render() {
     const { label } = this.props;
-    const values = this.props.values || [{ ...emptyVals }];
-    allExperiences = values;
+
+    const values = (this.props.values || [
+      { ...emptyVals }
+    ]) as CreateExperienceInput[];
+
+    cachedValues = values;
 
     return (
       <>
@@ -47,9 +51,7 @@ export class Experiences extends React.Component<Props, {}> {
     );
   }
 
-  private renderExperience = (exp: CreateExperienceInput | null) => {
-    exp = exp as CreateExperienceInput;
-
+  private renderExperience = (exp: CreateExperienceInput) => {
     const { setFieldValue } = this.props;
     /**
      * index is 1-based
@@ -69,7 +71,7 @@ export class Experiences extends React.Component<Props, {}> {
           label={HeaderLabelText}
           fieldName="experiences"
           setFieldValue={setFieldValue}
-          values={allExperiences as CreateExperienceInput[]}
+          values={cachedValues as CreateExperienceInput[]}
           empty={emptyVals}
         />
 
