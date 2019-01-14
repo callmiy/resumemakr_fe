@@ -102,7 +102,7 @@ export class Home extends React.Component<Props, State> {
 
         <Modal.Actions>
           <Button
-            positive={true}
+            negative={true}
             icon="remove"
             labelPosition="right"
             content="No"
@@ -112,7 +112,7 @@ export class Home extends React.Component<Props, State> {
           />
 
           <Button
-            negative={true}
+            positive={true}
             icon="checkmark"
             labelPosition="right"
             content="Yes"
