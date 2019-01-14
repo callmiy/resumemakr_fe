@@ -201,6 +201,10 @@ export class ResumeForm extends React.Component<Props> {
       );
     }
 
+    if (currentSection === Section.skills) {
+      return <Skills label={label} values={values.skills} />;
+    }
+
     if (currentSection === Section.addSkills) {
       return (
         <AdditionalSkills
@@ -216,10 +220,6 @@ export class ResumeForm extends React.Component<Props> {
 
     if (currentSection === Section.hobbies) {
       return <Hobbies label={label} values={values.hobbies} />;
-    }
-
-    if (currentSection === Section.skills) {
-      return <Skills label={label} values={values.skills} />;
     }
 
     return null;

@@ -79,10 +79,10 @@ export enum Section {
   personalInfo = "personal-information",
   experiences = "experiences",
   education = "education",
+  skills = "skill-summary",
   addSkills = "additional-skills",
   langs = "languages",
   hobbies = "hobbies",
-  skills = "skill-summary",
   preview = "preview"
 }
 
