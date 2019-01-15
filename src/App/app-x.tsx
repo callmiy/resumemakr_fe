@@ -1,5 +1,5 @@
 import React, { Component, Suspense, lazy } from "react";
-import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import logger from "../logger";
 import Loading from "../Loading";
@@ -8,6 +8,7 @@ import AuthRequired from "../AuthRequired";
 import { AppContainer } from "../styles/mixins";
 import { Props } from "./app";
 import Header from "../Header";
+import NotFound from "../NotFound";
 
 function Root() {
   return (
@@ -73,7 +74,7 @@ export class App extends Component<Props> {
                 }}
               />
 
-              <Redirect to={LOGIN_URL} />
+              <Route component={NotFound} />
             </Switch>
           ) : (
             <Root />
