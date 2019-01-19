@@ -83,6 +83,12 @@ export class Header extends React.Component<Props, {}> {
                     Sign up
                   </Dropdown.Item>
                 )}
+
+                {match.path === SIGN_UP_URL && (
+                  <Dropdown.Item as={NavLink} to={LOGIN_URL}>
+                    Login
+                  </Dropdown.Item>
+                )}
               </Dropdown.Menu>
             </Dropdown>
           </Menu.Menu>

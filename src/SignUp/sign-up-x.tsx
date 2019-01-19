@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Card, Input, Message, Icon, Form } from "semantic-ui-react";
+import "styled-components/macro";
 
 import {
   Formik,
@@ -12,8 +13,6 @@ import {
 import loIsEmpty from "lodash/isEmpty";
 import { ApolloError } from "apollo-client";
 
-import "./sign-up.scss";
-
 import {
   Props,
   initialFormValues,
@@ -23,12 +22,14 @@ import {
 
 import { RegistrationInput } from "../graphql/apollo-gql";
 import { LOGIN_URL, ROOT_URL } from "../routing";
+import Header from "../Header";
+import { AppContainer, AppMain1 } from "../styles/mixins";
 
 const FORM_RENDER_PROPS = {
   name: ["Name", "text"],
   email: ["Email", "email"],
   password: ["Password", "password"],
-  passwordConfirmation: ["Password Confirm", "password"],
+  passwordConfirmation: ["Confirm Password", "password"],
   source: ["Source", "text"]
 };
 
@@ -44,8 +45,17 @@ export class SignUp extends React.Component<Props, State> {
 
   render() {
     return (
-      <div className="app-container">
-        <div className="app-main routes-sign-up-route" ref={this.mainRef}>
+      <AppContainer>
+        <Header />
+
+        <AppMain1
+          ref={this.mainRef}
+          css={`
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          `}
+        >
           <Formik
             initialValues={initialFormValues}
             onSubmit={() => null}
@@ -53,8 +63,8 @@ export class SignUp extends React.Component<Props, State> {
             validationSchema={ValidationSchema}
             validateOnChange={false}
           />
-        </div>
-      </div>
+        </AppMain1>
+      </AppContainer>
     );
   }
 
@@ -121,10 +131,26 @@ export class SignUp extends React.Component<Props, State> {
     const { history } = this.props;
 
     return (
-      <Card>
+      <Card
+        css={`
+          overflow-y: auto;
+          height: 85%;
+          min-width: 310px;
+          width: 95% !important;
+          max-width: 400px !important;
+          min-height: 350px !important;
+        `}
+      >
         {this.renderFormErrors()}
 
-        <Card.Content extra={true}>Sign up to create your resume</Card.Content>
+        <Card.Content
+          css={`
+            flex-shrink: 0;
+          `}
+          extra={true}
+        >
+          Sign up to create your resume
+        </Card.Content>
 
         <Card.Content>
           <Form onSubmit={this.onSubmit(props)}>
@@ -153,7 +179,12 @@ export class SignUp extends React.Component<Props, State> {
           </Form>
         </Card.Content>
 
-        <Card.Content extra={true}>
+        <Card.Content
+          css={`
+            flex-shrink: 0;
+          `}
+          extra={true}
+        >
           <Button
             className="to-login-button"
             type="button"
