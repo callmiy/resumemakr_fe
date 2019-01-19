@@ -1,4 +1,5 @@
-import { graphql } from "react-apollo";
+import { graphql, compose } from "react-apollo";
+import { withRouter } from "react-router-dom";
 
 import USER_LOCAL_QUERY, {
   UserLocalGqlProps,
@@ -7,6 +8,7 @@ import USER_LOCAL_QUERY, {
 
 import { Header } from "./header-x";
 import { OwnProps } from "./header";
+import { userLocalMutationGql } from "../State/user.local.mutation";
 
 const userLocalGql = graphql<
   OwnProps,
@@ -17,4 +19,8 @@ const userLocalGql = graphql<
   props: ({ data }) => data
 });
 
-export default userLocalGql(Header);
+export default compose(
+  withRouter,
+  userLocalGql,
+  userLocalMutationGql
+)(Header);

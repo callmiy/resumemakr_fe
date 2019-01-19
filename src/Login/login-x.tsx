@@ -76,10 +76,11 @@ export class Login extends React.Component<Props, State> {
       <Card
         css={`
           overflow-y: auto;
-          height: 95%;
+          height: 45%;
           min-width: 310px;
           width: 95% !important;
           max-width: 400px !important;
+          min-height: 350px !important;
         `}
       >
         <Errors

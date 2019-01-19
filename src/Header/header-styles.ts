@@ -38,8 +38,8 @@ export const Container = styled.div`
     }
 
     .dropdown .menu {
-      font-size: 1.5em;
-      margin-top: 0.1em;
+      /* font-size: 1.5em; */
+      margin-top: 0;
     }
   }
 `;

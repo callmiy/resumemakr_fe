@@ -2,7 +2,7 @@ import React from "react";
 import { Input, Menu, Icon, Label, Dropdown } from "semantic-ui-react";
 import { NavLink } from "react-router-dom";
 
-import { LOGIN_URL, ROOT_URL } from "../routing";
+import { LOGIN_URL, ROOT_URL, SIGN_UP_URL } from "../routing";
 import { Container } from "./header-styles";
 import { Props } from "./header";
 
@@ -11,13 +11,20 @@ export class Header extends React.Component<Props, {}> {
 
   render() {
     const { activeItem } = this.state;
-    const { leftMenuItems = [], rightMenuItems = [], user } = this.props;
+    const {
+      leftMenuItems = [],
+      rightMenuItems = [],
+      user,
+      match,
+      updateLocalUser,
+      history
+    } = this.props;
 
     return (
       <Container>
         <Menu secondary={true}>
           <Menu.Item
-            as={NavLink}
+            as={user ? NavLink : "span"}
             to={ROOT_URL}
             className="logo"
             name="home"
@@ -49,10 +56,32 @@ export class Header extends React.Component<Props, {}> {
                   <>
                     <Dropdown.Divider />
 
-                    <Dropdown.Item as={NavLink} to={LOGIN_URL}>
+                    <Dropdown.Item
+                      as={NavLink}
+                      to={LOGIN_URL}
+                      onClick={async evt => {
+                        evt.preventDefault();
+
+                        if (updateLocalUser) {
+                          await updateLocalUser({
+                            variables: {
+                              user: null
+                            }
+                          });
+                        }
+
+                        history.replace(LOGIN_URL);
+                      }}
+                    >
                       Logout
                     </Dropdown.Item>
                   </>
+                )}
+
+                {match.path === LOGIN_URL && (
+                  <Dropdown.Item as={NavLink} to={SIGN_UP_URL}>
+                    Sign up
+                  </Dropdown.Item>
                 )}
               </Dropdown.Menu>
             </Dropdown>

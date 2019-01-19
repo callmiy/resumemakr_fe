@@ -108,7 +108,6 @@ const global = css`
 
   .ui.label,
   .ui.labels .label {
-    font-size: 1em;
     color: white;
   }
 
