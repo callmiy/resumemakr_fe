@@ -4,18 +4,14 @@ import { NavLink } from "react-router-dom";
 
 import { LOGIN_URL, ROOT_URL } from "../routing";
 import { Container } from "./header-styles";
-
-interface Props {
-  leftMenuItems?: JSX.Element[];
-  rightMenuItems?: JSX.Element[];
-}
+import { Props } from "./header";
 
 export class Header extends React.Component<Props, {}> {
   state = { activeItem: "home" };
 
   render() {
     const { activeItem } = this.state;
-    const { leftMenuItems = [], rightMenuItems = [] } = this.props;
+    const { leftMenuItems = [], rightMenuItems = [], user } = this.props;
 
     return (
       <Container>
@@ -33,9 +29,11 @@ export class Header extends React.Component<Props, {}> {
           <Menu.Menu position="right">
             {rightMenuItems.map(r => r)}
 
-            <Menu.Item>
-              <Input icon="search" placeholder="Search..." />
-            </Menu.Item>
+            {user && (
+              <Menu.Item>
+                <Input icon="search" placeholder="Search..." />
+              </Menu.Item>
+            )}
 
             <Dropdown
               item={true}
@@ -47,11 +45,15 @@ export class Header extends React.Component<Props, {}> {
               simple={true}
             >
               <Dropdown.Menu>
-                <Dropdown.Divider />
+                {user && (
+                  <>
+                    <Dropdown.Divider />
 
-                <Dropdown.Item as={NavLink} to={LOGIN_URL}>
-                  Logout
-                </Dropdown.Item>
+                    <Dropdown.Item as={NavLink} to={LOGIN_URL}>
+                      Logout
+                    </Dropdown.Item>
+                  </>
+                )}
               </Dropdown.Menu>
             </Dropdown>
           </Menu.Menu>

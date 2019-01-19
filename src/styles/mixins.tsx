@@ -131,6 +131,15 @@ export const AppMain = styled.div`
   position: relative;
 `;
 
+export const AppMain1 = styled.div`
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
 export const appBgColor = "#f4f4f4";
 
 export const AppContainer = styled.div`

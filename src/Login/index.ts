@@ -30,7 +30,7 @@ const userLocalGql = graphql<
   {},
   UserLocalGqlData,
   {},
-  UserLocalGqlProps | void
+  UserLocalGqlProps | undefined
 >(USER_LOCAL_QUERY, {
   props: ({ data }) => data
 });

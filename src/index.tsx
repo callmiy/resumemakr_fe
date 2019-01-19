@@ -1,28 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { ApolloProvider } from "react-apollo";
-import { createGlobalStyle } from "styled-components";
 import "semantic-ui-css-offline";
 
-import "./index.scss";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import setUp from "./State/apollo-setup";
+import GlobalStyle from "./styles/global-style";
 
 const { persistCache, client } = setUp();
-
-const GlobalStyle = createGlobalStyle`
-  ul {
-    padding: 0;
-    margin: 0;
-
-  
-  }
-
-  li{
-      list-style-type: none;
-    }
-`;
 
 ReactDOM.render(
   <ApolloProvider client={client}>

@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Card, Input, Message, Icon, Form } from "semantic-ui-react";
 import { ApolloError } from "apollo-client";
+import "styled-components/macro";
 
 import {
   Formik,
@@ -11,11 +12,12 @@ import {
   FormikErrors
 } from "formik";
 
-import "./login.scss";
 import { Props, ValidationSchema } from "./login";
 import { LoginInput } from "../graphql/apollo-gql";
 import { SIGN_UP_URL, ROOT_URL } from "../routing";
 import PwdInput from "../PwdInput";
+import Header from "../Header";
+import { AppContainer, AppMain1 } from "../styles/mixins";
 
 const Errors = React.memo(ErrorsComp, ErrorsCompEqual);
 
@@ -37,8 +39,16 @@ export class Login extends React.Component<Props, State> {
     const { loggedOutUser, user } = this.props;
 
     return (
-      <div className="app-container">
-        <div className="app-main routes-login">
+      <AppContainer>
+        <Header />
+
+        <AppMain1
+          css={`
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          `}
+        >
           <Formik
             initialValues={{
               email:
@@ -52,8 +62,8 @@ export class Login extends React.Component<Props, State> {
             validationSchema={ValidationSchema}
             validateOnChange={false}
           />
-        </div>
-      </div>
+        </AppMain1>
+      </AppContainer>
     );
   }
 
@@ -63,13 +73,28 @@ export class Login extends React.Component<Props, State> {
     const { dirty, isSubmitting } = props;
 
     return (
-      <Card>
+      <Card
+        css={`
+          overflow-y: auto;
+          height: 95%;
+          min-width: 310px;
+          width: 95% !important;
+          max-width: 400px !important;
+        `}
+      >
         <Errors
           errors={{ graphQlErrors, otherErrors, formErrors }}
           handleErrorsDismissed={this.handleErrorsDismissed}
         />
 
-        <Card.Content extra={true}>Login to your account</Card.Content>
+        <Card.Content
+          css={`
+            flex-shrink: 0;
+          `}
+          extra={true}
+        >
+          Login to your account
+        </Card.Content>
 
         <Card.Content>
           <Form onSubmit={this.onSubmit(props)}>
@@ -92,9 +117,13 @@ export class Login extends React.Component<Props, State> {
           </Form>
         </Card.Content>
 
-        <Card.Content extra={true}>
+        <Card.Content
+          css={`
+            flex-shrink: 0;
+          `}
+          extra={true}
+        >
           <Button
-            className="to-sign-up-button"
             type="button"
             fluid={true}
             onClick={() => history.replace(SIGN_UP_URL)}
