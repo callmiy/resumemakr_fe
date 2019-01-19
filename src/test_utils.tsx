@@ -17,7 +17,7 @@ export function makeClient() {
 interface HistoryProps {
   push?: (path: string) => void;
   replace?: (path: string) => void;
-  resumeBuilderPath?: string;
+  resumeMakrPath?: string;
 }
 
 const defaultHistoryProps: HistoryProps = {
@@ -27,7 +27,7 @@ const defaultHistoryProps: HistoryProps = {
 
 export function makeHistory(params: HistoryProps = defaultHistoryProps) {
   const history = createMemoryHistory({
-    initialEntries: [params.resumeBuilderPath || "/"]
+    initialEntries: [params.resumeMakrPath || "/"]
   });
 
   return { ...history, ...params };

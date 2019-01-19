@@ -22,7 +22,7 @@ jest.mock("../Preview", () => {
 
 it("navigates forward", () => {
   /**
-   * Given she is on the resume builder page
+   * Given she is on the resume makr page
    */
   const { Ui: ui } = renderWithApollo(ResumeFormP);
   const Ui = withFormik(formikConfig)(ui) as P;

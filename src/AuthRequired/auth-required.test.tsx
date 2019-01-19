@@ -28,7 +28,7 @@ function App(props: Props = {}) {
 
 it("renders auth component when user is not null", () => {
   const { Ui } = renderWithRouter(App, {
-    resumeBuilderPath: "/my-path"
+    resumeMakrPath: "/my-path"
   });
 
   const { container } = render(
@@ -40,7 +40,7 @@ it("renders auth component when user is not null", () => {
 
 xit("redirects to login when user is null", () => {
   const { Ui } = renderWithRouter(App, {
-    resumeBuilderPath: "/my-path"
+    resumeMakrPath: "/my-path"
   });
 
   const { container } = render(<Ui />);

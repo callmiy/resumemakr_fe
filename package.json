@@ -1,5 +1,5 @@
 {
-  "name": "resume_builder",
+  "name": "resumemakr",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -31,7 +31,7 @@
   },
   "scripts": {
     "start": "cross-env PORT=4024 BROWSER=none REACT_APP_API_URL=http://localhost:4025/api yarn react-scripts start",
-    "build-prod": "cross-env REACT_APP_API_URL=https://exceach.herokuapp.com/api  react-scripts build",
+    "build-prod": "cross-env REACT_APP_API_URL=https://resumemakr.herokuapp.com/api  react-scripts build",
     "build-local-prod": "cross-env REACT_APP_API_URL=http://localhost:4026/api  react-scripts build",
     "test": "cross-env REACT_APP_API_URL=http://localhost:4025/api yarn react-scripts test",
     "test-cover": "yarn test --coverage --coverageDirectory=./coverage",
