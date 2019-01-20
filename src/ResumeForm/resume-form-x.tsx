@@ -215,6 +215,7 @@ export class ResumeForm extends React.Component<Props> {
         <AdditionalSkills
           label={label}
           values={values.additionalSkills || []}
+          setFieldValue={setFieldValue}
         />
       );
     }

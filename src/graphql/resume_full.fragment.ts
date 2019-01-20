@@ -5,6 +5,7 @@ const ratedFrag = gql`
     id
     description
     level
+    index
   }
 `;
 

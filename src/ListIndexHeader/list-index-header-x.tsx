@@ -12,6 +12,7 @@ interface Props<TValues> {
   fieldName: string;
   values: TValues[];
   empty: TValues;
+  idPrefix?: string;
 }
 
 export function ListIndexHeader<TValues extends { index: number }>({
@@ -20,15 +21,16 @@ export function ListIndexHeader<TValues extends { index: number }>({
   setFieldValue,
   fieldName,
   values,
-  empty
+  empty,
+  idPrefix
 }: Props<TValues>) {
-  const id = label + "-" + index;
+  const id = (idPrefix || label) + "-" + index;
   const len = values.length;
 
   return (
     <Container>
       <Card.Header id={id}>
-        {label} #{index}
+        {`${label ? label + " #" + index : "#" + index}`}
       </Card.Header>
 
       <div>

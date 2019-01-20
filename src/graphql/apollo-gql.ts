@@ -11,6 +11,7 @@ export interface CloneResume_cloneResume_resume_additionalSkills {
   id: string;
   description: string | null;
   level: string | null;
+  index: number;
   __typename: "Rated";
 }
 
@@ -18,6 +19,7 @@ export interface CloneResume_cloneResume_resume_languages {
   id: string;
   description: string | null;
   level: string | null;
+  index: number;
   __typename: "Rated";
 }
 
@@ -102,6 +104,7 @@ export interface CreateResume_createResume_resume_additionalSkills {
   id: string;
   description: string | null;
   level: string | null;
+  index: number;
   __typename: "Rated";
 }
 
@@ -109,6 +112,7 @@ export interface CreateResume_createResume_resume_languages {
   id: string;
   description: string | null;
   level: string | null;
+  index: number;
   __typename: "Rated";
 }
 
@@ -218,6 +222,7 @@ export interface GetResume_getResume_additionalSkills {
   id: string;
   description: string | null;
   level: string | null;
+  index: number;
   __typename: "Rated";
 }
 
@@ -225,6 +230,7 @@ export interface GetResume_getResume_languages {
   id: string;
   description: string | null;
   level: string | null;
+  index: number;
   __typename: "Rated";
 }
 
@@ -365,6 +371,7 @@ export interface UpdateResume_updateResume_resume_additionalSkills {
   id: string;
   description: string | null;
   level: string | null;
+  index: number;
   __typename: "Rated";
 }
 
@@ -372,6 +379,7 @@ export interface UpdateResume_updateResume_resume_languages {
   id: string;
   description: string | null;
   level: string | null;
+  index: number;
   __typename: "Rated";
 }
 
@@ -507,6 +515,7 @@ export interface RatedFrag {
   id: string;
   description: string | null;
   level: string | null;
+  index: number;
 }
 
 
@@ -521,6 +530,7 @@ export interface ResumeFullFrag_additionalSkills {
   id: string;
   description: string | null;
   level: string | null;
+  index: number;
   __typename: "Rated";
 }
 
@@ -528,6 +538,7 @@ export interface ResumeFullFrag_languages {
   id: string;
   description: string | null;
   level: string | null;
+  index: number;
   __typename: "Rated";
 }
 
@@ -634,6 +645,7 @@ export interface CreateResumeInput {
 export interface RatedInput {
   description?: string | null;
   id?: string | null;
+  index: number;
   level?: string | null;
 }
 
