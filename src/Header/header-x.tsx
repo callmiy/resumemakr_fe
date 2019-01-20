@@ -20,12 +20,18 @@ export class Header extends React.Component<Props, {}> {
       history
     } = this.props;
 
+    let homeLinkProps = {};
+    if (user && match.path !== ROOT_URL) {
+      homeLinkProps = { as: NavLink, to: ROOT_URL };
+    } else {
+      homeLinkProps = { as: "span" };
+    }
+
     return (
       <Container>
         <Menu secondary={true}>
           <Menu.Item
-            as={user ? NavLink : "span"}
-            to={ROOT_URL}
+            {...homeLinkProps}
             className="logo"
             name="home"
             active={activeItem === "home"}
