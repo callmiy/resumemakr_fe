@@ -52,14 +52,14 @@ export class Preview extends React.Component<Props> {
     return (
       <Container data-testid="preview-resume-section" mode={mode}>
         <Left>
-          {personalInfo && this.renderPersonalInfo(personalInfo)}
+          {personalInfo && <PersonalInfo personalInfo={personalInfo} />}
 
           {additionalSkills && additionalSkills.length && (
             <Section>
               <TitleLeft>Additional Skills</TitleLeft>
 
               {additionalSkills.map((s, index) => (
-                <span key={index}>{s && s.description}</span>
+                <div key={index}>{s && s.description}</div>
               ))}
             </Section>
           )}
@@ -69,9 +69,9 @@ export class Preview extends React.Component<Props> {
               <TitleLeft>Languages</TitleLeft>
 
               {languages.map((s, index) => (
-                <span key={index}>
+                <div key={index}>
                   {s && s.description} [{s && s.level}]
-                </span>
+                </div>
               ))}
             </Section>
           )}
@@ -89,89 +89,16 @@ export class Preview extends React.Component<Props> {
 
         <Right>
           {skills && this.renderSkills(skills)}
-          {experiences && this.renderExperiences(experiences)}
-          {education && this.renderEducation(education)}
+          {experiences && experiences.length && (
+            <Experiences experiences={experiences as CreateExperienceInput[]} />
+          )}
+          {education && education.length && (
+            <Educations educations={education as EducationInput[]} />
+          )}
         </Right>
       </Container>
     );
   }
-
-  private renderEducation = (education: Array<EducationInput | null>) => {
-    return (
-      <Section>
-        <TitleRight>Education</TitleRight>
-
-        {education.map((ed, index) => {
-          if (!ed) {
-            return;
-          }
-
-          const { course, school, fromDate, toDate, achievements } = ed;
-
-          return (
-            <div key={index} className="experience-container">
-              <div className="left">
-                {fromDate} {(toDate && `-${toDate}`) || ""}
-              </div>
-
-              <div className="right">
-                <Description className="position">{course}</Description>
-
-                <div className="company">{school}</div>
-
-                {achievements && achievements.length && (
-                  <Ul>
-                    {achievements.map((achievement, ind) => (
-                      <li key={ind}>{achievement}</li>
-                    ))}
-                  </Ul>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </Section>
-    );
-  };
-
-  private renderExperiences = (
-    experiences: Array<CreateExperienceInput | null>
-  ) => {
-    return (
-      <Section>
-        <TitleRight>Experience</TitleRight>
-
-        {experiences.map((exp, index) => {
-          if (!exp) {
-            return null;
-          }
-
-          const { position, achievements, fromDate, toDate, companyName } = exp;
-
-          return (
-            <div key={index} className="experience-container">
-              <div className="left">
-                {fromDate} {`- ${toDate || "present"}`}
-              </div>
-
-              <div className="right">
-                <Description className="position">{position}</Description>
-
-                <div className="company">{companyName}</div>
-
-                <Ul>
-                  {achievements &&
-                    achievements.map((achievement, ind) => (
-                      <li key={ind}>{achievement}</li>
-                    ))}
-                </Ul>
-              </div>
-            </div>
-          );
-        })}
-      </Section>
-    );
-  };
 
   private renderSkills = (skills: Array<CreateSkillInput | null>) => {
     return (
@@ -201,73 +128,149 @@ export class Preview extends React.Component<Props> {
       </Section>
     );
   };
-
-  private renderPersonalInfo = (
-    personalInfo: GetResume_getResume_personalInfo
-  ) => {
-    const {
-      firstName,
-      lastName,
-      profession,
-      address,
-      phone,
-      email,
-      dateOfBirth,
-      photo
-    } = personalInfo;
-
-    return (
-      <>
-        <Section>
-          <NamePos>
-            <Name>{firstName}</Name>
-            <Name>{lastName}</Name>
-          </NamePos>
-
-          <Profession>{profession}</Profession>
-        </Section>
-
-        <Section>
-          <TitleLeft>Personal Info</TitleLeft>
-
-          {dateOfBirth && (
-            <PersonalTitle>
-              Phone
-              <PersonalText>{dateOfBirth}</PersonalText>
-            </PersonalTitle>
-          )}
-
-          <PersonalTitle>
-            <PersonalIcon name="map marker alternate" />
-
-            {address &&
-              address
-                .split("\n")
-                .map((s, k) => <PersonalText key={k}>{s.trim()}</PersonalText>)}
-          </PersonalTitle>
-
-          <PersonalTitle>
-            <PersonalIcon name="phone" />
-
-            <PersonalText>{phone}</PersonalText>
-          </PersonalTitle>
-
-          <PersonalTitle>
-            <PersonalIcon name="mail" />
-
-            <PersonalText>{email}</PersonalText>
-          </PersonalTitle>
-        </Section>
-
-        {photo && (
-          <Img
-            backgroundImg={`url(${toServerUrl(photo)})`}
-            data-testid={`${firstName} ${lastName} photo`}
-          />
-        )}
-      </>
-    );
-  };
 }
 
 export default Preview;
+
+function PersonalInfo({
+  personalInfo
+}: {
+  personalInfo: GetResume_getResume_personalInfo;
+}) {
+  const {
+    firstName,
+    lastName,
+    profession,
+    address,
+    phone,
+    email,
+    dateOfBirth,
+    photo
+  } = personalInfo;
+
+  return (
+    <>
+      <Section>
+        <NamePos>
+          <Name>{firstName}</Name>
+          <Name>{lastName}</Name>
+        </NamePos>
+
+        <Profession>{profession}</Profession>
+      </Section>
+
+      <Section>
+        <TitleLeft>Personal Info</TitleLeft>
+
+        {dateOfBirth && (
+          <PersonalTitle>
+            <PersonalText>Date of birth</PersonalText>
+
+            <PersonalText>{dateOfBirth}</PersonalText>
+          </PersonalTitle>
+        )}
+
+        <PersonalTitle>
+          <PersonalIcon name="map marker alternate" />
+
+          {address &&
+            address
+              .split("\n")
+              .map((addy, index) => (
+                <PersonalText key={index}>{addy.trim()}</PersonalText>
+              ))}
+        </PersonalTitle>
+
+        <PersonalTitle>
+          <PersonalIcon name="phone" />
+
+          <PersonalText>{phone}</PersonalText>
+        </PersonalTitle>
+
+        <PersonalTitle>
+          <PersonalIcon name="mail" />
+
+          <PersonalText>{email}</PersonalText>
+        </PersonalTitle>
+      </Section>
+
+      {photo && (
+        <Img
+          backgroundImg={`url(${toServerUrl(photo)})`}
+          data-testid={`${firstName} ${lastName} photo`}
+        />
+      )}
+    </>
+  );
+}
+
+function Educations({ educations }: { educations: EducationInput[] }) {
+  return (
+    <Section>
+      <TitleRight>Education</TitleRight>
+
+      {educations.map((ed, index) => {
+        const { course, school, fromDate, toDate, achievements } = ed;
+
+        return (
+          <div key={index} className="experience-container">
+            <div className="left">
+              {fromDate} {(toDate && `-${toDate}`) || ""}
+            </div>
+
+            <div className="right">
+              <Description className="position">{course}</Description>
+
+              <div className="company">{school}</div>
+
+              {achievements && achievements.length && (
+                <Ul>
+                  {achievements.map((achievement, ind) => (
+                    <li key={ind}>{achievement}</li>
+                  ))}
+                </Ul>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </Section>
+  );
+}
+
+function Experiences({
+  experiences
+}: {
+  experiences: CreateExperienceInput[];
+}) {
+  return (
+    <Section>
+      <TitleRight>Experience</TitleRight>
+
+      {experiences.map((exp, index) => {
+        const { position, achievements, fromDate, toDate, companyName } = exp;
+
+        return (
+          <div key={index} className="experience-container">
+            <div className="left">
+              {fromDate} {`- ${toDate || "present"}`}
+            </div>
+
+            <div className="right">
+              <Description className="position">{position}</Description>
+
+              <div className="company">{companyName}</div>
+
+              <Ul>
+                {achievements &&
+                  achievements.map((achievement, ind) => (
+                    <li key={ind}>{achievement}</li>
+                  ))}
+              </Ul>
+            </div>
+          </div>
+        );
+      })}
+    </Section>
+  );
+}

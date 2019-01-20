@@ -63,10 +63,6 @@ export class ResumeForm extends React.Component<Props> {
     if (debounceUpdateResume) {
       debounceUpdateResume.cancel();
     }
-
-    valuesTracker = null;
-    currentSection = (null as unknown) as Section;
-    backToSection = (null as unknown) as Section;
   }
 
   componentDidUpdate() {
@@ -77,20 +73,22 @@ export class ResumeForm extends React.Component<Props> {
 
   render() {
     const { loading, error: graphQlLoadingError, values } = this.props;
-
-    if (graphQlLoadingError) {
-      return <div>{JSON.stringify(graphQlLoadingError)}</div>;
-    }
-
-    if (loading) {
-      return (
-        <Container>
-          <Loading />
-        </Container>
-      );
-    }
-
     currentSection = this.sectionFromUrl();
+
+    if (currentSection !== Section.preview) {
+      if (graphQlLoadingError) {
+        return <div>{JSON.stringify(graphQlLoadingError)}</div>;
+      }
+
+      if (loading) {
+        return (
+          <Container className="container--loading">
+            <Loading />
+          </Container>
+        );
+      }
+    }
+
     const prevSection = toSection(currentSection, "prev");
     const nextSection = toSection(currentSection, "next");
     const sectionIndex = sectionsList.indexOf(currentSection);
@@ -254,6 +252,10 @@ export class ResumeForm extends React.Component<Props> {
   };
 
   private updateResume = async () => {
+    if (currentSection === Section.preview) {
+      return;
+    }
+
     let values = this.props.values;
 
     /**
