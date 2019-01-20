@@ -18,10 +18,6 @@ import {
   defaultVal as education
 } from "../Education/education";
 
-import { defaultValue as additionSkill } from "../AdditionalSkills/additional-skills";
-
-import { defaultVal as lang } from "../Languages/languages";
-
 import {
   defaultVal as skills,
   validationSchema as skillsSchema
@@ -36,8 +32,13 @@ import {
   GetResume_getResume
 } from "../graphql/apollo-gql";
 
+import {
+  validationSchema as ratedSchema,
+  languageDefaultVal,
+  additionalSkillDefaultVal
+} from "../Rated/rated";
+
 import { HobbyVal, defaultVal as hobby } from "../Hobbies/hobbies";
-import { validationSchema as ratedSchema } from "../Rated/rated";
 import { UpdateResumeProps } from "../graphql/update-resume.mutation";
 import { GetResumeProps } from "../graphql/get-resume.query";
 import { stripTypeName } from "../utils";
@@ -56,8 +57,8 @@ export const initialFormValues: FormValues = {
   personalInfo,
   experiences: [experience],
   education: [education],
-  additionalSkills: [additionSkill],
-  languages: [lang],
+  additionalSkills: [additionalSkillDefaultVal],
+  languages: [languageDefaultVal],
   hobbies: [hobby],
   skills
 };

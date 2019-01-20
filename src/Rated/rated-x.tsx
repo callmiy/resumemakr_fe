@@ -1,5 +1,5 @@
 import React from "react";
-import { Icon, Card } from "semantic-ui-react";
+import { Card } from "semantic-ui-react";
 import { FieldArrayRenderProps, FastField, FieldArray } from "formik";
 
 import { Section, ChildProps } from "../ResumeForm/resume-form";
@@ -10,37 +10,54 @@ import { RatedInput, CreateExperienceInput } from "../graphql/apollo-gql";
 import ListIndexHeader from "../ListIndexHeader";
 import { SetFieldValue } from "../utils";
 
-const headerLabelText = "Add. Skill";
 let cachedValues: RatedInput[] = [];
+
+interface RowItemsLabels {
+  description: string;
+  level: string;
+}
 
 interface Props extends ChildProps {
   label: Section;
   values?: Array<RatedInput | null> | null;
+  icon: JSX.Element;
+  fieldName: string;
+  idPrefix: string;
+  rowItemsLabels: RowItemsLabels;
+  dataTestId: string;
 }
 
-export class AdditionalSkills extends React.Component<Props, {}> {
+export class Rated extends React.Component<Props, {}> {
   render() {
-    const { label, setFieldValue } = this.props;
+    const {
+      label,
+      setFieldValue,
+      icon,
+      fieldName,
+      idPrefix,
+      rowItemsLabels,
+      dataTestId
+    } = this.props;
+
     const values = (this.props.values || [{ ...emptyVal }]) as RatedInput[];
     cachedValues = values;
 
     return (
       <>
-        <SectionLabel
-          label={label}
-          ico={<Icon name="won" />}
-          data-testid="additional-skills-section"
-        />
+        <SectionLabel label={label} ico={icon} data-testid={dataTestId} />
 
         <FieldArray
-          name="additionalSkills"
+          name={fieldName}
           render={arrayHelper =>
-            values.map((skill, index) => (
-              <Skill
+            values.map((value, index) => (
+              <Item
                 key={index}
-                skill={skill}
+                value={value}
                 arrayHelper={arrayHelper}
                 setFieldValue={setFieldValue}
+                idPrefix={idPrefix}
+                fieldName={fieldName}
+                rowItemsLabels={rowItemsLabels}
               />
             ))
           }
@@ -50,24 +67,33 @@ export class AdditionalSkills extends React.Component<Props, {}> {
   }
 }
 
-export default AdditionalSkills;
+export default Rated;
 
-interface SkillProps {
-  skill: RatedInput;
+interface ItemProps {
+  value: RatedInput;
   arrayHelper: FieldArrayRenderProps;
   setFieldValue: SetFieldValue<CreateExperienceInput>;
+  idPrefix: string;
+  fieldName: string;
+  rowItemsLabels: RowItemsLabels;
 }
 
-function Skill({ skill, arrayHelper, setFieldValue }: SkillProps) {
-  const { index, level, description } = skill;
-  const fieldName = "additionalSkills";
+function Item({
+  value,
+  arrayHelper,
+  setFieldValue,
+  idPrefix,
+  fieldName,
+  rowItemsLabels
+}: ItemProps) {
+  const { index, level, description } = value;
 
   return (
     <Card>
       <ListIndexHeader
         index={index}
         label={""}
-        idPrefix={headerLabelText}
+        idPrefix={idPrefix}
         fieldName={fieldName}
         setFieldValue={setFieldValue}
         values={cachedValues as RatedInput[]}
@@ -76,15 +102,15 @@ function Skill({ skill, arrayHelper, setFieldValue }: SkillProps) {
 
       <Card.Content>
         <FastField
-          name={makeName(index, "description")}
-          label="Skill, description (e.g. Editing skills)"
+          name={makeName(fieldName, index, "description")}
+          label={rowItemsLabels.description}
           emptyValue={description}
           component={RegularField}
         />
 
         <FastField
-          name={makeName(index, "level")}
-          label="Rating description (e.g. Advanced) (optional)"
+          name={makeName(fieldName, index, "level")}
+          label={rowItemsLabels.level}
           emptyValue={level}
           component={RegularField}
         />
@@ -93,6 +119,6 @@ function Skill({ skill, arrayHelper, setFieldValue }: SkillProps) {
   );
 }
 
-function makeName(index: number, key: keyof RatedInput) {
-  return `additionalSkills[${index - 1}].${key}`;
+function makeName(fieldName: string, index: number, key: keyof RatedInput) {
+  return `${fieldName}[${index - 1}].${key}`;
 }

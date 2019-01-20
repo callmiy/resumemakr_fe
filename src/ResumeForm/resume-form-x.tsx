@@ -1,5 +1,5 @@
 import React from "react";
-import { Form } from "semantic-ui-react";
+import { Form, Icon } from "semantic-ui-react";
 import { Cancelable } from "lodash";
 import lodashDebounce from "lodash/debounce";
 import lodashIsEqual from "lodash/isEqual";
@@ -32,8 +32,6 @@ import { Mode as PreviewMode } from "../Preview/preview";
 import PersonalInfo from "../PersonalInfo";
 import Experiences from "../Experiences";
 import Education from "../Education";
-import AdditionalSkills from "../AdditionalSkills";
-import Languages from "../Languages";
 import Hobbies from "../Hobbies";
 import Skills from "../Skills";
 import Loading from "../Loading";
@@ -41,6 +39,7 @@ import { ALREADY_UPLOADED } from "../constants";
 import { UpdateResumeInput } from "../graphql/apollo-gql";
 import { ResumePathHash } from "../routing";
 import logger from "../logger";
+import Rated from "../Rated";
 
 let valuesTracker: FormValues | null = null;
 let debounceUpdateResume: (ResumeForm["updateResume"] & Cancelable) | undefined;
@@ -212,16 +211,38 @@ export class ResumeForm extends React.Component<Props> {
 
     if (currentSection === Section.addSkills) {
       return (
-        <AdditionalSkills
+        <Rated
           label={label}
           values={values.additionalSkills || []}
           setFieldValue={setFieldValue}
+          rowItemsLabels={{
+            description: "Skill (e.g. Editing skills)",
+            level: "Rating description (e.g. Advanced) (optional)"
+          }}
+          fieldName="additionalSkills"
+          icon={<Icon name="won" />}
+          dataTestId="additional-skills-section"
+          idPrefix="Add. Skill"
         />
       );
     }
 
     if (currentSection === Section.langs) {
-      return <Languages label={label} values={values.languages} />;
+      return (
+        <Rated
+          label={label}
+          values={values.languages}
+          rowItemsLabels={{
+            description: "Language (e.g. Spanish - Certified)",
+            level: "Rating description (e.g. Proficient) (optional)"
+          }}
+          fieldName="languages"
+          icon={<Icon name="won" />}
+          dataTestId="languages-section"
+          setFieldValue={setFieldValue}
+          idPrefix="languages"
+        />
+      );
     }
 
     if (currentSection === Section.hobbies) {
