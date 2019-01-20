@@ -2,10 +2,19 @@ import styled from "styled-components";
 
 import { NavBtn, EpicBtnIcon, withControls } from "../styles/mixins";
 
+const navBtnMaxWidth = 8.5;
+const columnNavBtnMedia = `@media (max-width: ${3 * navBtnMaxWidth}rem)`;
+
 export const Container = styled.div`
+  margin-right: 5px;
+
   form {
     width: 100%;
-    padding-bottom: 4rem;
+    padding-bottom: 3rem;
+
+    ${columnNavBtnMedia} {
+      padding-bottom: 9rem;
+    }
   }
 
   .card {
@@ -32,6 +41,28 @@ export const Container = styled.div`
 
     &.list-string-header {
       padding-bottom: 5px;
+    }
+  }
+
+  .bottom-navs {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    padding: 10px;
+    z-index: 1000;
+
+    ${columnNavBtnMedia} {
+      display: flex;
+      flex-direction: column;
+
+      & > a {
+        max-width: ${navBtnMaxWidth}rem;
+        margin-left: 0;
+
+        & ~ a {
+          margin-top: 10px;
+        }
+      }
     }
   }
 `;
@@ -78,12 +109,4 @@ export const NextBtnIcon = styled(EpicBtnIcon)`
   &:before {
     content: "\\e270";
   }
-`;
-
-export const BottomNavs = styled.div`
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  padding: 10px;
-  z-index: 1000;
 `;

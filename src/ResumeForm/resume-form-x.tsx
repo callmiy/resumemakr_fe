@@ -21,7 +21,6 @@ import {
   PreviewBtnIcon,
   EditBtn,
   PrevBtnIcon,
-  BottomNavs,
   NextBtn,
   NextBtnIcon,
   Container
@@ -107,7 +106,7 @@ export class ResumeForm extends React.Component<Props> {
             <Preview mode={PreviewMode.preview} />
           )}
 
-          <BottomNavs>
+          <div className="bottom-navs">
             {currentSection !== Section.preview ? (
               <>
                 {sectionIndex !== lastSectionIndex && (
@@ -163,7 +162,7 @@ export class ResumeForm extends React.Component<Props> {
                 <span>Back to Editor</span>
               </EditBtn>
             )}
-          </BottomNavs>
+          </div>
         </Form>
       </Container>
     );

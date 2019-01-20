@@ -54,8 +54,7 @@ export const btnMixin = css`
   font-weight: 400 !important;
   border-style: solid !important;
   border-radius: 3px !important;
-  font-size: 1.5rem !important;
-  line-height: 36px !important;
+  line-height: 2.25rem !important;
 `;
 
 export const ToolTip = styled.span`

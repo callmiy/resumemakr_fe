@@ -30,7 +30,6 @@ export const EditorContainer = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  font-size: 1.5rem;
   display: flex;
 `;
 
@@ -45,7 +44,6 @@ const BtnPhoto = css`
   padding: 6px 12px;
   transition: border-color 0.2s linear;
   background-color: rgba(0, 0, 0, 0.5);
-  font-size: 1.5rem;
   color: #fff;
 `;
 
@@ -57,12 +55,12 @@ export const ChangePhoto = styled.label`
 
 export const UploadPhotoIconWrap = styled.div`
   color: #bcbdbd;
-  font-size: 3.2rem;
   margin: 10px auto;
   text-align: center;
   display: block;
   overflow: hidden;
   height: 50px;
+  font-size: 1.5rem;
 `;
 
 export const InputFile = styled.input.attrs({

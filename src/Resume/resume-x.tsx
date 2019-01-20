@@ -3,7 +3,7 @@ import { RouteComponentProps } from "react-router-dom";
 
 import ResumeForm from "../ResumeForm";
 import { DownloadBtn, Container } from "./resume-styles";
-import { AppMain, ToolTip } from "../styles/mixins";
+import { AppMain1, ToolTip } from "../styles/mixins";
 import Preview from "../Preview";
 import { Mode as PreviewMode } from "../Preview/preview";
 import { ResumePathHash } from "../routing";
@@ -31,15 +31,13 @@ export class Resume extends React.Component<Props> {
               ]}
             />
 
-            <AppMain>
-              <div className="side-bar">Side bar</div>
+            <AppMain1>
+              <div className="side-bar">.</div>
 
               <div className="main-container">
-                <div className="main">
-                  <ResumeForm />
-                </div>
+                <ResumeForm />
               </div>
-            </AppMain>
+            </AppMain1>
           </>
         )}
 
