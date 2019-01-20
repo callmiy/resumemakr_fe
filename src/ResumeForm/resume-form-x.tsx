@@ -211,8 +211,9 @@ export class ResumeForm extends React.Component<Props> {
     if (currentSection === Section.addSkills) {
       return (
         <Rated
+          key={label}
           label={label}
-          values={values.additionalSkills || []}
+          values={values.additionalSkills}
           setFieldValue={setFieldValue}
           rowItemsLabels={{
             description: "Skill (e.g. Editing skills)",
@@ -229,6 +230,7 @@ export class ResumeForm extends React.Component<Props> {
     if (currentSection === Section.langs) {
       return (
         <Rated
+          key={label}
           label={label}
           values={values.languages}
           rowItemsLabels={{
