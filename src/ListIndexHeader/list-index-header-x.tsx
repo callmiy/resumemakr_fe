@@ -48,7 +48,7 @@ export function ListIndexHeader<TValues extends { index: number }>({
         {len > 1 && (
           <CircularLabel
             color="red"
-            onClick={function onRemoveEmployee() {
+            onClick={function onRemoveItem() {
               setFieldValue(fieldName, remove<TValues>(values, index));
             }}
           >
@@ -58,7 +58,7 @@ export function ListIndexHeader<TValues extends { index: number }>({
 
         <CircularLabel
           color="green"
-          onClick={function onAddEmployee() {
+          onClick={function onAddItem() {
             setFieldValue(fieldName, add<TValues>(values, index, empty));
           }}
         >
