@@ -14,6 +14,13 @@
       "type": "shell",
       "command": "apollo-codegen introspect-schema http://localhost:4025/api --output src/graphql/schema.json && apollo-codegen generate src/graphql/*.ts --schema src/graphql/schema.json --target typescript --output src/graphql/apollo-gql.ts",
       "problemMatcher": []
+    },
+
+    {
+      "label": "Deploy to netlify",
+      "type": "shell",
+      "command": "yarn build-prod && netlify deploy  --prod --dir=build",
+      "problemMatcher": []
     }
   ]
 }
