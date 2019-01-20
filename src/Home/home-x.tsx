@@ -1,22 +1,14 @@
 import React from "react";
 
-import { Modal, Button, Grid, Label, Icon, Popup } from "semantic-ui-react";
-
+import { Modal, Button, Label, Icon, Popup } from "semantic-ui-react";
 import { ApolloError, MutationUpdaterFn } from "apollo-client";
 import dateFormat from "date-fns/format";
 import { Formik, FastField, FormikProps, FormikErrors } from "formik";
 import * as Yup from "yup";
 import lodashIsEmpty from "lodash/isEmpty";
+import "styled-components/macro";
 
-import {
-  HomeContainer,
-  InputLabel,
-  HomeMain,
-  Titles,
-  CtrlLabelText,
-  DeleteResumeSuccess,
-  FormField
-} from "./home-styles";
+import { FormField, HomeContainer } from "./home-styles";
 
 import {
   ResumeTitles,
@@ -26,7 +18,7 @@ import {
   CreateResumeInput
 } from "../graphql/apollo-gql";
 
-import { AppModal, CircularLabel } from "../styles/mixins";
+import { AppModal, CircularLabel, AppMain1 } from "../styles/mixins";
 import { makeResumeRoute } from "../routing";
 import { Props } from "./home";
 import Loading from "../Loading";
@@ -87,15 +79,17 @@ export class Home extends React.Component<Props, State> {
       <HomeContainer>
         <Header />
 
-        <HomeMain>
-          {error && <div>{error.message}</div>}
+        <AppMain1>
+          <div className="main-content">
+            {error && <div>{error.message}</div>}
 
-          {this.renderTitles()}
+            {this.renderTitles()}
+          </div>
 
           <div className="new" onClick={this.openModalForCreate}>
             <span>+</span>
           </div>
-        </HomeMain>
+        </AppMain1>
 
         {this.renderModal()}
       </HomeContainer>
@@ -124,9 +118,9 @@ export class Home extends React.Component<Props, State> {
                 <Modal.Content>
                   <Modal.Description>
                     <FormField className={`field ${titleError ? "error" : ""}`}>
-                      <InputLabel htmlFor="resume-title">
+                      <label htmlFor="resume-title">
                         Title e.g. name of company to send to
-                      </InputLabel>
+                      </label>
 
                       <FastField
                         component={"input"}
@@ -138,10 +132,10 @@ export class Home extends React.Component<Props, State> {
                     </FormField>
 
                     <FormField className="field" style={{ marginTop: "15px" }}>
-                      <InputLabel htmlFor="resume-description">
+                      <label htmlFor="resume-description">
                         Description{" "}
                         <span style={{ opacity: 0.6 }}>(optional)</span>
-                      </InputLabel>
+                      </label>
 
                       <FastField
                         component={"textarea"}
@@ -184,11 +178,7 @@ export class Home extends React.Component<Props, State> {
   private renderTitles = () => {
     const { listResumes } = this.props;
 
-    if (!listResumes) {
-      return null;
-    }
-
-    const { edges } = listResumes;
+    const edges = listResumes && listResumes.edges;
 
     if (!edges) {
       return null;
@@ -201,38 +191,41 @@ export class Home extends React.Component<Props, State> {
     const { deletedResume } = this.state;
 
     return (
-      <Titles>
+      <div className="titles">
         <div className="header">
           <div>My resumes</div>
 
           {deletedResume && (
-            <DeleteResumeSuccess onClick={this.resetDeletedResume}>
+            <div
+              className="deleted-resume-success"
+              onClick={this.resetDeletedResume}
+            >
               <div>
-                <Label style={{ cursor: "pointer" }} horizontal={true}>
-                  Dismiss
-                </Label>
-
-                <span>{deletedResume} deleted successfully</span>
+                <Label horizontal={true}>Dismiss</Label>
+                <span
+                  css={`
+                    font-weight: bolder;
+                  `}
+                >
+                  {deletedResume}
+                </span>{" "}
+                deleted successfully
               </div>
-            </DeleteResumeSuccess>
+            </div>
           )}
         </div>
 
-        <Grid reversed="computer" columns={3}>
-          <Grid.Row className="row-header">
-            <Grid.Column className="controls">Controls</Grid.Column>
+        <div className="columns">
+          <div className="row header">
+            <div className="title">Title</div>
 
-            <Grid.Column>Last modified</Grid.Column>
+            <div className="modified-date">Last modified</div>
 
-            <Grid.Column className="title">Title</Grid.Column>
-          </Grid.Row>
+            <div className="controls">Controls</div>
+          </div>
 
           {edges.map(edge => {
-            if (!edge) {
-              return null;
-            }
-
-            const { node } = edge;
+            const node = edge && edge.node;
 
             if (!node) {
               return null;
@@ -242,12 +235,12 @@ export class Home extends React.Component<Props, State> {
             const { deletingResume } = this.state;
 
             return (
-              <Grid.Row key={id} data-testid={`${title} row`}>
+              <div className="row" key={id} data-testid={`${title} row`}>
                 {deletingResume === id && (
                   <Loading data-testid={`deleting ${title}`} />
                 )}
 
-                <Grid.Column className="controls">
+                <div className="controls">
                   <CircularLabel
                     color="teal"
                     onClick={() => {
@@ -287,31 +280,37 @@ export class Home extends React.Component<Props, State> {
                   >
                     <Icon name="delete" />
 
-                    <CtrlLabelText ref={this.setConfirmDeleteTriggerRef(id)}>
+                    <span
+                      className="control-label-text"
+                      ref={this.setConfirmDeleteTriggerRef(id)}
+                    >
                       delete {title}
-                    </CtrlLabelText>
+                    </span>
 
                     {this.renderConfirmDelete(node)}
 
                     {this.renderDeleteError(node)}
                   </CircularLabel>
-                </Grid.Column>
+                </div>
 
-                <Grid.Column onClick={() => this.goToResume(title)}>
-                  {dateFormat(updatedAt, "Do MMM, YYYY H:mm A")}
-                </Grid.Column>
-
-                <Grid.Column
-                  className="clickable"
+                <div
+                  className="clickable title"
                   onClick={() => this.goToResume(title)}
                 >
                   {title}
-                </Grid.Column>
-              </Grid.Row>
+                </div>
+
+                <div
+                  className="column modified-date"
+                  onClick={() => this.goToResume(title)}
+                >
+                  {dateFormat(updatedAt, "Do MMM, YYYY H:mm A")}
+                </div>
+              </div>
             );
           })}
-        </Grid>
-      </Titles>
+        </div>
+      </div>
     );
   };
 
@@ -364,37 +363,45 @@ export class Home extends React.Component<Props, State> {
         open={confirmDeleteId === id}
         onClose={this.handleConfirmDeletePopup}
       >
-        <div>Sure to delete {title}</div>
+        Sure to delete:
+        <span
+          css={`
+            font-weight: bolder;
+            margin-left: 5px;
+            word-break: break-all;
+          `}
+        >
+          {title}?
+        </span>
+        <div
+          css={`
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+          `}
+        >
+          <Button
+            data-testid={`yes to delete ${title}`}
+            color="red"
+            onClick={evt => {
+              evt.stopPropagation();
+              this.handleConfirmDeletePopup();
+              this.deleteResume(id);
+            }}
+          >
+            Yes
+          </Button>
 
-        <Grid divided={true} columns="equal">
-          <Grid.Column>
-            <Button
-              data-testid={`yes to delete ${title}`}
-              color="red"
-              fluid={true}
-              onClick={evt => {
-                evt.stopPropagation();
-                this.handleConfirmDeletePopup();
-                this.deleteResume(id);
-              }}
-            >
-              Yes
-            </Button>
-          </Grid.Column>
-
-          <Grid.Column>
-            <Button
-              data-testid={`no to delete ${title}`}
-              color="blue"
-              content="No"
-              fluid={true}
-              onClick={evt => {
-                evt.stopPropagation();
-                this.handleConfirmDeletePopup();
-              }}
-            />
-          </Grid.Column>
-        </Grid>
+          <Button
+            data-testid={`no to delete ${title}`}
+            color="blue"
+            content="No"
+            onClick={evt => {
+              evt.stopPropagation();
+              this.handleConfirmDeletePopup();
+            }}
+          />
+        </div>
       </Popup>
     );
   };
@@ -487,10 +494,6 @@ export class Home extends React.Component<Props, State> {
       return;
     }
 
-    if (!deleteResume) {
-      return;
-    }
-
     const result = await deleteResume({
       variables: {
         input: { id }
@@ -499,23 +502,11 @@ export class Home extends React.Component<Props, State> {
       update: this.updateAfterDelete
     });
 
-    if (!result) {
-      return;
-    }
-
-    const { data } = result;
-
-    if (!data) {
-      return;
-    }
-
-    const { deleteResume: deletedResume } = data;
-
-    if (!deletedResume) {
-      return;
-    }
-
-    const { resume } = deletedResume;
+    const resume =
+      result &&
+      result.data &&
+      result.data.deleteResume &&
+      result.data.deleteResume.resume;
 
     if (!resume) {
       return;

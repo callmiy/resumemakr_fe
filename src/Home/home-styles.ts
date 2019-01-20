@@ -4,8 +4,8 @@ import { lighten } from "polished";
 import {
   AppContainer,
   visuallyHidden,
-  AppMain,
-  appBgColor
+  appBgColor,
+  AppMain1
 } from "../styles/mixins";
 
 export const FormField = styled.div`
@@ -23,15 +23,23 @@ export const FormField = styled.div`
   }
 `;
 
+const bgColor = lighten(0.026, appBgColor);
+
+const newBtnWidth = 45;
+const newBtnBottom = 20;
+
 export const HomeContainer = styled(AppContainer)`
-  position: relative;
+  ${AppMain1} {
+    position: relative;
+    overflow: hidden;
+  }
 
   .new {
     position: absolute;
     right: 20px;
-    bottom: 50px;
-    width: 50px;
-    height: 50px;
+    bottom: ${newBtnBottom}px;
+    width: ${newBtnWidth}px;
+    height: ${newBtnWidth}px;
     border-radius: 50%;
     border-width: 1px;
     border-color: transparent;
@@ -41,35 +49,32 @@ export const HomeContainer = styled(AppContainer)`
     align-items: center;
     justify-content: center;
     color: #ffffff;
-    font-size: 3em;
-    font-weight: 600;
+    font-size: 1.5rem;
+    font-weight: 500;
     cursor: pointer;
   }
-`;
 
-export const InputLabel = styled.label``;
-
-export const HomeMain = styled(AppMain)`
-  font-size: 1.4em;
-  padding: 10px;
-`;
-
-const bgColor = lighten(0.026, appBgColor);
-
-export const Titles = styled.div`
-  max-width: 800px;
-  background: #ffffff;
-
-  & > .header {
-    background-color: ${bgColor};
-    padding: 10px 10px 20px 10px;
-    font-size: 1.3em;
-    font-weight: 700;
+  .main-content {
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: ${newBtnWidth + newBtnBottom + 10}px;
   }
 
-  .ui.grid {
-    & > .row {
-      padding: 10px;
+  .titles {
+    max-width: 800px;
+    background: #ffffff;
+
+    & > .header {
+      background-color: ${bgColor};
+      padding: 10px 10px 20px 10px;
+      font-size: 1.3em;
+      font-weight: 700;
+    }
+
+    .row {
+      padding: 10px 0 10px 10px;
       border-bottom: 1px solid ${appBgColor};
 
       &:first-child {
@@ -81,51 +86,83 @@ export const Titles = styled.div`
         border-bottom: none;
       }
 
-      &.row-header {
+      &.header {
         background-color: ${bgColor};
         margin-top: 20px;
-        margin-left: 10px;
-        margin-right: 10px;
         text-transform: uppercase;
         color: blue;
         font-weight: 600;
-        font-size: 0.8em;
-
-        & > .title {
-          padding-left: 0;
-        }
+        display: none;
       }
 
-      & > .controls {
+      .controls,
+      .title {
+        margin-bottom: 15px;
+      }
+
+      @media (min-width: 550px) {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
+        padding-left: 0;
+
+        &.header {
+          display: flex;
+
+          .modified-date,
+          .controls {
+            position: relative;
+            left: -45px;
+          }
+        }
+
+        .controls,
+        .title {
+          margin-bottom: 0;
+        }
+
+        .title {
+          order: 0;
+          width: 40%;
+          padding-left: 10px;
+        }
+
+        .controls {
+          order: 2;
+          display: flex;
+          justify-content: flex-end;
+        }
       }
     }
   }
 
+  .deleted-resume-success {
+    font-size: 0.7em;
+    font-weight: 400;
+    margin-top: 10px;
+    margin-bottom: -15px;
+
+    & > div {
+      border: 1px solid #1e99ff;
+      display: inline-block;
+      padding-right: 10px;
+      padding-left: 5px;
+    }
+
+    .ui.horizontal.label {
+      background-color: #1e99ff !important;
+      border-color: #1e99ff !important;
+      cursor: pointer;
+      border-radius: 0;
+      position: relative;
+      left: -5px;
+    }
+  }
+
+  .control-label-text {
+    ${visuallyHidden}
+  }
+
   .clickable {
     cursor: pointer;
-  }
-`;
-
-export const CtrlLabelText = styled.span`
-  ${visuallyHidden}
-`;
-
-export const DeleteResumeSuccess = styled.div`
-  font-size: 0.7em;
-  font-weight: 400;
-  margin-top: 10px;
-  margin-bottom: -15px;
-
-  & > div {
-    border: 1px solid #1e99ff;
-    display: inline-block;
-    padding-right: 10px;
-  }
-
-  .ui.horizontal.label {
-    background-color: #1e99ff !important;
-    border-color: #1e99ff !important;
   }
 `;

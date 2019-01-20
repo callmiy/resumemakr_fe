@@ -161,22 +161,14 @@ const Modal1 = wrapped<ModalProps>(Modal);
 export const AppModal = styled(Modal1)`
   &.ui.modal {
     width: 90%;
-    font-size: 1.6rem;
     max-width: 500px;
 
     & > .header {
       ${openSansMixin};
-      font-size: 1.8rem;
       font-weight: 500;
-      min-height: 70px;
-      padding: 0em 1.5rem !important;
+      padding: 1rem !important;
       background: #323942;
       color: #fff;
-      line-height: 70px;
-    }
-
-    .ui.button {
-      font-size: 1.5rem;
     }
   }
 `;
@@ -209,3 +201,21 @@ export const withControls = css`
   justify-content: space-between;
   align-items: center;
 `;
+
+export const mediaSizes = {
+  mobileS: "320px",
+  mobileM: "375px",
+  mobileL: "425px",
+  tablet: "768px",
+  laptop: "1024px",
+  laptopL: "1440px",
+  desktop: "2560px"
+};
+
+export const mediaQueries = Object.entries(mediaSizes).reduce(
+  (acc, [k, v]) => {
+    acc[k] = `@media (min-width: ${v})`;
+    return acc;
+  },
+  {} as { [k in keyof typeof mediaSizes]: string }
+);
