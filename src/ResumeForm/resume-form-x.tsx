@@ -11,7 +11,6 @@ import {
   Section,
   toSection,
   sectionsList,
-  lastSectionIndex,
   Props,
   getInitialValues
 } from "./resume-form";
@@ -108,7 +107,7 @@ export class ResumeForm extends React.Component<Props> {
           <div className="bottom-navs">
             {currentSection !== Section.preview ? (
               <>
-                {sectionIndex !== lastSectionIndex && (
+                {nextSection !== Section.preview && (
                   <PreviewBtn href={this.urlFromSection(Section.preview)}>
                     <ToolTip>Partial: preview your resume</ToolTip>
 
@@ -130,7 +129,7 @@ export class ResumeForm extends React.Component<Props> {
                   </EditBtn>
                 )}
 
-                {sectionIndex < lastSectionIndex && (
+                {nextSection !== Section.preview && (
                   <NextBtn href={this.urlFromSection(nextSection)}>
                     <ToolTip>
                       {`Next resume section ${nextSection.toLowerCase()}`}
@@ -142,7 +141,7 @@ export class ResumeForm extends React.Component<Props> {
                   </NextBtn>
                 )}
 
-                {sectionIndex === lastSectionIndex && (
+                {nextSection === Section.preview && (
                   <NextBtn href={this.urlFromSection(Section.preview)}>
                     <ToolTip>End: preview your resume</ToolTip>
 

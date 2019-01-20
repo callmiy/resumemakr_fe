@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 import { NavBtn, EpicBtnIcon, withControls } from "../styles/mixins";
 
-const navBtnMaxWidth = 8.5;
+const navBtnMaxWidth = 12.5;
 const columnNavBtnMedia = `@media (max-width: ${3 * navBtnMaxWidth}rem)`;
 
 export const Container = styled.div`
