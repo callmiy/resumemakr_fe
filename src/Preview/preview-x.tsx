@@ -100,17 +100,29 @@ export class Preview extends React.Component<Props> {
           <div className="main-column left">
             {personalInfo && <PersonalInfo personalInfo={personalInfo} />}
 
-            {additionalSkills && additionalSkills.length && (
+            {additionalSkills && !!additionalSkills.length && (
               <div className="section-container">
                 <h3 className="break-here section-title left">
                   Additional Skills
                 </h3>
 
-                {additionalSkills.map((s, index) => (
-                  <div key={index} className="break-here">
-                    {s && s.description}
-                  </div>
-                ))}
+                {additionalSkills.map((s, index) => {
+                  if (!s) {
+                    return null;
+                  }
+
+                  const { description } = s;
+
+                  if (!description) {
+                    return null;
+                  }
+
+                  return (
+                    <div key={index} className="break-here">
+                      {description}
+                    </div>
+                  );
+                })}
               </div>
             )}
 
@@ -166,14 +178,18 @@ export class Preview extends React.Component<Props> {
             return;
           }
 
-          const { description, achievements } = skill;
+          const { description } = skill;
+
+          const [achievements, shouldRenderAchievements] = computeAchievements(
+            skill.achievements
+          );
 
           return (
             <React.Fragment key={index}>
               <Description className="break-here">{description}</Description>
 
               <Ul>
-                {achievements &&
+                {shouldRenderAchievements &&
                   achievements.map((achievement, ind) => (
                     <li key={ind} className="break-here li">
                       {achievement}
@@ -267,7 +283,10 @@ function Educations({ educations }: { educations: EducationInput[] }) {
       <h3 className="break-here section-title right">Education</h3>
 
       {educations.map((ed, index) => {
-        const { course, school, fromDate, toDate, achievements } = ed;
+        const { course, school, fromDate, toDate } = ed;
+        const [achievements, shouldRenderAchievements] = computeAchievements(
+          ed.achievements
+        );
 
         return (
           <div key={index} className="experience-container">
@@ -282,7 +301,7 @@ function Educations({ educations }: { educations: EducationInput[] }) {
 
               <div className="company break-here">{school}</div>
 
-              {achievements && achievements.length && (
+              {shouldRenderAchievements && (
                 <Ul>
                   {achievements.map((achievement, ind) => {
                     return (
@@ -311,7 +330,10 @@ function Experiences({
       <h3 className="break-here section-title right">Experience</h3>
 
       {experiences.map((exp, index) => {
-        const { position, achievements, fromDate, toDate, companyName } = exp;
+        const { position, fromDate, toDate, companyName } = exp;
+        const [achievements, shouldRenderAchievements] = computeAchievements(
+          exp.achievements
+        );
 
         return (
           <div key={index} className="experience-container">
@@ -327,7 +349,7 @@ function Experiences({
               <div className="company break-here">{companyName}</div>
 
               <Ul>
-                {achievements &&
+                {shouldRenderAchievements &&
                   achievements.map((achievement, ind) => {
                     return (
                       <li key={ind} className="break-here">
@@ -342,4 +364,9 @@ function Experiences({
       })}
     </div>
   );
+}
+
+function computeAchievements(achievements: Array<string | null> | null = []) {
+  achievements = (achievements || []).filter(a => !!a);
+  return [achievements, !!achievements.length] as [string[], boolean];
 }
