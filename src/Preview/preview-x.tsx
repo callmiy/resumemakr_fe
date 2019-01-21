@@ -52,12 +52,10 @@ export class Preview extends React.Component<Props> {
       }
     });
 
-    if (pages > 1) {
-      const { current } = this.containerRef;
+    const { current } = this.containerRef;
 
-      if (current) {
-        current.style.height = 1120 * pages + "px";
-      }
+    if (mode === Mode.download && current) {
+      current.style.height = 1120 * pages + "px";
     }
   }
 
