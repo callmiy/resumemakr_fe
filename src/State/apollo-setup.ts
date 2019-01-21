@@ -1,25 +1,38 @@
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
 import { ApolloLink, Operation } from "apollo-link";
-import { HttpLink } from "apollo-link-http";
 import { CachePersistor } from "apollo-cache-persist";
 import { onError } from "apollo-link-error";
+import * as AbsintheSocket from "@absinthe/socket";
+import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
 
-import { getBackendUrls } from "./get-backend-urls";
 import { getToken } from "./tokens";
 import { SCHEMA_VERSION, SCHEMA_VERSION_KEY, SCHEMA_KEY } from "../constants";
 import initState from "./resolvers";
-
-const HTTP_URL = getBackendUrls().apiUrl;
-const httpLink = middleWares(new HttpLink({ uri: HTTP_URL }) as ApolloLink);
+import { getSocket } from "../socket";
+import CONN_MUTATION, { ConnMutData } from "./conn.mutation";
 
 const cache = new InMemoryCache({
   addTypename: true
 });
 
-const client = new ApolloClient({
+let client: ApolloClient<{}>;
+
+function onConnChange(isConnected: boolean) {
+  client.mutate<ConnMutData, ConnMutData>({
+    mutation: CONN_MUTATION,
+    variables: {
+      isConnected
+    }
+  });
+}
+
+const absintheSocket = AbsintheSocket.create(getSocket({ onConnChange }));
+const socketLink = middleWares(createAbsintheSocketLink(absintheSocket));
+
+client = new ApolloClient({
   cache,
-  link: ApolloLink.from([initState(cache), httpLink])
+  link: ApolloLink.from([initState(cache), socketLink])
 });
 
 // tslint:disable-next-line:no-any

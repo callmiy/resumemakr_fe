@@ -13,7 +13,7 @@ export const getBackendUrls = () => {
 
   return {
     apiUrl: url.href,
-    websocketUrl: new URL(URL_SOCKET, url.origin),
+    websocketUrl: new URL(URL_SOCKET, url.origin).href.replace("http", "ws"),
     root: url.origin
   };
 };

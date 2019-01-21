@@ -14,10 +14,12 @@ import {
 
 import { Props, ValidationSchema } from "./login";
 import { LoginInput } from "../graphql/apollo-gql";
-import { SIGN_UP_URL, ROOT_URL } from "../routing";
+import { SIGN_UP_URL } from "../routing";
 import PwdInput from "../PwdInput";
 import Header from "../Header";
 import { AppContainer, AppMain1 } from "../styles/mixins";
+import refreshToHomeDefault from "../refresh-to-home";
+import getConnDefault from "../State/get-conn-status";
 
 const Errors = React.memo(ErrorsComp, ErrorsCompEqual);
 
@@ -151,9 +153,16 @@ export class Login extends React.Component<Props, State> {
     setSubmitting,
     validateForm
   }: FormikProps<LoginInput>) => async () => {
+    setSubmitting(true);
     this.handleErrorsDismissed();
 
-    const { login, updateLocalUser, history } = this.props;
+    const {
+      login,
+      updateLocalUser,
+      client,
+      getConn = getConnDefault,
+      refreshToHome = refreshToHomeDefault
+    } = this.props;
 
     if (!login) {
       setSubmitting(false);
@@ -161,7 +170,11 @@ export class Login extends React.Component<Props, State> {
       return;
     }
 
-    setSubmitting(true);
+    if (!(await getConn(client))) {
+      setSubmitting(false);
+      this.setState({ otherErrors: "You are not connected" });
+      return;
+    }
 
     const errors = await validateForm(values);
 
@@ -193,7 +206,7 @@ export class Login extends React.Component<Props, State> {
           });
         }
 
-        history.push(ROOT_URL);
+        refreshToHome();
       }
     } catch (error) {
       setSubmitting(false);

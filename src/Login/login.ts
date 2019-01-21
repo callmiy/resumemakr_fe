@@ -1,7 +1,8 @@
 import * as Yup from "yup";
 import { RouteComponentProps } from "react-router-dom";
 import { FormikErrors } from "formik";
-import { ApolloError } from "apollo-client";
+import { ApolloError, ApolloClient } from "apollo-client";
+import { WithApolloClient } from "react-apollo";
 
 import { LoginInput as FormValues } from "../graphql/apollo-gql";
 import { LoginMutationProps } from "../graphql/login.mutation";
@@ -9,7 +10,12 @@ import { UserLocalMutationProps } from "../State/user.local.mutation";
 import { UserLocalGqlProps } from "../State/auth.local.query";
 import { LoggedOutUserProps } from "../State/logged-out-user.local.query";
 
-export interface OwnProps extends RouteComponentProps<{}> {}
+export interface OwnProps
+  extends RouteComponentProps<{}>,
+    WithApolloClient<{}> {
+  refreshToHome?: () => void;
+  getConn?: (client: ApolloClient<{}>) => Promise<boolean>;
+}
 
 export interface Props
   extends OwnProps,

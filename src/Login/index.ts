@@ -1,4 +1,4 @@
-import { graphql, compose } from "react-apollo";
+import { graphql, compose, withApollo } from "react-apollo";
 
 import USER_LOCAL_QUERY, {
   UserLocalGqlProps,
@@ -36,6 +36,7 @@ const userLocalGql = graphql<
 });
 
 export default compose(
+  withApollo,
   loggedOutUserGql,
   userLocalGql,
   userLocalMutationGql,

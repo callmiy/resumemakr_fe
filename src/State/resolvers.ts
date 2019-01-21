@@ -36,8 +36,7 @@ const userMutation: ClientStateFn<UserMutationVar> = async (
 
   const data = {
     user: null,
-    staleToken: null,
-    currentResumeTitle: null
+    staleToken: null
   } as {
     loggedOutUser?: UserFragment | null;
   };
@@ -55,18 +54,35 @@ const userMutation: ClientStateFn<UserMutationVar> = async (
   return loggedOutUser;
 };
 
+const updateConn: ClientStateFn<{
+  isConnected: boolean;
+}> = (_, { isConnected }, { cache }) => {
+  const connected = {
+    __typename: "ConnectionStatus",
+    isConnected
+  };
+
+  cache.writeData({ data: { connected } });
+  return connected;
+};
+
 export default (cache: InMemoryCache) => {
   return withClientState({
     cache,
     resolvers: {
       Mutation: {
-        user: userMutation
+        user: userMutation,
+        connected: updateConn
       }
     },
     defaults: {
       staleToken: getToken(),
       user: null,
-      loggedOutUser: null
+      loggedOutUser: null,
+      connected: {
+        __typename: "ConnectionStatus",
+        isConnected: true
+      }
     }
   });
 };
