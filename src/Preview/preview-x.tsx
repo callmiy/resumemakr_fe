@@ -24,17 +24,23 @@ import {
   CreateSkillInput,
   CreateExperienceInput,
   EducationInput,
-  GetResume_getResume_personalInfo
+  ResumeDownload_getResume_personalInfo
 } from "../graphql/apollo-gql";
-
-import { toServerUrl } from "../utils";
 
 export class Preview extends React.Component<Props> {
   render() {
-    const { getResume } = this.props;
+    const { getResume, loading, error } = this.props;
+
+    if (loading) {
+      return <div>loading</div>;
+    }
+
+    if (error) {
+      return <div>{JSON.stringify(error)}</div>;
+    }
 
     if (!getResume) {
-      return;
+      return <div>An error occurred</div>;
     }
 
     const {
@@ -135,7 +141,7 @@ export default Preview;
 function PersonalInfo({
   personalInfo
 }: {
-  personalInfo: GetResume_getResume_personalInfo;
+  personalInfo: ResumeDownload_getResume_personalInfo;
 }) {
   const {
     firstName,
@@ -145,7 +151,7 @@ function PersonalInfo({
     phone,
     email,
     dateOfBirth,
-    photo
+    encodedPhoto
   } = personalInfo;
 
   return (
@@ -194,9 +200,9 @@ function PersonalInfo({
         </PersonalTitle>
       </Section>
 
-      {photo && (
+      {encodedPhoto && (
         <Img
-          backgroundImg={`url(${toServerUrl(photo)})`}
+          backgroundImg={`url(${encodedPhoto})`}
           data-testid={`${firstName} ${lastName} photo`}
         />
       )}

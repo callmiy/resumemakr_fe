@@ -3,15 +3,18 @@ import { withRouter } from "react-router-dom";
 
 import { Preview } from "./preview-x";
 import { OwnProps } from "./preview";
-import { getResumeQuery, GetResumeProps } from "../graphql/get-resume.query";
-import { GetResume, GetResumeVariables } from "../graphql/apollo-gql";
+import {
+  resumeDownloadQuery,
+  ResumeDownloadProps
+} from "../graphql/get-resume.query";
+import { ResumeDownload, ResumeDownloadVariables } from "../graphql/apollo-gql";
 
 const getResumeGql = graphql<
   OwnProps,
-  GetResume,
-  GetResumeVariables,
-  GetResumeProps | undefined
->(getResumeQuery, {
+  ResumeDownload,
+  ResumeDownloadVariables,
+  ResumeDownloadProps | undefined
+>(resumeDownloadQuery, {
   props: ({ data }) => data,
 
   options: ({ match }) => {

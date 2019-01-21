@@ -44,7 +44,7 @@ export interface CloneResume_cloneResume_resume_experiences {
   fromDate: string | null;
   position: string | null;
   toDate: string | null;
-  __typename: "ResumeExperience";
+  __typename: "Experience";
 }
 
 export interface CloneResume_cloneResume_resume_skills {
@@ -137,7 +137,7 @@ export interface CreateResume_createResume_resume_experiences {
   fromDate: string | null;
   position: string | null;
   toDate: string | null;
-  __typename: "ResumeExperience";
+  __typename: "Experience";
 }
 
 export interface CreateResume_createResume_resume_skills {
@@ -255,7 +255,7 @@ export interface GetResume_getResume_experiences {
   fromDate: string | null;
   position: string | null;
   toDate: string | null;
-  __typename: "ResumeExperience";
+  __typename: "Experience";
 }
 
 export interface GetResume_getResume_skills {
@@ -296,6 +296,95 @@ export interface GetResume {
 }
 
 export interface GetResumeVariables {
+  input: GetResumeInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: ResumeDownload
+// ====================================================
+
+export interface ResumeDownload_getResume_additionalSkills {
+  id: string;
+  description: string | null;
+  level: string | null;
+  index: number;
+  __typename: "Rated";
+}
+
+export interface ResumeDownload_getResume_languages {
+  id: string;
+  description: string | null;
+  level: string | null;
+  index: number;
+  __typename: "Rated";
+}
+
+export interface ResumeDownload_getResume_personalInfo {
+  id: string;
+  address: string | null;
+  dateOfBirth: string | null;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  encodedPhoto: string | null;
+  profession: string | null;
+  __typename: "PersonalInfo";
+}
+
+export interface ResumeDownload_getResume_experiences {
+  id: string;
+  index: number;
+  achievements: (string | null)[] | null;
+  companyName: string | null;
+  fromDate: string | null;
+  position: string | null;
+  toDate: string | null;
+  __typename: "Experience";
+}
+
+export interface ResumeDownload_getResume_skills {
+  id: string;
+  index: number;
+  description: string | null;
+  achievements: (string | null)[] | null;
+  __typename: "Skill";
+}
+
+export interface ResumeDownload_getResume_education {
+  id: string;
+  index: number;
+  course: string | null;
+  fromDate: string | null;
+  toDate: string | null;
+  school: string | null;
+  achievements: (string | null)[] | null;
+  __typename: "Education";
+}
+
+export interface ResumeDownload_getResume {
+  id: string;  // The ID of an object
+  title: string;
+  description: string | null;
+  hobbies: (string | null)[] | null;
+  __typename: "Resume";
+  additionalSkills: (ResumeDownload_getResume_additionalSkills | null)[] | null;
+  languages: (ResumeDownload_getResume_languages | null)[] | null;
+  personalInfo: ResumeDownload_getResume_personalInfo | null;
+  experiences: (ResumeDownload_getResume_experiences | null)[] | null;
+  skills: (ResumeDownload_getResume_skills | null)[] | null;
+  education: (ResumeDownload_getResume_education | null)[] | null;
+}
+
+export interface ResumeDownload {
+  getResume: ResumeDownload_getResume | null;  // Get a resume
+}
+
+export interface ResumeDownloadVariables {
   input: GetResumeInput;
 }
 
@@ -404,7 +493,7 @@ export interface UpdateResume_updateResume_resume_experiences {
   fromDate: string | null;
   position: string | null;
   toDate: string | null;
-  __typename: "ResumeExperience";
+  __typename: "Experience";
 }
 
 export interface UpdateResume_updateResume_resume_skills {
@@ -516,6 +605,98 @@ export interface RatedFrag {
   description: string | null;
   level: string | null;
   index: number;
+  __typename: "Rated";
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: PersonalInfoFrag
+// ====================================================
+
+export interface PersonalInfoFrag {
+  id: string;
+  address: string | null;
+  dateOfBirth: string | null;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  photo: string | null;
+  profession: string | null;
+  __typename: "PersonalInfo";
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: ExperienceFrag
+// ====================================================
+
+export interface ExperienceFrag {
+  id: string;
+  index: number;
+  achievements: (string | null)[] | null;
+  companyName: string | null;
+  fromDate: string | null;
+  position: string | null;
+  toDate: string | null;
+  __typename: "Experience";
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: EducationFrag
+// ====================================================
+
+export interface EducationFrag {
+  id: string;
+  index: number;
+  course: string | null;
+  fromDate: string | null;
+  toDate: string | null;
+  school: string | null;
+  achievements: (string | null)[] | null;
+  __typename: "Education";
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: SkillFrag
+// ====================================================
+
+export interface SkillFrag {
+  id: string;
+  index: number;
+  description: string | null;
+  achievements: (string | null)[] | null;
+  __typename: "Skill";
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: ResumeMiniFrag
+// ====================================================
+
+export interface ResumeMiniFrag {
+  id: string;  // The ID of an object
+  title: string;
+  description: string | null;
+  hobbies: (string | null)[] | null;
+  __typename: "Resume";
 }
 
 
@@ -563,7 +744,7 @@ export interface ResumeFullFrag_experiences {
   fromDate: string | null;
   position: string | null;
   toDate: string | null;
-  __typename: "ResumeExperience";
+  __typename: "Experience";
 }
 
 export interface ResumeFullFrag_skills {
@@ -597,6 +778,87 @@ export interface ResumeFullFrag {
   experiences: (ResumeFullFrag_experiences | null)[] | null;
   skills: (ResumeFullFrag_skills | null)[] | null;
   education: (ResumeFullFrag_education | null)[] | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: ResumeDownloadFrag
+// ====================================================
+
+export interface ResumeDownloadFrag_additionalSkills {
+  id: string;
+  description: string | null;
+  level: string | null;
+  index: number;
+  __typename: "Rated";
+}
+
+export interface ResumeDownloadFrag_languages {
+  id: string;
+  description: string | null;
+  level: string | null;
+  index: number;
+  __typename: "Rated";
+}
+
+export interface ResumeDownloadFrag_personalInfo {
+  id: string;
+  address: string | null;
+  dateOfBirth: string | null;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  encodedPhoto: string | null;
+  profession: string | null;
+  __typename: "PersonalInfo";
+}
+
+export interface ResumeDownloadFrag_experiences {
+  id: string;
+  index: number;
+  achievements: (string | null)[] | null;
+  companyName: string | null;
+  fromDate: string | null;
+  position: string | null;
+  toDate: string | null;
+  __typename: "Experience";
+}
+
+export interface ResumeDownloadFrag_skills {
+  id: string;
+  index: number;
+  description: string | null;
+  achievements: (string | null)[] | null;
+  __typename: "Skill";
+}
+
+export interface ResumeDownloadFrag_education {
+  id: string;
+  index: number;
+  course: string | null;
+  fromDate: string | null;
+  toDate: string | null;
+  school: string | null;
+  achievements: (string | null)[] | null;
+  __typename: "Education";
+}
+
+export interface ResumeDownloadFrag {
+  id: string;  // The ID of an object
+  title: string;
+  description: string | null;
+  hobbies: (string | null)[] | null;
+  __typename: "Resume";
+  additionalSkills: (ResumeDownloadFrag_additionalSkills | null)[] | null;
+  languages: (ResumeDownloadFrag_languages | null)[] | null;
+  personalInfo: ResumeDownloadFrag_personalInfo | null;
+  experiences: (ResumeDownloadFrag_experiences | null)[] | null;
+  skills: (ResumeDownloadFrag_skills | null)[] | null;
+  education: (ResumeDownloadFrag_education | null)[] | null;
 }
 
 
