@@ -1,10 +1,9 @@
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
 import { ApolloLink, Operation } from "apollo-link";
-// import { HttpLink } from "apollo-link-http";
+import { HttpLink } from "apollo-link-http";
 import { CachePersistor } from "apollo-cache-persist";
 import { onError } from "apollo-link-error";
-import { createLink } from "apollo-absinthe-upload-link";
 
 import { getBackendUrls } from "./get-backend-urls";
 import { getToken } from "./tokens";
@@ -12,7 +11,7 @@ import { SCHEMA_VERSION, SCHEMA_VERSION_KEY, SCHEMA_KEY } from "../constants";
 import initState from "./resolvers";
 
 const HTTP_URL = getBackendUrls().apiUrl;
-const httpLink = middleWares(createLink({ uri: HTTP_URL }) as ApolloLink);
+const httpLink = middleWares(new HttpLink({ uri: HTTP_URL }) as ApolloLink);
 
 const cache = new InMemoryCache({
   addTypename: true
