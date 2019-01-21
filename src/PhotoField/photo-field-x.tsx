@@ -30,6 +30,9 @@ enum FileState {
   deleted = "deleted"
 }
 
+/**
+ * The value of the photo field path on the server
+ */
 let serverValue: string | null = null;
 
 export class PhotoField extends React.Component<Props, State> {
@@ -57,10 +60,6 @@ export class PhotoField extends React.Component<Props, State> {
       field: { value }
     } = this.props;
 
-    /**
-     * Means we received the value from the server, otherwise it will be a file
-     * instance
-     */
     if ("string" === typeof value && serverValue !== value) {
       this.toUrl(value);
     }
@@ -196,7 +195,6 @@ export class PhotoField extends React.Component<Props, State> {
     }
 
     this.toUrl(file);
-    this.props.form.setFieldValue(this.props.field.name, file);
   };
 
   private toUrl = (file: File | null | string) => {
@@ -205,8 +203,8 @@ export class PhotoField extends React.Component<Props, State> {
     }
 
     /**
-     * If we are loading the file from the server, then we get a string that
-     * points to the path of the file on the server
+     * The file may either be a path string from server or base64 encoded
+     * string from client file
      */
     if ("string" === typeof file) {
       this.setState({
@@ -223,7 +221,10 @@ export class PhotoField extends React.Component<Props, State> {
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      const url = `url(${reader.result as string})`;
+      const base64Encoded = reader.result as string;
+      this.props.form.setFieldValue(this.props.field.name, base64Encoded);
+      const url = `url(${base64Encoded})`;
+
       this.setState({ url, fileState: FileState.previewing });
     };
 

@@ -268,13 +268,12 @@ export class ResumeForm extends React.Component<Props> {
       return;
     }
 
-    const isStringPhoto =
-      "string" === typeof (values.personalInfo && values.personalInfo.photo);
+    const photo = values.personalInfo && (values.personalInfo.photo as string);
 
     /**
      * If we are not uploading a fresh photo file, tell the server so.
      */
-    if (isStringPhoto) {
+    if (photo && !photo.startsWith("data:")) {
       values = update(values, {
         personalInfo: {
           photo: {
