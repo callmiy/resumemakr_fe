@@ -99,7 +99,7 @@ export class ResumeForm extends React.Component<Props> {
           {this.renderCurrEditingSection(values)}
 
           {currentSection === Section.preview && (
-            <Preview mode={PreviewMode.preview} />
+            <Preview mode={PreviewMode.preview} resume={values} />
           )}
 
           <div className="bottom-navs">

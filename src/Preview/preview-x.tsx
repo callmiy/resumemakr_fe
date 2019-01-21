@@ -1,19 +1,37 @@
 import React from "react";
 import { Icon } from "semantic-ui-react";
 
-import { Props, Mode } from "./preview";
-
-import { Container, Img, Description, Ul, GlobalStyle } from "./preview-styles";
-
 import {
   CreateSkillInput,
   CreateExperienceInput,
   EducationInput,
-  ResumeDownload_getResume_personalInfo
+  ResumeDownload_getResume_personalInfo,
+  ResumeDownload,
+  ResumeDownloadVariables,
+  GetResume_getResume_personalInfo
 } from "../graphql/apollo-gql";
 
-export class Preview extends React.Component<Props> {
+import { resumeDownloadQuery } from "../graphql/get-resume.query";
+import { Props, Mode, State } from "./preview";
+import { Container, Img, Description, Ul, GlobalStyle } from "./preview-styles";
+
+export class Preview extends React.Component<Props, State> {
   containerRef = React.createRef<HTMLDivElement>();
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      resume: this.props.resume
+    };
+  }
+
+  componentDidMount() {
+    const { mode } = this.props;
+
+    if (mode === Mode.download) {
+      this.fetchResume();
+    }
+  }
 
   componentDidUpdate() {
     const els = document.getElementsByClassName("break-here");
@@ -60,17 +78,17 @@ export class Preview extends React.Component<Props> {
   }
 
   render() {
-    const { getResume, loading, error } = this.props;
+    const { resume, loading, gqlError } = this.state;
 
     if (loading) {
       return <div>loading</div>;
     }
 
-    if (error) {
-      return <div>{JSON.stringify(error)}</div>;
+    if (gqlError) {
+      return <div>{JSON.stringify(gqlError)}</div>;
     }
 
-    if (!getResume) {
+    if (!resume) {
       return <div>An error occurred</div>;
     }
 
@@ -82,7 +100,7 @@ export class Preview extends React.Component<Props> {
       hobbies,
       languages,
       personalInfo
-    } = getResume;
+    } = resume;
 
     const { mode } = this.props;
 
@@ -200,6 +218,44 @@ export class Preview extends React.Component<Props> {
       </div>
     );
   };
+
+  private fetchResume = async () => {
+    this.setState({ loading: true });
+
+    const {
+      client,
+      match: { params }
+    } = this.props;
+
+    try {
+      const result = await client.query<
+        ResumeDownload,
+        ResumeDownloadVariables
+      >({
+        query: resumeDownloadQuery,
+
+        variables: {
+          input: {
+            title: params.title
+          }
+        }
+      });
+
+      this.setState({ loading: false });
+
+      const resume =
+        result && result.data && result.data.getResume && result.data.getResume;
+
+      if (!resume) {
+        this.setState({ error: "Unable to fetch resume" });
+        return;
+      }
+
+      this.setState({ resume });
+    } catch (error) {
+      this.setState({ loading: false, gqlError: error });
+    }
+  };
 }
 
 export default Preview;
@@ -207,7 +263,9 @@ export default Preview;
 function PersonalInfo({
   personalInfo
 }: {
-  personalInfo: ResumeDownload_getResume_personalInfo;
+  personalInfo:
+    | ResumeDownload_getResume_personalInfo
+    | GetResume_getResume_personalInfo;
 }) {
   const {
     firstName,
@@ -216,9 +274,12 @@ function PersonalInfo({
     address,
     phone,
     email,
-    dateOfBirth,
-    encodedPhoto
+    dateOfBirth
   } = personalInfo;
+
+  const photo =
+    (personalInfo as GetResume_getResume_personalInfo).photo ||
+    (personalInfo as ResumeDownload_getResume_personalInfo).encodedPhoto;
 
   return (
     <>
@@ -264,10 +325,10 @@ function PersonalInfo({
         </h4>
       </div>
 
-      {encodedPhoto && (
+      {photo && (
         <Img
           className="photo"
-          backgroundImg={`url(${encodedPhoto})`}
+          backgroundImg={`url(${photo})`}
           data-testid={`${firstName} ${lastName} photo`}
         />
       )}
