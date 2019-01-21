@@ -42,9 +42,7 @@ export class Resume extends React.Component<Props> {
         )}
 
         {hash.startsWith(ResumePathHash.preview) && (
-          <div className="main-container preview">
-            <Preview mode={PreviewMode.download} />
-          </div>
+          <Preview mode={PreviewMode.download} />
         )}
       </Container>
     );

@@ -32,10 +32,5 @@ export const Container = styled(AppContainer)`
     flex: 1;
     min-height: 100%;
     margin-left: 5px;
-
-    &.preview {
-      max-width: 900px;
-      margin: 0 auto;
-    }
   }
 `;

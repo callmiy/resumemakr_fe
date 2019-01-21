@@ -1,24 +1,9 @@
 import React from "react";
+import { Icon } from "semantic-ui-react";
 
-import { Props } from "./preview";
+import { Props, Mode } from "./preview";
 
-import {
-  Container,
-  Left,
-  Section,
-  NamePos,
-  Name,
-  Profession,
-  TitleLeft,
-  PersonalTitle,
-  PersonalText,
-  Img,
-  Right,
-  TitleRight,
-  Description,
-  Ul,
-  PersonalIcon
-} from "./preview-styles";
+import { Container, Img, Description, Ul, GlobalStyle } from "./preview-styles";
 
 import {
   CreateSkillInput,
@@ -28,6 +13,54 @@ import {
 } from "../graphql/apollo-gql";
 
 export class Preview extends React.Component<Props> {
+  containerRef = React.createRef<HTMLDivElement>();
+
+  componentDidUpdate() {
+    const els = document.getElementsByClassName("break-here");
+
+    if (!els.length) {
+      return;
+    }
+
+    const { mode } = this.props;
+    let sumHeight = 0;
+    const maxHeight = 1000;
+    let pages = 1;
+
+    [].forEach.call(els, (el: HTMLElement, index: number) => {
+      sumHeight += el.offsetHeight;
+
+      if (sumHeight >= maxHeight) {
+        const id = "page-break" + index;
+
+        if (!document.getElementById(id)) {
+          const pageBreak = document.createElement("div");
+          pageBreak.id = id;
+
+          const classNames = ["html2pdf__page-break"];
+          if (mode === Mode.preview) {
+            classNames.push("preview");
+          }
+
+          pageBreak.classList.add(...classNames);
+
+          el.before(pageBreak);
+          pages += 1;
+        }
+
+        sumHeight = 0;
+      }
+    });
+
+    if (pages > 1) {
+      const { current } = this.containerRef;
+
+      if (current) {
+        current.style.height = 1120 * pages + "px";
+      }
+    }
+  }
+
   render() {
     const { getResume, loading, error } = this.props;
 
@@ -56,60 +89,77 @@ export class Preview extends React.Component<Props> {
     const { mode } = this.props;
 
     return (
-      <Container data-testid="preview-resume-section" mode={mode}>
-        <Left>
-          {personalInfo && <PersonalInfo personalInfo={personalInfo} />}
+      <>
+        {mode === Mode.download && <GlobalStyle />}
 
-          {additionalSkills && additionalSkills.length && (
-            <Section>
-              <TitleLeft>Additional Skills</TitleLeft>
+        <Container
+          ref={this.containerRef}
+          data-testid="preview-resume-section"
+          mode={mode}
+        >
+          <div className="main-column left">
+            {personalInfo && <PersonalInfo personalInfo={personalInfo} />}
 
-              {additionalSkills.map((s, index) => (
-                <div key={index}>{s && s.description}</div>
-              ))}
-            </Section>
-          )}
+            {additionalSkills && additionalSkills.length && (
+              <div className="section-container">
+                <h3 className="break-here section-title left">
+                  Additional Skills
+                </h3>
 
-          {languages && languages.length && (
-            <Section>
-              <TitleLeft>Languages</TitleLeft>
+                {additionalSkills.map((s, index) => (
+                  <div key={index} className="break-here">
+                    {s && s.description}
+                  </div>
+                ))}
+              </div>
+            )}
 
-              {languages.map((s, index) => (
-                <div key={index}>
-                  {s && s.description} [{s && s.level}]
-                </div>
-              ))}
-            </Section>
-          )}
+            {languages && languages.length && (
+              <div className="section-container">
+                <h3 className="break-here section-title left">Languages</h3>
 
-          {hobbies && hobbies.length && (
-            <Section>
-              <TitleLeft>Hobbies</TitleLeft>
+                {languages.map((s, index) => (
+                  <div key={index} className="break-here">
+                    {s && s.description} [{s && s.level}]
+                  </div>
+                ))}
+              </div>
+            )}
 
-              {hobbies.map((s, index) => (
-                <span key={index}>{s}</span>
-              ))}
-            </Section>
-          )}
-        </Left>
+            {hobbies && hobbies.length && (
+              <div className="section-container">
+                <h3 className="break-here section-title left">Hobbies</h3>
 
-        <Right>
-          {skills && this.renderSkills(skills)}
-          {experiences && experiences.length && (
-            <Experiences experiences={experiences as CreateExperienceInput[]} />
-          )}
-          {education && education.length && (
-            <Educations educations={education as EducationInput[]} />
-          )}
-        </Right>
-      </Container>
+                {hobbies.map((s, index) => (
+                  <div key={index} className="break-here">
+                    {s}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="main-column right">
+            {skills && this.renderSkills(skills)}
+
+            {experiences && experiences.length && (
+              <Experiences
+                experiences={experiences as CreateExperienceInput[]}
+              />
+            )}
+            {education && education.length && (
+              <Educations educations={education as EducationInput[]} />
+            )}
+          </div>
+        </Container>
+      </>
     );
   }
 
   private renderSkills = (skills: Array<CreateSkillInput | null>) => {
     return (
-      <Section>
-        <TitleRight>Skills</TitleRight>
+      <div className="section-container">
+        <h3 className="break-here section-title right skills">Skills</h3>
 
         {skills.map((skill, index) => {
           if (!skill) {
@@ -120,18 +170,20 @@ export class Preview extends React.Component<Props> {
 
           return (
             <React.Fragment key={index}>
-              <Description>{description}</Description>
+              <Description className="break-here">{description}</Description>
 
               <Ul>
                 {achievements &&
                   achievements.map((achievement, ind) => (
-                    <li key={ind}>{achievement}</li>
+                    <li key={ind} className="break-here li">
+                      {achievement}
+                    </li>
                   ))}
               </Ul>
             </React.Fragment>
           );
         })}
-      </Section>
+      </div>
     );
   };
 }
@@ -156,52 +208,51 @@ function PersonalInfo({
 
   return (
     <>
-      <Section>
-        <NamePos>
-          <Name>{firstName}</Name>
-          <Name>{lastName}</Name>
-        </NamePos>
+      <div className="section-container">
+        <h1 className="names-container">
+          <span className="name">{firstName}</span>
+          <span className="name">{lastName}</span>
+        </h1>
 
-        <Profession>{profession}</Profession>
-      </Section>
+        <div className="profession">{profession}</div>
+      </div>
 
-      <Section>
-        <TitleLeft>Personal Info</TitleLeft>
+      <div className="section-container">
+        <h3 className="section-title left">Personal Info</h3>
 
         {dateOfBirth && (
-          <PersonalTitle>
-            <PersonalText>Date of birth</PersonalText>
+          <h4 className="personal-info">
+            <Icon name="birthday" />
 
-            <PersonalText>{dateOfBirth}</PersonalText>
-          </PersonalTitle>
+            <p>{dateOfBirth}</p>
+          </h4>
         )}
 
-        <PersonalTitle>
-          <PersonalIcon name="map marker alternate" />
+        <h4 className="personal-info">
+          <Icon name="map marker alternate" />
 
           {address &&
             address
               .split("\n")
-              .map((addy, index) => (
-                <PersonalText key={index}>{addy.trim()}</PersonalText>
-              ))}
-        </PersonalTitle>
+              .map((addy, index) => <p key={index}>{addy.trim()}</p>)}
+        </h4>
 
-        <PersonalTitle>
-          <PersonalIcon name="phone" />
+        <h4 className="personal-info">
+          <Icon name="phone" />
 
-          <PersonalText>{phone}</PersonalText>
-        </PersonalTitle>
+          <p>{phone}</p>
+        </h4>
 
-        <PersonalTitle>
-          <PersonalIcon name="mail" />
+        <h4 className="personal-info">
+          <Icon name="mail" />
 
-          <PersonalText>{email}</PersonalText>
-        </PersonalTitle>
-      </Section>
+          <p>{email}</p>
+        </h4>
+      </div>
 
       {encodedPhoto && (
         <Img
+          className="photo"
           backgroundImg={`url(${encodedPhoto})`}
           data-testid={`${firstName} ${lastName} photo`}
         />
@@ -212,8 +263,8 @@ function PersonalInfo({
 
 function Educations({ educations }: { educations: EducationInput[] }) {
   return (
-    <Section>
-      <TitleRight>Education</TitleRight>
+    <div className="section-container">
+      <h3 className="break-here section-title right">Education</h3>
 
       {educations.map((ed, index) => {
         const { course, school, fromDate, toDate, achievements } = ed;
@@ -225,22 +276,28 @@ function Educations({ educations }: { educations: EducationInput[] }) {
             </div>
 
             <div className="right">
-              <Description className="position">{course}</Description>
+              <Description className="position break-here">
+                {course}
+              </Description>
 
-              <div className="company">{school}</div>
+              <div className="company break-here">{school}</div>
 
               {achievements && achievements.length && (
                 <Ul>
-                  {achievements.map((achievement, ind) => (
-                    <li key={ind}>{achievement}</li>
-                  ))}
+                  {achievements.map((achievement, ind) => {
+                    return (
+                      <li key={ind} className="break-here">
+                        {achievement}
+                      </li>
+                    );
+                  })}
                 </Ul>
               )}
             </div>
           </div>
         );
       })}
-    </Section>
+    </div>
   );
 }
 
@@ -250,8 +307,8 @@ function Experiences({
   experiences: CreateExperienceInput[];
 }) {
   return (
-    <Section>
-      <TitleRight>Experience</TitleRight>
+    <div className="section-container">
+      <h3 className="break-here section-title right">Experience</h3>
 
       {experiences.map((exp, index) => {
         const { position, achievements, fromDate, toDate, companyName } = exp;
@@ -263,20 +320,26 @@ function Experiences({
             </div>
 
             <div className="right">
-              <Description className="position">{position}</Description>
+              <Description className="position break-here">
+                {position}
+              </Description>
 
-              <div className="company">{companyName}</div>
+              <div className="company break-here">{companyName}</div>
 
               <Ul>
                 {achievements &&
-                  achievements.map((achievement, ind) => (
-                    <li key={ind}>{achievement}</li>
-                  ))}
+                  achievements.map((achievement, ind) => {
+                    return (
+                      <li key={ind} className="break-here">
+                        {achievement}
+                      </li>
+                    );
+                  })}
               </Ul>
             </div>
           </div>
         );
       })}
-    </Section>
+    </div>
   );
 }
