@@ -21,9 +21,11 @@ import {
 } from "./sign-up";
 
 import { RegistrationInput } from "../graphql/apollo-gql";
-import { LOGIN_URL, ROOT_URL } from "../routing";
+import { LOGIN_URL } from "../routing";
 import Header from "../Header";
 import { AppContainer, AppMain1 } from "../styles/mixins";
+import refreshToHomeDefault from "../refresh-to-home";
+import getConnDefault from "../State/get-conn-status";
 
 const FORM_RENDER_PROPS = {
   name: ["Name", "text"],
@@ -73,13 +75,16 @@ export class SignUp extends React.Component<Props, State> {
     setSubmitting,
     validateForm
   }: FormikProps<RegistrationInput>) => async () => {
+    setSubmitting(true);
     this.handleErrorsDismissed();
 
     const {
       regUser,
       updateLocalUser,
       scrollToTop = this.defaultScrollToTop,
-      history
+      getConn = getConnDefault,
+      refreshToHome = refreshToHomeDefault,
+      client
     } = this.props;
 
     if (!regUser) {
@@ -89,13 +94,18 @@ export class SignUp extends React.Component<Props, State> {
       return;
     }
 
-    setSubmitting(true);
     const errors = await validateForm(values);
 
     if (!loIsEmpty(errors)) {
       setSubmitting(false);
       this.setState({ formErrors: errors });
       scrollToTop();
+      return;
+    }
+
+    if (!(await getConn(client))) {
+      setSubmitting(false);
+      this.setState({ otherErrors: "You are not connected" });
       return;
     }
 
@@ -117,7 +127,7 @@ export class SignUp extends React.Component<Props, State> {
           await updateLocalUser({ variables: { user } });
         }
 
-        history.push(ROOT_URL);
+        refreshToHome();
       }
     } catch (error) {
       setSubmitting(false);

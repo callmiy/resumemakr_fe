@@ -170,17 +170,17 @@ export class Login extends React.Component<Props, State> {
       return;
     }
 
-    if (!(await getConn(client))) {
-      setSubmitting(false);
-      this.setState({ otherErrors: "You are not connected" });
-      return;
-    }
-
     const errors = await validateForm(values);
 
     if (errors.email || errors.password) {
       setSubmitting(false);
       this.setState({ formErrors: errors });
+      return;
+    }
+
+    if (!(await getConn(client))) {
+      setSubmitting(false);
+      this.setState({ otherErrors: "You are not connected" });
       return;
     }
 

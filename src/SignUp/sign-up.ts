@@ -1,6 +1,7 @@
 import * as Yup from "yup";
 import { RouteComponentProps } from "react-router-dom";
 import { WithApolloClient } from "react-apollo";
+import { ApolloClient } from "apollo-client";
 
 import { RegMutationProps } from "../graphql/user-reg.mutation";
 import { UserLocalMutationProps } from "../State/user.local.mutation";
@@ -12,6 +13,8 @@ export interface Props
     UserLocalMutationProps,
     WithApolloClient<{}> {
   scrollToTop?: () => void;
+  refreshToHome?: () => void;
+  getConn?: (client: ApolloClient<{}>) => Promise<boolean>;
 }
 
 export type FormValuesKey = keyof RegistrationInput;
