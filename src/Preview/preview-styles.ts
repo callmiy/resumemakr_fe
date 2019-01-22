@@ -164,7 +164,7 @@ export const Container = styled.div`
     }
 
     & + * {
-      padding-top: 10px;
+      padding-top: 15px;
     }
   }
 `;

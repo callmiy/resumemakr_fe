@@ -34,7 +34,7 @@ export class Preview extends React.Component<Props, State> {
   }
 
   componentDidUpdate() {
-    const els = document.getElementsByClassName("break-here");
+    const els = document.querySelectorAll(".right .break-here");
 
     if (!els.length) {
       return;
@@ -42,13 +42,18 @@ export class Preview extends React.Component<Props, State> {
 
     const { mode } = this.props;
     let sumHeight = 0;
-    const maxHeight = 1000;
-    let pages = 1;
+    let totalHeight = 0;
+    const maxHeights = {
+      [Mode.download]: 850,
+      [Mode.preview]: 1000
+    };
 
     [].forEach.call(els, (el: HTMLElement, index: number) => {
-      sumHeight += el.offsetHeight;
+      const h = this.getHeight(el);
+      sumHeight += h;
+      totalHeight += h;
 
-      if (sumHeight >= maxHeight) {
+      if (sumHeight >= maxHeights[mode]) {
         const id = "page-break" + index;
 
         if (!document.getElementById(id)) {
@@ -61,9 +66,8 @@ export class Preview extends React.Component<Props, State> {
           }
 
           pageBreak.classList.add(...classNames);
-
           el.before(pageBreak);
-          pages += 1;
+          // totalHeight += this.getHeight(pageBreak);
         }
 
         sumHeight = 0;
@@ -73,9 +77,19 @@ export class Preview extends React.Component<Props, State> {
     const { current } = this.containerRef;
 
     if (mode === Mode.download && current) {
-      current.style.height = 1120 * pages + "px";
+      current.style.height = 1120 * Math.ceil(totalHeight / 900) + "px";
+      (current as any).key = new Date().getTime() + "";
     }
   }
+
+  getHeight = (el: HTMLElement) => {
+    const styles = window.getComputedStyle(el);
+    return (
+      parseFloat(styles.getPropertyValue("margin-top").replace("px", "")) +
+      parseFloat(styles.getPropertyValue("margin-bottom").replace("px", "")) +
+      el.offsetHeight
+    );
+  };
 
   render() {
     const { resume, loading, gqlError } = this.state;
