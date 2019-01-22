@@ -39,7 +39,12 @@ export class Rated extends React.Component<Props, {}> {
       dataTestId
     } = this.props;
 
-    const values = (this.props.values || [{ ...emptyVal }]) as RatedInput[];
+    let values = this.props.values as RatedInput[];
+
+    if (!values || !values.length) {
+      values = [{ ...emptyVal }];
+    }
+
     cachedValues = values;
 
     return (
