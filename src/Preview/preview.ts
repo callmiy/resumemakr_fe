@@ -2,16 +2,13 @@ import { RouteComponentProps } from "react-router-dom";
 import { WithApolloClient } from "react-apollo";
 import { ApolloError } from "apollo-client";
 
-import {
-  GetResume_getResume,
-  ResumeDownload_getResume
-} from "../graphql/apollo-gql";
+import { GetResume_getResume } from "../graphql/apollo-gql";
 
 export interface OwnProps
   extends RouteComponentProps<{ title: string }>,
     WithApolloClient<{}> {
   mode: Mode;
-  resume?: GetResume_getResume | ResumeDownload_getResume;
+  resume?: GetResume_getResume;
 }
 
 export type Props = OwnProps;
@@ -22,7 +19,7 @@ export enum Mode {
 }
 
 export interface State {
-  resume?: GetResume_getResume | ResumeDownload_getResume;
+  resume?: GetResume_getResume;
   loading?: boolean;
   gqlError?: ApolloError;
   error?: string;

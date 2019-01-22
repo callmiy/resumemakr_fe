@@ -5,15 +5,15 @@ import {
   CreateSkillInput,
   CreateExperienceInput,
   EducationInput,
-  ResumeDownload_getResume_personalInfo,
-  ResumeDownload,
-  ResumeDownloadVariables,
-  GetResume_getResume_personalInfo
+  GetResume_getResume_personalInfo,
+  GetResume,
+  GetResumeVariables
 } from "../graphql/apollo-gql";
 
-import { resumeDownloadQuery } from "../graphql/get-resume.query";
+import { getResumeQuery } from "../graphql/get-resume.query";
 import { Props, Mode, State } from "./preview";
 import { Container, Img, Description, Ul, GlobalStyle } from "./preview-styles";
+import { toServerUrl } from "../utils";
 
 export class Preview extends React.Component<Props, State> {
   containerRef = React.createRef<HTMLDivElement>();
@@ -115,7 +115,6 @@ export class Preview extends React.Component<Props, State> {
         >
           <div className="main-column left">
             {personalInfo && <PersonalInfo personalInfo={personalInfo} />}
-
             {additionalSkills && !!additionalSkills.length && (
               <div className="section-container">
                 <h3 className="break-here section-title left">
@@ -141,7 +140,6 @@ export class Preview extends React.Component<Props, State> {
                 })}
               </div>
             )}
-
             {languages && languages.length && (
               <div className="section-container">
                 <h3 className="break-here section-title left">Languages</h3>
@@ -153,7 +151,6 @@ export class Preview extends React.Component<Props, State> {
                 ))}
               </div>
             )}
-
             {hobbies && hobbies.length && (
               <div className="section-container">
                 <h3 className="break-here section-title left">Hobbies</h3>
@@ -228,11 +225,8 @@ export class Preview extends React.Component<Props, State> {
     } = this.props;
 
     try {
-      const result = await client.query<
-        ResumeDownload,
-        ResumeDownloadVariables
-      >({
-        query: resumeDownloadQuery,
+      const result = await client.query<GetResume, GetResumeVariables>({
+        query: getResumeQuery,
 
         variables: {
           input: {
@@ -263,9 +257,7 @@ export default Preview;
 function PersonalInfo({
   personalInfo
 }: {
-  personalInfo:
-    | ResumeDownload_getResume_personalInfo
-    | GetResume_getResume_personalInfo;
+  personalInfo: GetResume_getResume_personalInfo;
 }) {
   const {
     firstName,
@@ -274,12 +266,9 @@ function PersonalInfo({
     address,
     phone,
     email,
-    dateOfBirth
+    dateOfBirth,
+    photo
   } = personalInfo;
-
-  const photo =
-    (personalInfo as GetResume_getResume_personalInfo).photo ||
-    (personalInfo as ResumeDownload_getResume_personalInfo).encodedPhoto;
 
   return (
     <>
@@ -328,7 +317,7 @@ function PersonalInfo({
       {photo && (
         <Img
           className="photo"
-          backgroundImg={`url(${photo})`}
+          backgroundImg={`url(${toServerUrl(photo)})`}
           data-testid={`${firstName} ${lastName} photo`}
         />
       )}
