@@ -3,7 +3,6 @@ import { Form, Icon } from "semantic-ui-react";
 import { Cancelable } from "lodash";
 import lodashDebounce from "lodash/debounce";
 import lodashIsEqual from "lodash/isEqual";
-import lodashIsEmpty from "lodash/isEmpty";
 import update from "immutability-helper";
 
 import {
@@ -53,7 +52,7 @@ export class ResumeForm extends React.Component<Props, State> {
 
     debounceUpdateResume = lodashDebounce<ResumeForm["updateResume"]>(
       this.updateResume,
-      500
+      250
     );
 
     this.state = {
@@ -259,18 +258,7 @@ export class ResumeForm extends React.Component<Props, State> {
     }
 
     let values = this.props.values;
-
-    /**
-     * if valuesTracker is empty (null or {}), then it means we are probably
-     * on a render before getResume from apollo is resolved and we don't
-     * want to save the form.
-     */
-    if (!valuesTracker || lodashIsEmpty(valuesTracker)) {
-      valuesTracker = values;
-      return;
-    }
-
-    const photo = values.personalInfo && (values.personalInfo.photo as string);
+    const photo = values.personalInfo && values.personalInfo.photo;
 
     /**
      * If we are not uploading a fresh photo file, tell the server so.
@@ -284,32 +272,20 @@ export class ResumeForm extends React.Component<Props, State> {
         }
       });
 
-      valuesTracker = update(valuesTracker, {
-        personalInfo: {
-          photo: {
-            $set: ALREADY_UPLOADED
+      if (valuesTracker && valuesTracker.personalInfo) {
+        valuesTracker = update(valuesTracker, {
+          personalInfo: {
+            photo: {
+              $set: ALREADY_UPLOADED
+            }
           }
-        }
-      });
+        });
+      }
     }
 
     if (lodashIsEqual(values, valuesTracker)) {
       return;
     }
-
-    // tslint:disable-next-line:no-console
-    console.log(
-      "\n\t\tLogging start\n\n\n\n values\n",
-      values,
-      "\n\n\n\n\t\tLogging ends\n"
-    );
-
-    // tslint:disable-next-line:no-console
-    console.log(
-      "\n\t\tLogging start\n\n\n\n valuesTracker\n",
-      valuesTracker,
-      "\n\n\n\n\t\tLogging ends\n"
-    );
 
     const { updateResume } = this.props;
 

@@ -1,4 +1,4 @@
-import React, { createRef } from "react";
+import React from "react";
 import { FieldProps } from "formik";
 import { Icon, Modal, Button } from "semantic-ui-react";
 
@@ -31,11 +31,6 @@ enum FileState {
   deleted = "deleted"
 }
 
-/**
- * The value of the photo field path on the server
- */
-let serverValue: string | null = null;
-
 export class PhotoField extends React.Component<Props, State> {
   static contextType = FormContext;
   context!: React.ContextType<typeof FormContext>;
@@ -44,10 +39,14 @@ export class PhotoField extends React.Component<Props, State> {
     fileState: FileState.clean
   };
 
-  inputRef = createRef<HTMLInputElement>();
+  /**
+   * The value of the photo field path on the server
+   */
+  serverValue: string | null = null;
 
   constructor(props: Props) {
     super(props);
+    this.serverValue = props.field.value;
   }
 
   componentDidMount() {
@@ -56,7 +55,6 @@ export class PhotoField extends React.Component<Props, State> {
     } = this.props;
 
     this.toUrl(value);
-    serverValue = value;
   }
 
   componentDidUpdate() {
@@ -64,11 +62,11 @@ export class PhotoField extends React.Component<Props, State> {
       field: { value }
     } = this.props;
 
-    if ("string" === typeof value && serverValue !== value) {
+    if (value && this.serverValue !== value) {
       this.toUrl(value);
     }
 
-    serverValue = value;
+    this.serverValue = value;
   }
 
   render() {
@@ -140,7 +138,6 @@ export class PhotoField extends React.Component<Props, State> {
         </ChangePhoto>
 
         <InputFile
-          ref={this.inputRef}
           name={fieldName}
           id={fieldName}
           onChange={this.handleFileUpload}
@@ -226,6 +223,7 @@ export class PhotoField extends React.Component<Props, State> {
 
     reader.onloadend = () => {
       const base64Encoded = reader.result as string;
+
       this.valueChanged(base64Encoded);
 
       this.setState({
