@@ -12,7 +12,9 @@ import {
   toSection,
   sectionsList,
   Props,
-  getInitialValues
+  getInitialValues,
+  State,
+  FormContextProvider
 } from "./resume-form";
 
 import {
@@ -45,7 +47,7 @@ let debounceUpdateResume: (ResumeForm["updateResume"] & Cancelable) | undefined;
 let currentSection: Section = Section.personalInfo;
 let backToSection: Section = Section.personalInfo;
 
-export class ResumeForm extends React.Component<Props> {
+export class ResumeForm extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
@@ -53,6 +55,10 @@ export class ResumeForm extends React.Component<Props> {
       this.updateResume,
       500
     );
+
+    this.state = {
+      valueChanged: this.valueChanged
+    };
   }
 
   componentDidMount() {
@@ -62,12 +68,6 @@ export class ResumeForm extends React.Component<Props> {
   componentWillUnmount() {
     if (debounceUpdateResume) {
       debounceUpdateResume.cancel();
-    }
-  }
-
-  componentDidUpdate() {
-    if (debounceUpdateResume) {
-      debounceUpdateResume();
     }
   }
 
@@ -96,7 +96,9 @@ export class ResumeForm extends React.Component<Props> {
     return (
       <Container>
         <Form>
-          {this.renderCurrEditingSection(values)}
+          <FormContextProvider value={this.state}>
+            {this.renderCurrEditingSection(values)}
+          </FormContextProvider>
 
           {currentSection === Section.preview && (
             <Preview mode={PreviewMode.preview} resume={values} />
@@ -295,6 +297,20 @@ export class ResumeForm extends React.Component<Props> {
       return;
     }
 
+    // tslint:disable-next-line:no-console
+    console.log(
+      "\n\t\tLogging start\n\n\n\n values\n",
+      values,
+      "\n\n\n\n\t\tLogging ends\n"
+    );
+
+    // tslint:disable-next-line:no-console
+    console.log(
+      "\n\t\tLogging start\n\n\n\n valuesTracker\n",
+      valuesTracker,
+      "\n\n\n\n\t\tLogging ends\n"
+    );
+
     const { updateResume } = this.props;
 
     if (!updateResume) {
@@ -362,6 +378,12 @@ export class ResumeForm extends React.Component<Props> {
       currentSection !== Section.preview ? currentSection : backToSection;
 
     return currentSection;
+  };
+
+  private valueChanged = () => {
+    if (debounceUpdateResume) {
+      debounceUpdateResume();
+    }
   };
 }
 

@@ -2,6 +2,7 @@ import * as Yup from "yup";
 import { RouteComponentProps } from "react-router-dom";
 import { FormikProps } from "formik";
 import { WithFormikConfig } from "formik";
+import { createContext } from "react";
 
 import {
   validationSchema as expSchema,
@@ -149,3 +150,11 @@ export const formikConfig: WithFormikConfig<Props, FormValues> = {
 export interface ChildProps {
   setFieldValue: SetFieldValue<CreateExperienceInput>;
 }
+
+export interface State {
+  updatingResume?: boolean;
+  valueChanged: () => void;
+}
+
+export const FormContext = createContext<State>({} as State);
+export const FormContextProvider = FormContext.Provider;

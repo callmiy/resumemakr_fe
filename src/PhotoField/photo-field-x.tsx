@@ -13,6 +13,7 @@ import {
 
 import { AppModal } from "../styles/mixins";
 import { toServerUrl } from "../utils";
+import { FormContext } from "../ResumeForm/resume-form";
 
 export interface Props extends FieldProps<{ photo: string | null }> {
   removeFilePreview?: () => void;
@@ -36,6 +37,9 @@ enum FileState {
 let serverValue: string | null = null;
 
 export class PhotoField extends React.Component<Props, State> {
+  static contextType = FormContext;
+  context!: React.ContextType<typeof FormContext>;
+
   state: State = {
     fileState: FileState.clean
   };
@@ -222,10 +226,12 @@ export class PhotoField extends React.Component<Props, State> {
 
     reader.onloadend = () => {
       const base64Encoded = reader.result as string;
-      this.props.form.setFieldValue(this.props.field.name, base64Encoded);
-      const url = `url(${base64Encoded})`;
+      this.valueChanged(base64Encoded);
 
-      this.setState({ url, fileState: FileState.previewing });
+      this.setState({
+        url: `url(${base64Encoded})`,
+        fileState: FileState.previewing
+      });
     };
 
     reader.readAsDataURL(file);
@@ -237,7 +243,12 @@ export class PhotoField extends React.Component<Props, State> {
       url: undefined,
       open: false
     });
-    this.props.form.setFieldValue(this.props.field.name, null);
+    this.valueChanged(null);
+  };
+
+  private valueChanged = (file: string | null) => {
+    this.props.form.setFieldValue(this.props.field.name, file);
+    this.context.valueChanged();
   };
 }
 

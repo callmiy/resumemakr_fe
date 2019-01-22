@@ -8,12 +8,64 @@ import RegularField from "../RegularField";
 import PhotoField from "../PhotoField";
 import { Section } from "../ResumeForm/resume-form";
 import { emptyVal } from "./personal-info";
+import { FormContext } from "../ResumeForm/resume-form";
+
+class FirstColumn extends React.Component<{ values: PersonalInfoInput }> {
+  static contextType = FormContext;
+  context!: React.ContextType<typeof FormContext>;
+
+  render() {
+    const { values } = this.props;
+
+    return (
+      <Card>
+        <Card.Content>
+          <Card.Header>1st column</Card.Header>
+        </Card.Content>
+
+        <Card.Content>
+          <FastField
+            name={makeName("address")}
+            label="Address"
+            comp={TextArea}
+            component={RegularField}
+            value={values.address}
+            onBlur={this.context.valueChanged}
+          />
+
+          <FastField
+            name={makeName("phone")}
+            label="Phone"
+            component={RegularField}
+            value={values.phone}
+          />
+
+          <FastField
+            name={makeName("email")}
+            label="Email"
+            type="email"
+            component={RegularField}
+            value={values.email}
+          />
+
+          <FastField
+            name={makeName("dateOfBirth")}
+            label="Date of birth yyyy-mm-dd"
+            component={RegularField}
+            value={values.dateOfBirth}
+          />
+        </Card.Content>
+      </Card>
+    );
+  }
+}
 
 interface Props {
   values: PersonalInfoInput | null | undefined;
   label: Section;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class PersonalInfo extends React.Component<Props, {}> {
   render() {
     const { label } = this.props;
@@ -77,48 +129,6 @@ function BioData({ values }: { values: PersonalInfoInput }) {
         value={values.photo}
       />
     </>
-  );
-}
-
-function FirstColumn({ values }: { values: PersonalInfoInput }) {
-  return (
-    <Card>
-      <Card.Content>
-        <Card.Header>1st column</Card.Header>
-      </Card.Content>
-
-      <Card.Content>
-        <FastField
-          name={makeName("address")}
-          label="Address"
-          comp={TextArea}
-          component={RegularField}
-          value={values.address}
-        />
-
-        <FastField
-          name={makeName("phone")}
-          label="Phone"
-          component={RegularField}
-          value={values.phone}
-        />
-
-        <FastField
-          name={makeName("email")}
-          label="Email"
-          type="email"
-          component={RegularField}
-          value={values.email}
-        />
-
-        <FastField
-          name={makeName("dateOfBirth")}
-          label="Date of birth yyyy-mm-dd"
-          component={RegularField}
-          value={values.dateOfBirth}
-        />
-      </Card.Content>
-    </Card>
   );
 }
 

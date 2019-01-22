@@ -4,6 +4,7 @@ import { Card, Icon } from "semantic-ui-react";
 import { CircularLabel } from "../styles/mixins";
 import { SetFieldValue } from "../utils";
 import { Container } from "./list-index-header-styles";
+import { FormContext } from "../ResumeForm/resume-form";
 
 interface Props<TValues> {
   index: number;
@@ -15,69 +16,101 @@ interface Props<TValues> {
   idPrefix?: string;
 }
 
-export function ListIndexHeader<TValues extends { index: number }>({
-  index,
-  label,
-  setFieldValue,
-  fieldName,
-  values,
-  empty,
-  idPrefix
-}: Props<TValues>) {
-  const id = (idPrefix || label) + "-" + index;
-  const len = values.length;
+export class ListIndexHeader<
+  TValues extends { index: number }
+> extends React.Component<Props<TValues>> {
+  static contextType = FormContext;
+  context!: React.ContextType<typeof FormContext>;
 
-  return (
-    <Container>
-      <Card.Header id={id}>
-        {`${label ? label + " #" + index : "#" + index}`}
-      </Card.Header>
+  render() {
+    const {
+      index,
+      label,
+      setFieldValue,
+      fieldName,
+      values,
+      empty,
+      idPrefix
+    } = this.props;
 
-      <div>
-        {len > index && (
+    const { valueChanged } = this.context;
+    const id = (idPrefix || label) + "-" + index;
+    const len = values.length;
+
+    return (
+      <Container>
+        <Card.Header id={id}>
+          {`${label ? label + " #" + index : "#" + index}`}
+        </Card.Header>
+
+        <div>
+          {len > index && (
+            <CircularLabel
+              color="blue"
+              onClick={function onSwapExperienceDown() {
+                setFieldValue(
+                  fieldName,
+                  swap<TValues>(values, index, index + 1)
+                );
+
+                setTimeout(() => {
+                  valueChanged();
+                });
+              }}
+            >
+              <Icon name="arrow down" />
+            </CircularLabel>
+          )}
+
+          {len > 1 && (
+            <CircularLabel
+              color="red"
+              onClick={function onRemoveItem() {
+                setFieldValue(fieldName, remove<TValues>(values, index));
+
+                setTimeout(() => {
+                  valueChanged();
+                });
+              }}
+            >
+              <Icon name="remove" />
+            </CircularLabel>
+          )}
+
           <CircularLabel
-            color="blue"
-            onClick={function onSwapExperienceDown() {
-              setFieldValue(fieldName, swap<TValues>(values, index, index + 1));
+            color="green"
+            onClick={function onAddItem() {
+              setFieldValue(fieldName, add<TValues>(values, index, empty));
+
+              setTimeout(() => {
+                valueChanged();
+              });
             }}
           >
-            <Icon name="arrow down" />
+            <Icon name="add" />
           </CircularLabel>
-        )}
 
-        {len > 1 && (
-          <CircularLabel
-            color="red"
-            onClick={function onRemoveItem() {
-              setFieldValue(fieldName, remove<TValues>(values, index));
-            }}
-          >
-            <Icon name="remove" />
-          </CircularLabel>
-        )}
+          {index > 1 && (
+            <CircularLabel
+              color="blue"
+              onClick={function onSwapExperienceUp() {
+                setFieldValue(
+                  fieldName,
+                  swap<TValues>(values, index, index - 1)
+                );
 
-        <CircularLabel
-          color="green"
-          onClick={function onAddItem() {
-            setFieldValue(fieldName, add<TValues>(values, index, empty));
-          }}
-        >
-          <Icon name="add" />
-        </CircularLabel>
-
-        {index > 1 && (
-          <CircularLabel
-            color="blue"
-            onClick={function onSwapExperienceUp() {
-              setFieldValue(fieldName, swap<TValues>(values, index, index - 1));
-            }}
-          >
-            <Icon name="arrow up" />
-          </CircularLabel>
-        )}
-      </div>
-    </Container>
-  );
+                setTimeout(() => {
+                  valueChanged();
+                });
+              }}
+            >
+              <Icon name="arrow up" />
+            </CircularLabel>
+          )}
+        </div>
+      </Container>
+    );
+  }
 }
 
 export default ListIndexHeader;
