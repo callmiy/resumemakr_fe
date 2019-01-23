@@ -5,33 +5,15 @@ import {
   CreateSkillInput,
   CreateExperienceInput,
   EducationInput,
-  GetResume_getResume_personalInfo,
-  GetResume,
-  GetResumeVariables
+  GetResume_getResume_personalInfo
 } from "../graphql/apollo-gql";
 
-import { getResumeQuery } from "../graphql/get-resume.query";
-import { Props, Mode, State } from "./preview";
+import { Props, Mode } from "./preview";
 import { Container, Img, Description, Ul, GlobalStyle } from "./preview-styles";
 import { toServerUrl } from "../utils";
 
-export class Preview extends React.Component<Props, State> {
+export class Preview extends React.Component<Props> {
   containerRef = React.createRef<HTMLDivElement>();
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      resume: this.props.resume
-    };
-  }
-
-  componentDidMount() {
-    const { mode } = this.props;
-
-    if (mode === Mode.download) {
-      this.fetchResume();
-    }
-  }
 
   componentDidUpdate() {
     const els = document.querySelectorAll(".right .break-here");
@@ -81,17 +63,17 @@ export class Preview extends React.Component<Props, State> {
   }
 
   render() {
-    const { resume, loading, gqlError } = this.state;
+    const { getResume, loading, error } = this.props;
 
     if (loading) {
       return <div>loading</div>;
     }
 
-    if (gqlError) {
-      return <div>{JSON.stringify(gqlError)}</div>;
+    if (error) {
+      return <div>{JSON.stringify(error)}</div>;
     }
 
-    if (!resume) {
+    if (!getResume) {
       return <div>An error occurred</div>;
     }
 
@@ -103,7 +85,7 @@ export class Preview extends React.Component<Props, State> {
       hobbies,
       languages,
       personalInfo
-    } = resume;
+    } = getResume;
 
     const { mode } = this.props;
 
@@ -217,41 +199,6 @@ export class Preview extends React.Component<Props, State> {
         })}
       </div>
     );
-  };
-
-  private fetchResume = async () => {
-    this.setState({ loading: true });
-
-    const {
-      client,
-      match: { params }
-    } = this.props;
-
-    try {
-      const result = await client.query<GetResume, GetResumeVariables>({
-        query: getResumeQuery,
-
-        variables: {
-          input: {
-            title: params.title
-          }
-        }
-      });
-
-      this.setState({ loading: false });
-
-      const resume =
-        result && result.data && result.data.getResume && result.data.getResume;
-
-      if (!resume) {
-        this.setState({ error: "Unable to fetch resume" });
-        return;
-      }
-
-      this.setState({ resume });
-    } catch (error) {
-      this.setState({ loading: false, gqlError: error });
-    }
   };
 }
 

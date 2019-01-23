@@ -100,7 +100,7 @@ export class ResumeForm extends React.Component<Props, State> {
           </FormContextProvider>
 
           {currentSection === Section.preview && (
-            <Preview mode={PreviewMode.preview} resume={values} />
+            <Preview mode={PreviewMode.preview} getResume={values} />
           )}
 
           <div className="bottom-navs">
