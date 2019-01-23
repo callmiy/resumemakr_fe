@@ -49,7 +49,7 @@ export class Preview extends React.Component<Props, State> {
     };
 
     [].forEach.call(els, (el: HTMLElement, index: number) => {
-      const h = this.getHeight(el);
+      const h = getHeight(el);
       sumHeight += h;
       totalHeight += h;
 
@@ -67,7 +67,6 @@ export class Preview extends React.Component<Props, State> {
 
           pageBreak.classList.add(...classNames);
           el.before(pageBreak);
-          // totalHeight += this.getHeight(pageBreak);
         }
 
         sumHeight = 0;
@@ -78,18 +77,8 @@ export class Preview extends React.Component<Props, State> {
 
     if (mode === Mode.download && current) {
       current.style.height = 1120 * Math.ceil(totalHeight / 900) + "px";
-      (current as any).key = new Date().getTime() + "";
     }
   }
-
-  getHeight = (el: HTMLElement) => {
-    const styles = window.getComputedStyle(el);
-    return (
-      parseFloat(styles.getPropertyValue("margin-top").replace("px", "")) +
-      parseFloat(styles.getPropertyValue("margin-bottom").replace("px", "")) +
-      el.offsetHeight
-    );
-  };
 
   render() {
     const { resume, loading, gqlError } = this.state;
@@ -431,4 +420,13 @@ function Experiences({
 function computeAchievements(achievements: Array<string | null> | null = []) {
   achievements = (achievements || []).filter(a => !!a);
   return [achievements, !!achievements.length] as [string[], boolean];
+}
+
+function getHeight(el: HTMLElement) {
+  const styles = window.getComputedStyle(el);
+  return (
+    parseFloat(styles.getPropertyValue("margin-top").replace("px", "")) +
+    parseFloat(styles.getPropertyValue("margin-bottom").replace("px", "")) +
+    el.offsetHeight
+  );
 }
