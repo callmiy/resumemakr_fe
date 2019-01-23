@@ -7,11 +7,11 @@ import "jest-styled-components";
 
 import PhotoField from ".";
 import { createFile, uploadFile } from "../test_utils";
+import { FormContextProvider } from "../ResumeForm/resume-form";
 
 it("changes to preview on file select", async () => {
   const { ui } = setUp();
   const {
-    debug,
     getByLabelText,
     queryByTestId,
     queryByLabelText,
@@ -27,11 +27,9 @@ it("changes to preview on file select", async () => {
     createFile("dog.jpg", 1234, "image/jpeg")
   );
 
-  debug();
-
-  await wait(() =>
-    expect(queryByLabelText(/Upload Photo/)).not.toBeInTheDocument()
-  );
+  await wait(() => {
+    expect(queryByLabelText(/Upload Photo/)).not.toBeInTheDocument();
+  });
 
   expect(getByTestId("photo-preview")).toHaveStyleRule(
     "background-image",
@@ -39,7 +37,7 @@ it("changes to preview on file select", async () => {
   );
 });
 
-xit("toggles edit buttons on mouse move on preview", async () => {
+it("toggles edit buttons on mouse move on preview", async () => {
   const { ui } = setUp();
   const { getByLabelText, getByTestId, queryByTestId } = render(ui);
 
@@ -62,7 +60,7 @@ xit("toggles edit buttons on mouse move on preview", async () => {
   });
 });
 
-xit("shows edit buttons when preview clicked", async () => {
+it("shows edit buttons when preview clicked", async () => {
   const { ui } = setUp();
   const { getByLabelText, getByTestId, queryByTestId } = render(ui);
 
@@ -80,7 +78,7 @@ xit("shows edit buttons when preview clicked", async () => {
   expect(getByTestId("edit-btns")).toBeInTheDocument();
 });
 
-xit("deletes photo", async () => {
+it("deletes photo", async () => {
   const { ui } = setUp();
   const { getByLabelText, getByTestId, getByText, queryByTestId } = render(ui);
 
@@ -158,6 +156,16 @@ xit("does not set field value if no file selected", async () => {
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
+class ResumeForm extends React.Component<{}> {
+  render() {
+    return (
+      <FormContextProvider value={{ valueChanged: jest.fn() }}>
+        {this.props.children}
+      </FormContextProvider>
+    );
+  }
+}
+
 function setUp(fieldName: string = "photo") {
   // tslint:disable-next-line:no-any
   const PhotoField1 = PhotoField as any;
@@ -166,13 +174,15 @@ function setUp(fieldName: string = "photo") {
 
   return {
     ui: (
-      <PhotoField1
-        field={{ name: fieldName }}
-        form={{
-          setFieldValue: mockSetFieldValue
-        }}
-        removeFilePreview={mockRemoveFilePreview}
-      />
+      <ResumeForm>
+        <PhotoField1
+          field={{ name: fieldName }}
+          form={{
+            setFieldValue: mockSetFieldValue
+          }}
+          removeFilePreview={mockRemoveFilePreview}
+        />
+      </ResumeForm>
     ),
     mockSetFieldValue,
     mockRemoveFilePreview,
