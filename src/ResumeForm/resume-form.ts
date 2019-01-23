@@ -42,8 +42,7 @@ import {
 import { HobbyVal, defaultVal as hobby } from "../Hobbies/hobbies";
 import { UpdateResumeProps } from "../graphql/update-resume.mutation";
 import { GetResumeProps } from "../graphql/get-resume.query";
-import { stripTypeName } from "../utils";
-import { SetFieldValue } from "../utils";
+import { stripTypeName, SetFieldValue } from "../utils";
 
 export interface OwnProps extends RouteComponentProps<{ title: string }> {}
 
@@ -107,8 +106,6 @@ export const toSection = (current: Section, to: "next" | "prev") => {
   return sectionsList[(currentIndex + lift) % sectionsLen];
 };
 
-export const lastSectionIndex = sectionsLen - 1;
-
 export function getInitialValues(
   getResume: GetResume_getResume | undefined | null
 ) {
@@ -123,7 +120,7 @@ export function getInitialValues(
       return acc;
     }
 
-    if (!v) {
+    if (!v || (v && typeof v.map === "function" && v.length === 0)) {
       acc[k] = initial[k];
       return acc;
     }
