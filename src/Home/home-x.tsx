@@ -208,7 +208,7 @@ export class Home extends React.Component<Props, State> {
                   `}
                 >
                   {deletedResume}
-                </span>{" "}
+                </span>
                 deleted successfully
               </div>
             </div>
@@ -284,7 +284,7 @@ export class Home extends React.Component<Props, State> {
                       className="control-label-text"
                       ref={this.setConfirmDeleteTriggerRef(id)}
                     >
-                      delete {title}
+                      {`delete ${title}`}
                     </span>
 
                     {this.renderConfirmDelete(node)}
@@ -320,11 +320,7 @@ export class Home extends React.Component<Props, State> {
   }: ResumeTitles_listResumes_edges_node) => {
     const { deleteError } = this.state;
 
-    if (!deleteError) {
-      return null;
-    }
-
-    if (deleteError.id !== id) {
+    if (!(deleteError && deleteError.id === id)) {
       return null;
     }
 

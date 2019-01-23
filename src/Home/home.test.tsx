@@ -5,14 +5,20 @@ import { render, fireEvent, wait } from "react-testing-library";
 import { ApolloError } from "apollo-client";
 
 import { Home } from "./home-x";
-import { renderWithRouter, fillField, WithData } from "../test_utils";
+import {
+  renderWithRouter,
+  fillField,
+  WithData,
+  renderWithApollo,
+  HistoryProps
+} from "../test_utils";
 import { makeResumeRoute } from "../routing";
 import { Props } from "./home";
 
 import {
-  CreateResumeTitle,
-  CreateResumeTitle_createResume_resume,
-  CreateResumeTitleVariables,
+  CreateResume,
+  CreateResume_createResume_resume,
+  CreateResumeVariables,
   ResumeTitles_listResumes,
   ResumeTitles_listResumes_edges_node,
   DeleteResume
@@ -24,7 +30,8 @@ it("renders loading indicator", () => {
   /**
    * Given a user is on the home page
    */
-  const { Ui } = renderWithRouter(HomeP);
+  const { Ui } = setUp();
+
   const {
     getByTestId,
     queryByText,
@@ -64,7 +71,7 @@ it("renders error", () => {
   /**
    * Given a user is on the home page
    */
-  const { Ui } = renderWithRouter(HomeP);
+  const { Ui } = setUp();
   const { queryByTestId, getByText } = render(<Ui error={error} />);
 
   /**
@@ -96,9 +103,9 @@ it("renders message if user has not created resume", () => {
   /**
    * When she navigates to the home page
    */
-  const { Ui } = renderWithRouter(HomeP);
+  const { Ui } = setUp();
 
-  const { getByText, getByLabelText } = render(<Ui listResumes={resumes} />);
+  const { getByText } = render(<Ui listResumes={resumes} />);
 
   /**
    * Then she sees a message that she has not created any resumes previously
@@ -113,7 +120,7 @@ it("renders message if user has not created resume", () => {
   /**
    * Then she sees a UI asking her to create a new resume
    */
-  expect(getByLabelText(/Enter resume title/)).toBeInTheDocument();
+  expect(getByText(/Create new resume/)).toBeInTheDocument();
 });
 
 it("renders resume titles", () => {
@@ -145,7 +152,7 @@ it("renders resume titles", () => {
    * When she visits the home page
    */
   const mockPush = jest.fn();
-  const { Ui } = renderWithRouter(HomeP, { push: mockPush });
+  const { Ui } = setUp({ historyProps: { push: mockPush } });
   const { getByText } = render(<Ui listResumes={resumes} />);
 
   /**
@@ -164,38 +171,36 @@ it("renders resume titles", () => {
   expect(mockPush).toBeCalledWith(makeResumeRoute(titles[1]));
 });
 
-it("creates resume title", async () => {
+it("creates resume", async () => {
   const title = "my awesome resume";
   const mockPush = jest.fn();
-  const mockSetCurrentResumeTitle = jest.fn();
 
-  const result: WithData<CreateResumeTitle> = {
+  const result: WithData<CreateResume> = {
     data: {
       createResume: {
         resume: {
           title
-        } as CreateResumeTitle_createResume_resume
+        } as CreateResume_createResume_resume
       }
     }
   };
 
-  const mockCreateResumeTitle = jest.fn(() => Promise.resolve(result));
-  const { Ui } = renderWithRouter(HomeP, { push: mockPush });
+  const mockCreateResume = jest.fn(() => Promise.resolve(result));
+  const { Ui } = setUp({ historyProps: { push: mockPush } });
 
   /**
    * Given that a user is on the home page
    */
   const { getByLabelText, queryByLabelText, getByText } = render(
-    <Ui
-      setCurrentResumeTitle={mockSetCurrentResumeTitle}
-      createResumeTitle={mockCreateResumeTitle}
-    />
+    <Ui createResume={mockCreateResume} />
   );
 
   /**
-   * She sees there is no UI with text "Enter resume title"
+   * She sees there is no UI with text "Title e.g. name of company to send to"
    */
-  expect(queryByLabelText(/Enter resume title/)).not.toBeInTheDocument();
+  expect(
+    queryByLabelText(/Title e.g. name of company to send to/)
+  ).not.toBeInTheDocument();
 
   /**
    * When she clicks on new button
@@ -203,9 +208,9 @@ it("creates resume title", async () => {
   fireEvent.click(getByText("+"));
 
   /**
-   * And fills the field labelled "Enter resume title" with resume title
+   * And fills the field labelled "Title e.g. name of company to send to" with resume title
    */
-  fillField(getByLabelText(/Enter resume title/), title);
+  fillField(getByLabelText(/Title e.g. name of company to send to/), title);
 
   /**
    * And clicks on the yes button
@@ -215,25 +220,10 @@ it("creates resume title", async () => {
   /**
    * She is redirected to the page where she can fill her resume
    */
-  const input: CreateResumeTitleVariables = {
-    input: {
-      title
-    }
-  };
-
-  await wait(() =>
-    expect(mockCreateResumeTitle).toBeCalledWith({
-      variables: input
-    })
-  );
-
-  await wait(() =>
-    expect(mockSetCurrentResumeTitle).toBeCalledWith({
-      variables: {
-        title
-      }
-    })
-  );
+  await wait(() => {
+    const args = mockCreateResume.mock.calls[0][0];
+    expect(args.variables.input.title).toBe(title);
+  });
 
   expect(mockPush).toBeCalledWith(makeResumeRoute(title));
 });
@@ -258,7 +248,7 @@ it("renders error if deleteResume prop not injected", async () => {
   /**
    * When a user visits the home page
    */
-  const { Ui } = renderWithRouter(HomeP);
+  const { Ui } = setUp();
 
   const { getByText, queryByText, getByTestId } = render(
     <Ui listResumes={resumes} />
@@ -324,14 +314,14 @@ it("deletes resume", async () => {
 
   const deleteResume = jest.fn(() => Promise.resolve(result));
 
-  const { Ui } = renderWithRouter(HomeP);
+  const { Ui } = setUp();
 
   const { getByText, queryByText, getByTestId } = render(
     <Ui listResumes={resumes} deleteResume={deleteResume} />
   );
 
-  const successRegexp = new RegExp(`${titles[1]} deleted`, "i");
-  const confirmRegexp = new RegExp(`Sure to delete ${titles[1]}`, "i");
+  const successRegexp = new RegExp(`deleted successfully`, "i");
+  const confirmRegexp = new RegExp(`Sure to delete`, "i");
 
   /**
    * She sees one of her resumes' title on the page
@@ -404,3 +394,14 @@ it("deletes resume", async () => {
 ////////////////////////// HELPER FUNCTIONS ///////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+interface SetUpProps {
+  historyProps?: HistoryProps;
+}
+
+function setUp(props: SetUpProps = {}) {
+  const { Ui: ui, ...routers } = renderWithRouter(HomeP, props.historyProps);
+  const { Ui, ...apollo } = renderWithApollo(ui);
+
+  return { Ui, ...routers, ...apollo };
+}

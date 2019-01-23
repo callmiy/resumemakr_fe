@@ -14,7 +14,7 @@ export function makeClient() {
   });
 }
 
-interface HistoryProps {
+export interface HistoryProps {
   push?: (path: string) => void;
   replace?: (path: string) => void;
   resumeMakrPath?: string;
