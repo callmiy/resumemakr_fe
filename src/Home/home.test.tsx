@@ -18,10 +18,11 @@ import { Props } from "./home";
 import {
   CreateResume,
   CreateResume_createResume_resume,
-  CreateResumeVariables,
   ResumeTitles_listResumes,
   ResumeTitles_listResumes_edges_node,
-  DeleteResume
+  DeleteResume,
+  CloneResume,
+  CloneResume_cloneResume_resume
 } from "../graphql/apollo-gql";
 
 const HomeP = Home as React.ComponentClass<Partial<Props>>;
@@ -387,6 +388,94 @@ it("deletes resume", async () => {
      */
     expect(queryByText(successRegexp)).not.toBeInTheDocument();
   });
+});
+
+it("clones resume", async () => {
+  const clonedTitle = "My awesome title cloned";
+
+  const result: WithData<CloneResume> = {
+    data: {
+      cloneResume: {
+        resume: {
+          title: clonedTitle
+        } as CloneResume_cloneResume_resume
+      }
+    }
+  };
+
+  const mockCloneResume = jest.fn(() => Promise.resolve(result));
+
+  /**
+   * Given there is resume in the system
+   */
+
+  const title = "My awesome title 1";
+
+  const resumes: ResumeTitles_listResumes = {
+    edges: [
+      {
+        node: {
+          title,
+          id: "1"
+        } as ResumeTitles_listResumes_edges_node
+      }
+    ],
+    __typename: "ResumeConnection"
+  };
+
+  /**
+   * When a user visits the home page
+   */
+  const mockPush = jest.fn();
+
+  const { Ui } = setUp({ historyProps: { push: mockPush } });
+  const { queryByText, getByText, getByLabelText } = render(
+    <Ui listResumes={resumes} cloneResume={mockCloneResume} />
+  );
+
+  /**
+   * Then she sees there is no message asking if she wants to clone resume
+   */
+  const cloneQuestion = /Clone from: /i;
+
+  expect(queryByText(cloneQuestion)).not.toBeInTheDocument();
+
+  /**
+   * When she clicks on the clone button
+   */
+  fireEvent.click(getByText(new RegExp(`clone ${title}`, "i")));
+
+  /**
+   * Then she sees a message asking if she wants to clone resume
+   */
+
+  expect(getByText(cloneQuestion)).toBeInTheDocument();
+
+  /**
+   * And sees that the title field is pre-filled with title she clicked on
+   */
+  const $input = getByLabelText("Title e.g. name of company to send to");
+  expect($input.getAttribute("value")).toBe(title);
+
+  /**
+   * When she fills the title field with new title
+   */
+  fillField($input, clonedTitle);
+
+  /**
+   * And clicks on the yes button
+   */
+  fireEvent.click(getByText("Yes"));
+
+  /**
+   * She is redirected to the page where she can continue filling her resume
+   */
+  await wait(() => {
+    const args = mockCloneResume.mock.calls[0][0];
+    expect(args.variables.input.title).toBe(clonedTitle);
+  });
+
+  expect(mockPush).toBeCalledWith(makeResumeRoute(clonedTitle));
 });
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -15,7 +15,8 @@ import {
   ResumeTitlesVariables,
   DeleteResume,
   ResumeTitles_listResumes_edges_node,
-  CreateResumeInput
+  CreateResumeInput,
+  ResumeTitles_listResumes_edges
 } from "../graphql/apollo-gql";
 
 import { AppModal, CircularLabel, AppMain1 } from "../styles/mixins";
@@ -225,11 +226,9 @@ export class Home extends React.Component<Props, State> {
           </div>
 
           {edges.map(edge => {
-            const node = edge && edge.node;
-
-            if (!node) {
-              return null;
-            }
+            edge = edge as ResumeTitles_listResumes_edges;
+            const node =
+              edge && (edge.node as ResumeTitles_listResumes_edges_node);
 
             const { id, title, updatedAt, description } = node;
             const { deletingResume } = this.state;
@@ -256,6 +255,10 @@ export class Home extends React.Component<Props, State> {
                     }}
                   >
                     <Icon name="copy outline" />
+
+                    <span className="control-label-text">
+                      {`clone ${title}`}
+                    </span>
                   </CircularLabel>
 
                   <CircularLabel
@@ -535,13 +538,6 @@ export class Home extends React.Component<Props, State> {
 
     const { deleteResume: resumeToBeRemoved } = newData;
 
-    if (!resumeToBeRemoved) {
-      return;
-    }
-
-    const resumeToBeRemovedId =
-      (resumeToBeRemoved.resume && resumeToBeRemoved.resume.id) || "";
-
     const readData = cache.readQuery<ResumeTitles, ResumeTitlesVariables>({
       query: RESUME_TITLES_QUERY,
 
@@ -550,21 +546,14 @@ export class Home extends React.Component<Props, State> {
       }
     });
 
-    if (!readData) {
-      return;
-    }
+    const edges =
+      readData && readData.listResumes && readData.listResumes.edges;
 
-    const { listResumes } = readData;
-
-    if (!listResumes) {
-      return;
-    }
-
-    const { edges } = listResumes;
-
-    if (!edges) {
-      return;
-    }
+    const resumeToBeRemovedId =
+      (resumeToBeRemoved &&
+        resumeToBeRemoved.resume &&
+        resumeToBeRemoved.resume.id) ||
+      "";
 
     cache.writeQuery<ResumeTitles, ResumeTitlesVariables>({
       query: RESUME_TITLES_QUERY,
@@ -575,7 +564,7 @@ export class Home extends React.Component<Props, State> {
 
       data: {
         listResumes: {
-          edges: edges.filter(e => {
+          edges: (edges || []).filter(e => {
             return e && e.node && e.node.id !== resumeToBeRemovedId;
           }),
 
