@@ -221,6 +221,13 @@ export class PhotoField extends React.Component<Props, State> {
      */
     const reader = new FileReader();
 
+    // tslint:disable-next-line:no-console
+    console.log(
+      "\n\t\tLogging start\n\n\n\n file\n",
+      file,
+      "\n\n\n\n\t\tLogging ends\n"
+    );
+
     reader.onloadend = () => {
       const base64Encoded = reader.result as string;
 

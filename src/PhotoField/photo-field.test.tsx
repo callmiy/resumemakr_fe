@@ -11,6 +11,7 @@ import { createFile, uploadFile } from "../test_utils";
 it("changes to preview on file select", async () => {
   const { ui } = setUp();
   const {
+    debug,
     getByLabelText,
     queryByTestId,
     queryByLabelText,
@@ -26,6 +27,8 @@ it("changes to preview on file select", async () => {
     createFile("dog.jpg", 1234, "image/jpeg")
   );
 
+  debug();
+
   await wait(() =>
     expect(queryByLabelText(/Upload Photo/)).not.toBeInTheDocument()
   );
@@ -36,7 +39,7 @@ it("changes to preview on file select", async () => {
   );
 });
 
-it("toggles edit buttons on mouse move on preview", async () => {
+xit("toggles edit buttons on mouse move on preview", async () => {
   const { ui } = setUp();
   const { getByLabelText, getByTestId, queryByTestId } = render(ui);
 
@@ -59,7 +62,7 @@ it("toggles edit buttons on mouse move on preview", async () => {
   });
 });
 
-it("shows edit buttons when preview clicked", async () => {
+xit("shows edit buttons when preview clicked", async () => {
   const { ui } = setUp();
   const { getByLabelText, getByTestId, queryByTestId } = render(ui);
 
@@ -77,7 +80,7 @@ it("shows edit buttons when preview clicked", async () => {
   expect(getByTestId("edit-btns")).toBeInTheDocument();
 });
 
-it("deletes photo", async () => {
+xit("deletes photo", async () => {
   const { ui } = setUp();
   const { getByLabelText, getByTestId, getByText, queryByTestId } = render(ui);
 
@@ -119,7 +122,7 @@ it("deletes photo", async () => {
   expect(queryByTestId("photo-preview")).not.toBeInTheDocument();
 });
 
-it("changes photo", async () => {
+xit("changes photo", async () => {
   const { mockSetFieldValue, ui, fieldName } = setUp();
   const { getByLabelText, getByTestId } = render(ui);
 
@@ -140,7 +143,7 @@ it("changes photo", async () => {
   );
 });
 
-it("does not set field value if no file selected", async () => {
+xit("does not set field value if no file selected", async () => {
   const { mockSetFieldValue, ui } = setUp();
 
   const { getByLabelText } = render(ui);
