@@ -2,14 +2,14 @@ import React from "react";
 import { Icon } from "semantic-ui-react";
 
 import {
-  CreateSkillInput,
   CreateExperienceInput,
-  EducationInput,
-  GetResume_getResume_personalInfo
+  GetResume_getResume_personalInfo,
+  GetResume_getResume_skills,
+  GetResume_getResume_education
 } from "../graphql/apollo-gql";
 
 import { Props, Mode } from "./preview";
-import { Container, Img, Description, Ul, GlobalStyle } from "./preview-styles";
+import { Container, Img, GlobalStyle } from "./preview-styles";
 import { toServerUrl } from "../utils";
 
 export class Preview extends React.Component<Props> {
@@ -150,7 +150,9 @@ export class Preview extends React.Component<Props> {
           </div>
 
           <div className="main-column right">
-            {skills && this.renderSkills(skills)}
+            {skills && (
+              <Skills skills={skills as GetResume_getResume_skills[]} />
+            )}
 
             {experiences && experiences.length && (
               <Experiences
@@ -158,48 +160,15 @@ export class Preview extends React.Component<Props> {
               />
             )}
             {education && education.length && (
-              <Educations educations={education as EducationInput[]} />
+              <Educations
+                educations={education as GetResume_getResume_education[]}
+              />
             )}
           </div>
         </Container>
       </>
     );
   }
-
-  private renderSkills = (skills: Array<CreateSkillInput | null>) => {
-    return (
-      <div className="section-container">
-        <h3 className="break-here section-title right skills">Skills</h3>
-
-        {skills.map((skill, index) => {
-          if (!skill) {
-            return;
-          }
-
-          const { description } = skill;
-
-          const [achievements, shouldRenderAchievements] = computeAchievements(
-            skill.achievements
-          );
-
-          return (
-            <React.Fragment key={index}>
-              <Description className="break-here">{description}</Description>
-
-              <Ul>
-                {shouldRenderAchievements &&
-                  achievements.map((achievement, ind) => (
-                    <li key={ind} className="break-here li">
-                      {achievement}
-                    </li>
-                  ))}
-              </Ul>
-            </React.Fragment>
-          );
-        })}
-      </div>
-    );
-  };
 }
 
 export default Preview;
@@ -275,42 +244,31 @@ function PersonalInfo({
   );
 }
 
-function Educations({ educations }: { educations: EducationInput[] }) {
+function Educations({
+  educations
+}: {
+  educations: GetResume_getResume_education[];
+}) {
   return (
     <div className="section-container">
       <h3 className="break-here section-title right">Education</h3>
 
-      {educations.map((ed, index) => {
-        const { course, school, fromDate, toDate } = ed;
-        const [achievements, shouldRenderAchievements] = computeAchievements(
-          ed.achievements
-        );
-
+      {educations.map(ed => {
+        const { course, school, fromDate, toDate, id, achievements } = ed;
         return (
-          <div key={index} className="experience-container">
-            <div className="left">
-              {fromDate} {(toDate && `-${toDate}`) || ""}
+          <div key={id} className="experience-container">
+            <div className="section-sub-head break-here">
+              <div className="description">{course}</div>
+
+              <div>
+                {fromDate} <span className="to-arrow">&rarr;</span>{" "}
+                {` ${toDate || "present"}`}
+              </div>
             </div>
 
-            <div className="right">
-              <Description className="position break-here">
-                {course}
-              </Description>
+            <div className="company break-here">{school}</div>
 
-              <div className="company break-here">{school}</div>
-
-              {shouldRenderAchievements && (
-                <Ul>
-                  {achievements.map((achievement, ind) => {
-                    return (
-                      <li key={ind} className="break-here">
-                        {achievement}
-                      </li>
-                    );
-                  })}
-                </Ul>
-              )}
-            </div>
+            <Achievements achievements={achievements} />
           </div>
         );
       })}
@@ -328,35 +286,22 @@ function Experiences({
       <h3 className="break-here section-title right">Experience</h3>
 
       {experiences.map((exp, index) => {
-        const { position, fromDate, toDate, companyName } = exp;
-        const [achievements, shouldRenderAchievements] = computeAchievements(
-          exp.achievements
-        );
+        const { position, fromDate, toDate, companyName, achievements } = exp;
 
         return (
           <div key={index} className="experience-container">
-            <div className="left">
-              {fromDate} {`- ${toDate || "present"}`}
+            <div className="section-sub-head break-here">
+              <div className="description">{position}</div>
+
+              <div>
+                {fromDate} <span className="to-arrow">&rarr;</span>{" "}
+                {` ${toDate || "present"}`}
+              </div>
             </div>
 
-            <div className="right">
-              <Description className="position break-here">
-                {position}
-              </Description>
+            <div className="company break-here">{companyName}</div>
 
-              <div className="company break-here">{companyName}</div>
-
-              <Ul>
-                {shouldRenderAchievements &&
-                  achievements.map((achievement, ind) => {
-                    return (
-                      <li key={ind} className="break-here">
-                        {achievement}
-                      </li>
-                    );
-                  })}
-              </Ul>
-            </div>
+            <Achievements achievements={achievements} />
           </div>
         );
       })}
@@ -364,9 +309,54 @@ function Experiences({
   );
 }
 
-function computeAchievements(achievements: Array<string | null> | null = []) {
+function Skills({ skills }: { skills: GetResume_getResume_skills[] }) {
+  return (
+    <div className="section-container">
+      <h3 className="break-here section-title right skills">Skills</h3>
+
+      {skills.map(skill => {
+        const { description, achievements } = skill;
+
+        if (!description) {
+          return null;
+        }
+
+        return (
+          <React.Fragment key={description}>
+            <div className="description break-here">{description}</div>
+
+            <Achievements achievements={achievements} />
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+}
+
+let elmKey = 0;
+
+function Achievements({
+  achievements
+}: {
+  achievements: Array<string | null> | null | undefined;
+}) {
   achievements = (achievements || []).filter(a => !!a);
-  return [achievements, !!achievements.length] as [string[], boolean];
+
+  if (!achievements.length) {
+    return null;
+  }
+
+  return (
+    <ul>
+      {achievements.map(achievement => {
+        return (
+          <li key={(elmKey++).toString()} className="break-here achievement">
+            {achievement}
+          </li>
+        );
+      })}
+    </ul>
+  );
 }
 
 function getHeight(el: HTMLElement) {

@@ -38,20 +38,21 @@ export const Container = styled.div`
   color: #292b2c;
 
   .experience-container {
-    display: flex;
-
-    .left {
-      width: 20%;
-    }
-
-    .right {
-      flex: 1;
-      padding-left: 2.5rem;
+    & + .experience-container {
+      ::before {
+        content: "";
+        display: block;
+        border: 0.6px solid #dedede;
+        margin-bottom: 25px;
+        margin-top: 10px;
+        width: 90%;
+        position: relative;
+        left: 10%;
+      }
     }
 
     .company {
-      margin-top: -1.2em;
-      margin-bottom: 1em;
+      margin-bottom: 0.5rem;
     }
   }
 
@@ -167,6 +168,25 @@ export const Container = styled.div`
       padding-top: 15px;
     }
   }
+
+  .section-sub-head {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .description {
+    flex: 1;
+    font-weight: 600;
+  }
+
+  .to-arrow {
+    font-size: 2rem;
+  }
+
+  .achievement {
+    list-style-type: disc;
+    margin-left: 2em;
+  }
 `;
 
 export const Img = styled.div`
@@ -177,17 +197,4 @@ export const Img = styled.div`
   background-position: center center;
   width: 100%;
   min-height: 170px;
-`;
-
-export const Description = styled.div`
-  margin-bottom: 1.2em;
-  margin-top: 1.2em;
-  font-weight: 600;
-`;
-
-export const Ul = styled.ul`
-  li {
-    list-style-type: disc;
-    margin-left: 2em;
-  }
 `;
