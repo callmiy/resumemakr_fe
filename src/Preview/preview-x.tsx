@@ -261,8 +261,9 @@ function Educations({
               <div className="description">{course}</div>
 
               <div>
-                {fromDate} <span className="to-arrow">&rarr;</span>{" "}
-                {` ${toDate || "present"}`}
+                {fromDate}
+                <span className="to-arrow">&rarr;</span>
+                {`${toDate || "present"}`}
               </div>
             </div>
 
@@ -294,8 +295,9 @@ function Experiences({
               <div className="description">{position}</div>
 
               <div>
-                {fromDate} <span className="to-arrow">&rarr;</span>{" "}
-                {` ${toDate || "present"}`}
+                <span>{fromDate}</span>
+                <span className="to-arrow">&rarr;</span>
+                <span>{`${toDate || "present"}`}</span>
               </div>
             </div>
 
