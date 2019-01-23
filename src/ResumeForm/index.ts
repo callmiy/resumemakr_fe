@@ -41,7 +41,7 @@ const getResumeGql = graphql<
     return {
       variables: {
         input: {
-          title: match.params.title
+          title: decodeURIComponent(match.params.title)
         }
       },
 
