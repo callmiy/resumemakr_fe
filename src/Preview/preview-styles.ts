@@ -43,7 +43,7 @@ export const Container = styled.div`
         content: "";
         display: block;
         border: 0.6px solid #dedede;
-        margin-bottom: 25px;
+        margin-bottom: 10px;
         margin-top: 10px;
         width: 90%;
         position: relative;
@@ -59,17 +59,18 @@ export const Container = styled.div`
   .main-column {
     font-family: "Arimo" !important;
     vertical-align: top;
-    padding: 3px 8px;
 
     &.left {
       width: 25%;
       background-color: #373d48;
       color: #fff;
+      padding: 3px 8px;
     }
 
     &.right {
       flex: 1;
       line-height: 1.5em;
+      padding: 3px 5px;
     }
   }
 
@@ -172,6 +173,8 @@ export const Container = styled.div`
   .section-sub-head {
     display: flex;
     justify-content: space-around;
+    align-items: baseline;
+    margin-bottom: 5px;
   }
 
   .description {
@@ -186,6 +189,12 @@ export const Container = styled.div`
   .achievement {
     list-style-type: disc;
     margin-left: 2em;
+  }
+
+  .has-level {
+    & + .has-level {
+      margin-top: 10px;
+    }
   }
 `;
 
