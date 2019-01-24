@@ -80,7 +80,6 @@ export class Preview extends React.Component<Props> {
     const {
       skills,
       experiences,
-      additionalSkills,
       education,
       hobbies,
       languages,
@@ -88,6 +87,10 @@ export class Preview extends React.Component<Props> {
     } = getResume;
 
     const { mode } = this.props;
+
+    const additionalSkills = (getResume.additionalSkills || []).filter(
+      a => a && a.description
+    );
 
     return (
       <>
