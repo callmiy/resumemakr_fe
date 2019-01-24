@@ -5,7 +5,9 @@ import {
   CreateExperienceInput,
   GetResume_getResume_personalInfo,
   GetResume_getResume_skills,
-  GetResume_getResume_education
+  GetResume_getResume_education,
+  GetResume_getResume_additionalSkills,
+  GetResume_getResume_languages
 } from "../graphql/apollo-gql";
 
 import { Props, Mode } from "./preview";
@@ -83,11 +85,11 @@ export class Preview extends React.Component<Props> {
 
     const additionalSkills = (getResume.additionalSkills || []).filter(
       a => a && a.description && a.description.trim()
-    );
+    ) as GetResume_getResume_additionalSkills[];
 
     const languages = (getResume.languages || []).filter(
       a => a && a.description && a.description.trim()
-    );
+    ) as GetResume_getResume_languages[];
 
     const hobbies = (getResume.hobbies || []).filter(s => s && s.trim());
 
@@ -109,19 +111,15 @@ export class Preview extends React.Component<Props> {
                 </h3>
 
                 {additionalSkills.map((s, index) => {
-                  if (!s) {
-                    return null;
-                  }
-
-                  const { description } = s;
+                  const { description, level } = s;
 
                   if (!description) {
                     return null;
                   }
 
                   return (
-                    <div key={index} className="break-here">
-                      {description}
+                    <div key={index} className="break-here has-level">
+                      {description} {level && `[${level}]`}
                     </div>
                   );
                 })}
@@ -131,11 +129,15 @@ export class Preview extends React.Component<Props> {
               <div className="section-container">
                 <h3 className="break-here section-title left">Languages</h3>
 
-                {languages.map((s, index) => (
-                  <div key={index} className="break-here">
-                    {s && s.description} [{s && s.level}]
-                  </div>
-                ))}
+                {languages.map((s, index) => {
+                  const { description, level } = s;
+
+                  return (
+                    <div key={index} className="break-here has-level">
+                      {description} {level && `[${level}]`}
+                    </div>
+                  );
+                })}
               </div>
             )}
             {hobbies && !!hobbies.length && (
@@ -143,7 +145,7 @@ export class Preview extends React.Component<Props> {
                 <h3 className="break-here section-title left">Hobbies</h3>
 
                 {hobbies.map((s, index) => (
-                  <div key={index} className="break-here">
+                  <div key={index} className="break-here  has-level">
                     {s}
                   </div>
                 ))}
