@@ -77,20 +77,19 @@ export class Preview extends React.Component<Props> {
       return <div>An error occurred</div>;
     }
 
-    const {
-      skills,
-      experiences,
-      education,
-      hobbies,
-      languages,
-      personalInfo
-    } = getResume;
+    const { skills, experiences, education, personalInfo } = getResume;
 
     const { mode } = this.props;
 
     const additionalSkills = (getResume.additionalSkills || []).filter(
-      a => a && a.description
+      a => a && a.description && a.description.trim()
     );
+
+    const languages = (getResume.languages || []).filter(
+      a => a && a.description && a.description.trim()
+    );
+
+    const hobbies = (getResume.hobbies || []).filter(s => s && s.trim());
 
     return (
       <>
@@ -128,7 +127,7 @@ export class Preview extends React.Component<Props> {
                 })}
               </div>
             )}
-            {languages && languages.length && (
+            {languages && !!languages.length && (
               <div className="section-container">
                 <h3 className="break-here section-title left">Languages</h3>
 
@@ -139,7 +138,7 @@ export class Preview extends React.Component<Props> {
                 ))}
               </div>
             )}
-            {hobbies && hobbies.length && (
+            {hobbies && !!hobbies.length && (
               <div className="section-container">
                 <h3 className="break-here section-title left">Hobbies</h3>
 
