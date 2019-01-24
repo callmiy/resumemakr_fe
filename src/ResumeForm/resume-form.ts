@@ -39,7 +39,6 @@ import {
   additionalSkillDefaultVal
 } from "../Rated/rated";
 
-import { HobbyVal, defaultVal as hobby } from "../Hobbies/hobbies";
 import { UpdateResumeProps } from "../graphql/update-resume.mutation";
 import { GetResumeProps } from "../graphql/get-resume.query";
 import { stripTypeName, SetFieldValue } from "../utils";
@@ -59,7 +58,7 @@ export const initialFormValues: FormValues = {
   education: [education],
   additionalSkills: [additionalSkillDefaultVal],
   languages: [languageDefaultVal],
-  hobbies: [hobby],
+  hobbies: ["Swimming"],
   skills
 };
 
@@ -72,7 +71,7 @@ export const validationSchema = Yup.object<FormValues>().shape({
   skills: Yup.array<CreateSkillInput>().of<CreateSkillInput>(skillsSchema),
   additionalSkills: Yup.array<RatedInput>().of<RatedInput>(ratedSchema),
   languages: Yup.array<RatedInput>().of<RatedInput>(ratedSchema),
-  hobbies: Yup.array<HobbyVal>()
+  hobbies: Yup.array<string>()
 });
 
 // sections by string key

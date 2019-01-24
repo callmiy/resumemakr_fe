@@ -1,6 +1,6 @@
 import React from "react";
 import { TextArea, Icon } from "semantic-ui-react";
-import { FieldArrayRenderProps, FastField } from "formik";
+import { FieldArrayRenderProps, Field } from "formik";
 
 import { CircularLabel } from "../styles/mixins";
 import RegularField from "../RegularField";
@@ -12,6 +12,7 @@ interface Props {
   arrayHelper: FieldArrayRenderProps;
   hiddenLabel?: string;
   header?: JSX.Element;
+  controlComponent?: React.ComponentClass | React.FunctionComponent;
 }
 
 export class ListStrings extends React.Component<Props> {
@@ -24,7 +25,8 @@ export class ListStrings extends React.Component<Props> {
       fieldName: parentFieldName,
       arrayHelper,
       hiddenLabel,
-      header
+      header,
+      controlComponent
     } = this.props;
 
     const { valueChanged } = this.context;
@@ -40,7 +42,7 @@ export class ListStrings extends React.Component<Props> {
           const index1 = index + 1;
 
           return (
-            <FastField
+            <Field
               key={index}
               name={fieldName}
               label={
@@ -95,13 +97,15 @@ export class ListStrings extends React.Component<Props> {
                     )}
                   </div>
 
-                  <label className="visually-hidden" htmlFor={fieldName}>
-                    {hiddenLabel && hiddenLabel}
-                  </label>
+                  {hiddenLabel && (
+                    <label className="visually-hidden" htmlFor={fieldName}>
+                      {hiddenLabel}
+                    </label>
+                  )}
                 </div>
               }
               defaultValue={value}
-              comp={TextArea}
+              comp={controlComponent || TextArea}
               component={RegularField}
             />
           );

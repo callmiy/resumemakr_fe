@@ -1,9 +1,10 @@
 import React from "react";
-import { Form, Icon } from "semantic-ui-react";
+import { Form, Icon, Input } from "semantic-ui-react";
 import { Cancelable } from "lodash";
 import lodashDebounce from "lodash/debounce";
 import lodashIsEqual from "lodash/isEqual";
 import update from "immutability-helper";
+import { FieldArray } from "formik";
 
 import {
   FormValues,
@@ -32,7 +33,6 @@ import { Mode as PreviewMode } from "../Preview/preview";
 import PersonalInfo from "../PersonalInfo";
 import Experiences from "../Experiences";
 import Education from "../Education";
-import Hobbies from "../Hobbies";
 import Skills from "../Skills";
 import Loading from "../Loading";
 import { ALREADY_UPLOADED } from "../constants";
@@ -40,6 +40,8 @@ import { UpdateResumeInput } from "../graphql/apollo-gql";
 import { ResumePathHash } from "../routing";
 import logger from "../logger";
 import Rated from "../Rated";
+import SectionLabel from "../SectionLabel";
+import ListStrings from "../ListStrings";
 
 let valuesTracker: FormValues | null = null;
 let debounceUpdateResume: (ResumeForm["updateResume"] & Cancelable) | undefined;
@@ -246,7 +248,27 @@ export class ResumeForm extends React.Component<Props, State> {
     }
 
     if (currentSection === Section.hobbies) {
-      return <Hobbies label={label} values={values.hobbies} />;
+      return (
+        <>
+          <SectionLabel
+            label={label}
+            ico={<Icon name="won" />}
+            data-testid="hobbies-section"
+          />
+
+          <FieldArray
+            name="hobbies"
+            render={arrayHelper => (
+              <ListStrings
+                arrayHelper={arrayHelper}
+                fieldName="hobbies"
+                values={(values.hobbies || []) as string[]}
+                controlComponent={Input}
+              />
+            )}
+          />
+        </>
+      );
     }
 
     return null;
