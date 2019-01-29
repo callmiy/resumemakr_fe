@@ -10,3 +10,5 @@ Top 10 Free Resume Builder Online Reviews
 8. https://www.hloom.com/
 9. https://www.gotresumebuilder.com/
 10. https://www.jobscan.co/power-edit
+
+11. Make the app manage the entire application process including a place to store research about companies being applied to, interview tips, store video links etc.
