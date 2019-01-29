@@ -104,6 +104,7 @@ export class Preview extends React.Component<Props> {
         >
           <div className="main-column left">
             {personalInfo && <PersonalInfo personalInfo={personalInfo} />}
+
             {additionalSkills && !!additionalSkills.length && (
               <div className="section-container">
                 <h3 className="break-here section-title left">
@@ -125,6 +126,7 @@ export class Preview extends React.Component<Props> {
                 })}
               </div>
             )}
+
             {languages && !!languages.length && (
               <div className="section-container">
                 <h3 className="break-here section-title left">Languages</h3>
@@ -140,6 +142,7 @@ export class Preview extends React.Component<Props> {
                 })}
               </div>
             )}
+
             {hobbies && !!hobbies.length && (
               <div className="section-container">
                 <h3 className="break-here section-title left">Hobbies</h3>
@@ -158,12 +161,13 @@ export class Preview extends React.Component<Props> {
               <Skills skills={skills as GetResume_getResume_skills[]} />
             )}
 
-            {experiences && experiences.length && (
+            {experiences && !!experiences.length && (
               <Experiences
                 experiences={experiences as CreateExperienceInput[]}
               />
             )}
-            {education && education.length && (
+
+            {education && !!education.length && (
               <Educations
                 educations={education as GetResume_getResume_education[]}
               />
