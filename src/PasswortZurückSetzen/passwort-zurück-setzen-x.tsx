@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "styled-components/macro";
 import { Formik, FormikProps, FastField, FieldProps } from "formik";
 import {
@@ -12,7 +12,6 @@ import {
 
 import {
   Merkmale,
-  Zustand,
   FORMULAR_RENDERN_MARKMALE,
   ValidationSchema,
   emailValidator
@@ -23,47 +22,16 @@ import { BerechtigungHaupanwendung, BerechtigungKarte } from "../styles/mixins";
 import { Behälter, FormularBereich } from "./passwort-zurück-setzen.styles";
 import { PasswortZuruckSetzenInput } from "../graphql/apollo-gql";
 
-export class PasswortZurückSetzen extends React.Component<Merkmale, Zustand> {
-  state: Zustand = {
-    email: ""
-  };
+export function PasswortZurückSetzen(merkmale: Merkmale) {
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState<string | undefined>(undefined);
+  const [wirdGeladen, setWirdGeladen] = useState<boolean>(false);
 
-  render() {
-    const {
-      match: {
-        params: { token }
-      }
-    } = this.props;
-
-    return (
-      <Behälter>
-        <Header />
-
-        <BerechtigungHaupanwendung>
-          {token === ZURUCK_SETZEN_PFAD_ANFORDERN ? (
-            this.rendenErstellen()
-          ) : (
-            <Formik
-              initialValues={{
-                email: "",
-                password: "",
-                passwordConfirmation: "",
-                token: ""
-              }}
-              onSubmit={() => null}
-              render={this.renderForm}
-              validationSchema={ValidationSchema}
-              validateOnChange={false}
-            />
-          )}
-        </BerechtigungHaupanwendung>
-      </Behälter>
-    );
-  }
-
-  private renderForm = (merkMale: FormikProps<PasswortZuruckSetzenInput>) => {
-    const { dirty: schmutzig, isSubmitting: istEinreichen } = merkMale;
-    const { history: verlauf } = this.props;
+  function renderForm(
+    formularMerkmale: FormikProps<PasswortZuruckSetzenInput>
+  ) {
+    const { dirty: schmutzig, isSubmitting: istEinreichen } = formularMerkmale;
+    const { history: verlauf } = merkmale;
 
     return (
       <BerechtigungKarte>
@@ -84,7 +52,7 @@ export class PasswortZurückSetzen extends React.Component<Merkmale, Zustand> {
                   <FastField
                     key={name}
                     name={name}
-                    render={this.rendernEingabe(label, type)}
+                    render={rendernEingabe(label, type)}
                   />
                 );
               }
@@ -123,31 +91,32 @@ export class PasswortZurückSetzen extends React.Component<Merkmale, Zustand> {
         </Card.Content>
       </BerechtigungKarte>
     );
-  };
+  }
 
-  private rendernEingabe = (label: string, typ: string) => (
-    formularMarkmale: FieldProps<PasswortZuruckSetzenInput>
-  ) => {
-    const { field: bereich } = formularMarkmale;
-    const { name } = bereich;
+  function rendernEingabe(label: string, typ: string) {
+    return function rendernEingabeDrinnen(
+      formularMarkmale: FieldProps<PasswortZuruckSetzenInput>
+    ) {
+      const { field: bereich } = formularMarkmale;
+      const { name } = bereich;
 
-    return (
-      <FormularBereich istVersteckt={name === "token"}>
-        <Form.Field
-          {...bereich}
-          control={Input}
-          autoComplete="off"
-          label={label}
-          type={typ}
-          id={name}
-          autoFocus={name === "password"}
-        />
-      </FormularBereich>
-    );
-  };
+      return (
+        <FormularBereich istVersteckt={name === "token"}>
+          <Form.Field
+            {...bereich}
+            control={Input}
+            autoComplete="off"
+            label={label}
+            type={typ}
+            id={name}
+            autoFocus={name === "password"}
+          />
+        </FormularBereich>
+      );
+    };
+  }
 
-  private rendenErstellen = () => {
-    const { email, emailError, wirdGeladen } = this.state;
+  function rendenAnfordern() {
     const hasError = !!email.trim() && !!emailError;
 
     return (
@@ -171,16 +140,15 @@ export class PasswortZurückSetzen extends React.Component<Merkmale, Zustand> {
         <Card.Content>
           <Form
             onSubmit={() => {
-              this.setState({ wirdGeladen: true });
+              setWirdGeladen(true);
               const data = email.trim();
 
               try {
                 emailValidator.validateSync(data);
               } catch (error) {
-                this.setState({
-                  emailError: error.message,
-                  wirdGeladen: false
-                });
+                setEmailError(error.message);
+                setWirdGeladen(false);
+                setEmailError(error.message);
                 return;
               }
             }}
@@ -196,7 +164,7 @@ export class PasswortZurückSetzen extends React.Component<Merkmale, Zustand> {
                 ) => {
                   const { value } = data;
                   if (value.trim()) {
-                    this.setState({ email: value });
+                    setEmail(value);
                   }
                 }}
               />
@@ -232,7 +200,38 @@ export class PasswortZurückSetzen extends React.Component<Merkmale, Zustand> {
         </Card.Content>
       </BerechtigungKarte>
     );
-  };
+  }
+
+  const {
+    match: {
+      params: { token }
+    }
+  } = merkmale;
+
+  return (
+    <Behälter>
+      <Header />
+
+      <BerechtigungHaupanwendung>
+        {token === ZURUCK_SETZEN_PFAD_ANFORDERN ? (
+          rendenAnfordern()
+        ) : (
+          <Formik
+            initialValues={{
+              email: "",
+              password: "",
+              passwordConfirmation: "",
+              token: ""
+            }}
+            onSubmit={() => null}
+            render={renderForm}
+            validationSchema={ValidationSchema}
+            validateOnChange={false}
+          />
+        )}
+      </BerechtigungHaupanwendung>
+    </Behälter>
+  );
 }
 
 export default PasswortZurückSetzen;
