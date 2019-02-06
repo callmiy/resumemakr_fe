@@ -17,7 +17,11 @@ import { LoginInput } from "../graphql/apollo-gql";
 import { SIGN_UP_URL } from "../routing";
 import PwdInput from "../PwdInput";
 import Header from "../Header";
-import { AppContainer, AppMain1 } from "../styles/mixins";
+import {
+  AppContainer,
+  BerechtigungHaupanwendung,
+  BerechtigungKarte
+} from "../styles/mixins";
 import refreshToHomeDefault from "../refresh-to-home";
 import getConnDefault from "../State/get-conn-status";
 
@@ -44,13 +48,7 @@ export class Login extends React.Component<Props, State> {
       <AppContainer>
         <Header />
 
-        <AppMain1
-          css={`
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          `}
-        >
+        <BerechtigungHaupanwendung>
           <Formik
             initialValues={{
               email:
@@ -64,7 +62,7 @@ export class Login extends React.Component<Props, State> {
             validationSchema={ValidationSchema}
             validateOnChange={false}
           />
-        </AppMain1>
+        </BerechtigungHaupanwendung>
       </AppContainer>
     );
   }
@@ -75,16 +73,7 @@ export class Login extends React.Component<Props, State> {
     const { dirty, isSubmitting } = props;
 
     return (
-      <Card
-        css={`
-          overflow-y: auto;
-          height: 45%;
-          min-width: 310px;
-          width: 95% !important;
-          max-width: 400px !important;
-          min-height: 350px !important;
-        `}
-      >
+      <BerechtigungKarte>
         <Errors
           errors={{ graphQlErrors, otherErrors, formErrors }}
           handleErrorsDismissed={this.handleErrorsDismissed}
@@ -96,7 +85,7 @@ export class Login extends React.Component<Props, State> {
           `}
           extra={true}
         >
-          Login to your account
+          ins konto einloggen
         </Card.Content>
 
         <Card.Content>
@@ -136,7 +125,7 @@ export class Login extends React.Component<Props, State> {
             Don't have an account? Sign Up
           </Button>
         </Card.Content>
-      </Card>
+      </BerechtigungKarte>
     );
   };
 

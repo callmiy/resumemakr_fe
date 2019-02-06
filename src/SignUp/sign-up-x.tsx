@@ -17,22 +17,26 @@ import {
   Props,
   initialFormValues,
   ValidationSchema,
-  FormValuesKey
+  FormValuesKey,
+  FORMULAR_PASSWORT_RENDERN_MERKMALE
 } from "./sign-up";
 
 import { RegistrationInput } from "../graphql/apollo-gql";
 import { LOGIN_URL } from "../routing";
 import Header from "../Header";
-import { AppContainer, AppMain1 } from "../styles/mixins";
+import {
+  AppContainer,
+  BerechtigungHaupanwendung,
+  BerechtigungKarte
+} from "../styles/mixins";
 import refreshToHomeDefault from "../refresh-to-home";
 import getConnDefault from "../State/get-conn-status";
 
 const FORM_RENDER_PROPS = {
   name: ["Name", "text"],
   email: ["Email", "email"],
-  password: ["Password", "password"],
-  passwordConfirmation: ["Confirm Password", "password"],
-  source: ["Source", "text"]
+  source: ["Source", "text"],
+  ...FORMULAR_PASSWORT_RENDERN_MERKMALE
 };
 
 interface State {
@@ -50,14 +54,7 @@ export class SignUp extends React.Component<Props, State> {
       <AppContainer>
         <Header />
 
-        <AppMain1
-          ref={this.mainRef}
-          css={`
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          `}
-        >
+        <BerechtigungHaupanwendung ref={this.mainRef}>
           <Formik
             initialValues={initialFormValues}
             onSubmit={() => null}
@@ -65,7 +62,7 @@ export class SignUp extends React.Component<Props, State> {
             validationSchema={ValidationSchema}
             validateOnChange={false}
           />
-        </AppMain1>
+        </BerechtigungHaupanwendung>
       </AppContainer>
     );
   }
@@ -141,16 +138,7 @@ export class SignUp extends React.Component<Props, State> {
     const { history } = this.props;
 
     return (
-      <Card
-        css={`
-          overflow-y: auto;
-          height: 85%;
-          min-width: 310px;
-          width: 95% !important;
-          max-width: 400px !important;
-          min-height: 350px !important;
-        `}
-      >
+      <BerechtigungKarte>
         {this.renderFormErrors()}
 
         <Card.Content
@@ -205,7 +193,7 @@ export class SignUp extends React.Component<Props, State> {
             Already have an account? Login
           </Button>
         </Card.Content>
-      </Card>
+      </BerechtigungKarte>
     );
   };
 

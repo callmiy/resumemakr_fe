@@ -18,11 +18,13 @@ export interface HistoryProps {
   push?: (path: string) => void;
   replace?: (path: string) => void;
   resumeMakrPath?: string;
+  match?: {};
 }
 
 const defaultHistoryProps: HistoryProps = {
   push: jest.fn(),
-  replace: jest.fn()
+  replace: jest.fn(),
+  match: {}
 };
 
 export function makeHistory(params: HistoryProps = defaultHistoryProps) {

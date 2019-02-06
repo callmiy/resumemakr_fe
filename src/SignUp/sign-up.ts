@@ -27,6 +27,12 @@ export const initialFormValues: RegistrationInput = {
   source: "password"
 };
 
+export const PasswortGleichPrüfer = Yup.string()
+  .required("is required")
+  .test("passwords-match", "Passwords do not match", function(val) {
+    return this.parent.password === val;
+  });
+
 export const ValidationSchema = Yup.object<RegistrationInput>().shape({
   name: Yup.string()
     .min(2, "must be at least 2 characters")
@@ -39,14 +45,15 @@ export const ValidationSchema = Yup.object<RegistrationInput>().shape({
     .min(4, "must be at least 4 characters")
     .max(50, "is too Long!")
     .required("is required"),
-  passwordConfirmation: Yup.string()
-    .required("is required")
-    .test("passwords-match", "Passwords do not match", function(val) {
-      return this.parent.password === val;
-    }),
+  passwordConfirmation: PasswortGleichPrüfer,
   source: Yup.string().default(() => "password")
 });
 
 export const RouterThings = {
   documentTitle: "Sign up"
+};
+
+export const FORMULAR_PASSWORT_RENDERN_MERKMALE = {
+  password: ["Passwort", "password"],
+  passwordConfirmation: ["Passwort Bestätigen", "password"]
 };

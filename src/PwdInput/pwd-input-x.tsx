@@ -1,6 +1,10 @@
 import React from "react";
 import { FieldProps } from "formik";
 import { Form, Input, Icon } from "semantic-ui-react";
+import "styled-components/macro";
+import { Link } from "react-router-dom";
+
+import { createResetRoute } from "../routing";
 
 type PwdType = "password" | "text";
 
@@ -23,7 +27,17 @@ export class PwdInput<T> extends React.PureComponent<Props<T>, State> {
 
     return (
       <Form.Field>
-        <label htmlFor={id}>Password</label>
+        <label
+          htmlFor={id}
+          css={`
+            display: flex !important;
+            justify-content: space-between;
+          `}
+        >
+          <span>Passwort</span>
+
+          <Link to={createResetRoute()}>Passwort Vergessen?</Link>
+        </label>
 
         <Input icon={true} placeholder="" data-testid={id}>
           <input {...field} type={pwdType} autoComplete="off" id={id} />

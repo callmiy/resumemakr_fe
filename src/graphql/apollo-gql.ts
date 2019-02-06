@@ -4,6 +4,49 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: AktualisierenAbfrage
+// ====================================================
+
+export interface AktualisierenAbfrage_refreshUser {
+  id: string;  // The ID of an object
+  name: string;
+  email: string;
+  jwt: string;
+}
+
+export interface AktualisierenAbfrage {
+  refreshUser: AktualisierenAbfrage_refreshUser | null;  // Refresh a user session
+}
+
+export interface AktualisierenAbfrageVariables {
+  jwt: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: AnfordernPasswortZuruckSetzen
+// ====================================================
+
+export interface AnfordernPasswortZuruckSetzen_anfordernPasswortZuruckSetzen {
+  email: string;
+}
+
+export interface AnfordernPasswortZuruckSetzen {
+  anfordernPasswortZuruckSetzen: AnfordernPasswortZuruckSetzen_anfordernPasswortZuruckSetzen | null;
+}
+
+export interface AnfordernPasswortZuruckSetzenVariables {
+  email: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: CloneResume
 // ====================================================
 
@@ -324,6 +367,33 @@ export interface LoginMutation {
 
 export interface LoginMutationVariables {
   input: LoginInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: PasswortZuruckSetzen
+// ====================================================
+
+export interface PasswortZuruckSetzen_passwortZuruckSetzen_user {
+  id: string;  // The ID of an object
+  name: string;
+  email: string;
+  jwt: string;
+}
+
+export interface PasswortZuruckSetzen_passwortZuruckSetzen {
+  user: PasswortZuruckSetzen_passwortZuruckSetzen_user | null;
+}
+
+export interface PasswortZuruckSetzen {
+  passwortZuruckSetzen: PasswortZuruckSetzen_passwortZuruckSetzen | null;
+}
+
+export interface PasswortZuruckSetzenVariables {
+  input: PasswortZuruckSetzenInput;
 }
 
 
@@ -799,6 +869,13 @@ export interface GetResumeInput {
 export interface LoginInput {
   email: string;
   password: string;
+}
+
+// null
+export interface PasswortZuruckSetzenInput {
+  password: string;
+  passwordConfirmation: string;
+  token: string;
 }
 
 // null

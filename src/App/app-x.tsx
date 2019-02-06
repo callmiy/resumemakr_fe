@@ -3,7 +3,13 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import logger from "../logger";
 import Loading from "../Loading";
-import { RESUME_PATH, ROOT_URL, LOGIN_URL, SIGN_UP_URL } from "../routing";
+import {
+  RESUME_PATH,
+  ROOT_URL,
+  LOGIN_URL,
+  SIGN_UP_URL,
+  RESET_PATH
+} from "../routing";
 import AuthRequired from "../AuthRequired";
 import { AppContainer } from "../styles/mixins";
 import { Props } from "./app";
@@ -23,6 +29,7 @@ const Resume = lazy(() => import("../Resume"));
 const Home = lazy(() => import("../Home"));
 const Login = lazy(() => import("../Login"));
 const SignUp = lazy(() => import("../SignUp"));
+const PasswortZurückSetzen = lazy(() => import("../PasswortZurückSetzen"));
 
 export class App extends Component<Props> {
   state: { cacheLoaded: boolean } = { cacheLoaded: false };
@@ -71,6 +78,14 @@ export class App extends Component<Props> {
                 path={SIGN_UP_URL}
                 render={function renderSignUp(childProps) {
                   return <SignUp {...childProps} />;
+                }}
+              />
+
+              <Route
+                exact={true}
+                path={RESET_PATH}
+                render={function renderReset(childProps) {
+                  return <PasswortZurückSetzen {...childProps} />;
                 }}
               />
 

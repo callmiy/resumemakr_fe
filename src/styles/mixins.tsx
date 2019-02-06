@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components/macro";
-import { Modal, ModalProps, Label, LabelProps } from "semantic-ui-react";
+import { Modal, ModalProps, Label, LabelProps, Card } from "semantic-ui-react";
 
 export function wrapped<T>(
   Component: React.ComponentClass<T> | React.FunctionComponent<T>
@@ -112,7 +112,6 @@ export const EpicBtnIcon = styled.i`
   font-weight: normal !important;
   font-variant: normal !important;
   text-transform: none !important;
-  speak: none;
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -137,6 +136,12 @@ export const AppMain1 = styled.div`
   max-width: 1180px;
   margin-left: auto;
   margin-right: auto;
+`;
+
+export const BerechtigungHaupanwendung = styled(AppMain1)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const appBgColor = "#f4f4f4";
@@ -218,3 +223,13 @@ export const mediaQueries = Object.entries(mediaSizes).reduce(
   },
   {} as { [k in keyof typeof mediaSizes]: string }
 );
+
+const Card1 = wrapped(Card);
+export const BerechtigungKarte = styled(Card1)`
+  overflow-y: auto;
+  height: 45%;
+  min-width: 310px;
+  width: 95% !important;
+  max-width: 400px !important;
+  min-height: 350px !important;
+`;
