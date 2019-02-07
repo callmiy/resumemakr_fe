@@ -8989,7 +8989,7 @@ react-scripts@2.1.2:
   optionalDependencies:
     fsevents "1.2.4"
 
-react-testing-library@^5.4.2:
+react-testing-library@5.5.3:
   version "5.5.3"
   resolved "https://registry.yarnpkg.com/react-testing-library/-/react-testing-library-5.5.3.tgz#cfd32da95b29e475003df4f66bd96e34eb5624bd"
   integrity sha512-67jMsSJHbbm9M0NWvEzjNikDAKRdxivhP6vnpa9xPg/fYh19zkE4rMsFh5YWLpyoomm+e49fg+ubcXaEBYartA==

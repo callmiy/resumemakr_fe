@@ -45,4 +45,4 @@ export const ValidationSchema = Yup.object<PasswortZuruckSetzenInput>().shape({
 
 export const emailValidator = Yup.string()
   .required()
-  .email("email is invalid");
+  .email("E-Mail ist ungültig");

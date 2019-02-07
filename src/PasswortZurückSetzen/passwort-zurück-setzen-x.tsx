@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "styled-components/macro";
 import { Formik, FormikProps, FastField, FieldProps } from "formik";
 import {
   Form,
@@ -21,13 +20,25 @@ import Header from "../Header";
 import { BerechtigungHaupanwendung, BerechtigungKarte } from "../styles/mixins";
 import { Behälter, FormularBereich } from "./passwort-zurück-setzen.styles";
 import { PasswortZuruckSetzenInput } from "../graphql/apollo-gql";
+import { ApolloError } from "apollo-client";
 
 export function PasswortZurückSetzen(merkmale: Merkmale) {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string | undefined>(undefined);
   const [wirdGeladen, setWirdGeladen] = useState<boolean>(false);
+  const [erfolgNachricht, einstellenErfolgNachricht] = useState<
+    JSX.Element | undefined
+  >(undefined);
 
-  function renderForm(
+  const [emailGqlFehler, einstellenGqlFehler] = useState<
+    ApolloError | undefined
+  >(undefined);
+
+  const [andererFehlerNachrichte, einstellenAndererFehlerNachrichte] = useState<
+    string | undefined
+  >(undefined);
+
+  function rendernAndern(
     formularMerkmale: FormikProps<PasswortZuruckSetzenInput>
   ) {
     const { dirty: schmutzig, isSubmitting: istEinreichen } = formularMerkmale;
@@ -35,12 +46,7 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
 
     return (
       <BerechtigungKarte>
-        <Card.Content
-          css={`
-            flex-shrink: 0;
-          `}
-          extra={true}
-        >
+        <Card.Content className="berechtigung-karte__intro" extra={true}>
           Zuruck setzen Ihr Passwort
         </Card.Content>
 
@@ -73,12 +79,7 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
           </Form>
         </Card.Content>
 
-        <Card.Content
-          css={`
-            flex-shrink: 0;
-          `}
-          extra={true}
-        >
+        <Card.Content className="berechtigung-karte__intro" extra={true}>
           <Button
             className="to-login-button"
             type="button"
@@ -117,29 +118,24 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
   }
 
   function rendenAnfordern() {
-    const hasError = !!email.trim() && !!emailError;
+    const hatFehler = !!email.trim() && !!emailError;
 
     return (
-      <BerechtigungKarte
-        css={`
-          height: initial;
-          min-height: 0 !important;
-        `}
-      >
-        <Card.Content
-          extra={true}
-          css={`
-            color: #000 !important;
-            font-weight: bolder;
-          `}
-        >
-          Geben Sie Ihr E-mail Adresse ein und Sie erhalten einen Link, um das
-          passwortzurücksetzen.
+      <BerechtigungKarte className="anfordern">
+        <Card.Content className="anfordern__intro" extra={true}>
+          {erfolgNachricht ? (
+            erfolgNachricht
+          ) : (
+            <span>
+              Geben Sie Ihr E-mail Adresse ein und Sie erhalten einen Link, um
+              das passwortzurücksetzen.
+            </span>
+          )}
         </Card.Content>
 
         <Card.Content>
           <Form
-            onSubmit={() => {
+            onSubmit={async () => {
               setWirdGeladen(true);
               const data = email.trim();
 
@@ -151,40 +147,78 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
                 setEmailError(error.message);
                 return;
               }
+
+              const { anfordernPasswortZuruckSetzen } = merkmale;
+
+              if (!anfordernPasswortZuruckSetzen) {
+                einstellenAndererFehlerNachrichte(
+                  "Es gibt ein Fehler. Die Anforderung kann nicht gestellt werden"
+                );
+                return;
+              }
+
+              try {
+                const erfolg = await anfordernPasswortZuruckSetzen({
+                  variables: {
+                    email: email.trim()
+                  }
+                });
+
+                setWirdGeladen(false);
+
+                const serverEmail =
+                  erfolg &&
+                  erfolg.data &&
+                  erfolg.data.anfordernPasswortZuruckSetzen &&
+                  erfolg.data.anfordernPasswortZuruckSetzen.email;
+
+                if (!serverEmail) {
+                  einstellenAndererFehlerNachrichte(
+                    "Es gibt ein Fehler. Die Anforderung kann nicht gestellt werden"
+                  );
+                  return;
+                }
+
+                einstellenErfolgNachricht(
+                  <div>
+                    Wir haben nach Ihr E-mail Adress {serverEmail} ein Link zum
+                    passwort zuruck setzen geschickt. Klicken Sie auf dem Link.
+                  </div>
+                );
+              } catch (fehler) {
+                einstellenGqlFehler(fehler);
+                setWirdGeladen(false);
+              }
             }}
           >
-            <Form.Field error={hasError}>
+            <Form.Field error={hatFehler}>
+              {andererFehlerNachrichte && (
+                <div className="email-error ">{andererFehlerNachrichte}</div>
+              )}
+
+              <label htmlFor="passwort-zuruck-setzen-anfordern">
+                Geben Sie ihr E-mail Adresse
+              </label>
               <Input
-                name="passwort-zuruck-setzen-erstellen"
-                id="passwort-zuruck-erstellen"
+                name="passwort-zuruck-setzen-anfordern"
+                id="passwort-zuruck-setzen-anfordern"
                 autoComplete="off"
                 onChange={(
                   evt: React.ChangeEvent<HTMLInputElement>,
                   data: InputOnChangeData
                 ) => {
                   const { value } = data;
-                  if (value.trim()) {
-                    setEmail(value);
+                  setEmail(value);
+                  if (emailError && !value.trim()) {
+                    setEmailError(undefined);
                   }
                 }}
               />
-
-              {hasError && (
-                <div
-                  css={`
-                    margin-top: 5px;
-                    color: #9f3a38;
-                  `}
-                >
-                  {emailError}
-                </div>
-              )}
+              {hatFehler && <div className="email-error ">{emailError}</div>}
             </Form.Field>
 
             <Button
-              css={`
-                margin-top: 50px !important;
-              `}
+              className="anfordern__btn"
               id="passwort-zuruck-bitten"
               name="passwort-zuruck-bitten"
               color="green"
@@ -224,7 +258,7 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
               token: ""
             }}
             onSubmit={() => null}
-            render={renderForm}
+            render={rendernAndern}
             validationSchema={ValidationSchema}
             validateOnChange={false}
           />
