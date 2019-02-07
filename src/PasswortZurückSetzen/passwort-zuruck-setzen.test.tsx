@@ -13,6 +13,8 @@ import {
 } from "../test_utils";
 import { ZURUCK_SETZEN_PFAD_ANFORDERN } from "../routing";
 import { AnfordernPasswortZuruckSetzen } from "../graphql/apollo-gql";
+import { GraphQLError } from "graphql";
+import { ApolloError } from "apollo-client";
 
 const PasswortZurückSetzenTeilweise = PasswortZurückSetzen as React.FunctionComponent<
   Partial<Merkmale>
@@ -164,6 +166,70 @@ it("rendern anfordern", async () => {
   const $el = await waitForElement(() => getByText(erfolgNachrichtMuster));
 
   expect($el).toBeInTheDocument();
+});
+
+it("eine apollo fehler rendert", async () => {
+  const { Ui: ui } = renderWithRouter(PasswortZurückSetzenTeilweise);
+  const { Ui } = renderWithApollo(ui);
+  const email = "ich@du.com";
+  const angelehntNachricht = `Unknown user email: ${email}`;
+  const gqlFehler = new ApolloError({
+    graphQLErrors: [new GraphQLError(angelehntNachricht)]
+  });
+
+  const nachgemachtemAnfordernPasswortZuruckSetzen = jest.fn(() =>
+    Promise.reject(gqlFehler)
+  );
+
+  /**
+   * Given that user visits page to request password reset token
+   */
+  const { getByText, queryByText, getByLabelText } = render(
+    <Ui
+      match={{
+        params: { token: ZURUCK_SETZEN_PFAD_ANFORDERN },
+        isExact: true,
+        path: "",
+        url: ""
+      }}
+      anfordernPasswortZuruckSetzen={nachgemachtemAnfordernPasswortZuruckSetzen}
+    />
+  );
+
+  /**
+   * Er merkt dass kein Nachricht dass sein E-mail ist angelehnt
+   */
+  expect(queryByText(angelehntNachricht)).not.toBeInTheDocument();
+
+  /**
+   * Wann er gebt sein E-mail Adress ein
+   */
+
+  fillField(getByLabelText("Geben Sie ihr E-mail Adresse"), email);
+
+  /**
+   * Und klicken die Taste
+   */
+  fireEvent.click(getByText(anfordernTasteMuster));
+
+  /**
+   * Dann erfordert die Nachricht dass die Email ist angelehnt
+   */
+  const angelehntNachrichtMuster = new RegExp(angelehntNachricht, "i");
+  const $el = await waitForElement(() => getByText(angelehntNachrichtMuster));
+  expect($el).toBeInTheDocument();
+
+  /**
+   * Wann klickt er die Taste das angelehntachricht
+   */
+  fireEvent.click(($el.parentNode as HTMLElement).querySelector(
+    ".close.icon"
+  ) as HTMLElement);
+
+  /**
+   * Dann die angelehntnachricht soll verschwinden
+   */
+  expect(queryByText(angelehntNachrichtMuster)).not.toBeInTheDocument();
 });
 
 it("rendern andern", () => {

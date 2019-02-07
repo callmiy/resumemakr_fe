@@ -6,7 +6,8 @@ import {
   Button,
   Icon,
   Input,
-  InputOnChangeData
+  InputOnChangeData,
+  Message
 } from "semantic-ui-react";
 
 import {
@@ -26,6 +27,7 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string | undefined>(undefined);
   const [wirdGeladen, setWirdGeladen] = useState<boolean>(false);
+
   const [erfolgNachricht, einstellenErfolgNachricht] = useState<
     JSX.Element | undefined
   >(undefined);
@@ -117,7 +119,67 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
     };
   }
 
-  function rendenAnfordern() {
+  async function einreichenAnfordernFormular() {
+    setWirdGeladen(true);
+    einstellenAndererFehlerNachrichte(undefined);
+    einstellenGqlFehler(undefined);
+    setEmailError(undefined);
+
+    const data = email.trim();
+
+    try {
+      emailValidator.validateSync(data);
+    } catch (error) {
+      setEmailError(error.message);
+      setWirdGeladen(false);
+      setEmailError(error.message);
+      return;
+    }
+
+    const { anfordernPasswortZuruckSetzen } = merkmale;
+
+    if (!anfordernPasswortZuruckSetzen) {
+      einstellenAndererFehlerNachrichte(
+        "Es gibt ein Fehler. Die Anforderung kann nicht gestellt werden"
+      );
+      return;
+    }
+
+    try {
+      const erfolg = await anfordernPasswortZuruckSetzen({
+        variables: {
+          email: email.trim()
+        }
+      });
+
+      setWirdGeladen(false);
+
+      const serverEmail =
+        erfolg &&
+        erfolg.data &&
+        erfolg.data.anfordernPasswortZuruckSetzen &&
+        erfolg.data.anfordernPasswortZuruckSetzen.email;
+
+      if (!serverEmail) {
+        einstellenAndererFehlerNachrichte(
+          "Es gibt ein Fehler. Die Anforderung kann nicht gestellt werden"
+        );
+        return;
+      }
+
+      einstellenErfolgNachricht(
+        <div>
+          Wir haben nach Ihr E-mail Adress {serverEmail} ein Link zum passwort
+          zuruck setzen geschickt. Klicken Sie auf dem Link.
+        </div>
+      );
+    } catch (fehler) {
+      einstellenGqlFehler(fehler);
+      setWirdGeladen(false);
+    }
+  }
+
+  function rendenAnfordernFormular() {
     const hatFehler = !!email.trim() && !!emailError;
 
     return (
@@ -134,66 +196,19 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
         </Card.Content>
 
         <Card.Content>
-          <Form
-            onSubmit={async () => {
-              setWirdGeladen(true);
-              const data = email.trim();
-
-              try {
-                emailValidator.validateSync(data);
-              } catch (error) {
-                setEmailError(error.message);
-                setWirdGeladen(false);
-                setEmailError(error.message);
-                return;
-              }
-
-              const { anfordernPasswortZuruckSetzen } = merkmale;
-
-              if (!anfordernPasswortZuruckSetzen) {
-                einstellenAndererFehlerNachrichte(
-                  "Es gibt ein Fehler. Die Anforderung kann nicht gestellt werden"
-                );
-                return;
-              }
-
-              try {
-                const erfolg = await anfordernPasswortZuruckSetzen({
-                  variables: {
-                    email: email.trim()
-                  }
-                });
-
-                setWirdGeladen(false);
-
-                const serverEmail =
-                  erfolg &&
-                  erfolg.data &&
-                  erfolg.data.anfordernPasswortZuruckSetzen &&
-                  erfolg.data.anfordernPasswortZuruckSetzen.email;
-
-                if (!serverEmail) {
-                  einstellenAndererFehlerNachrichte(
-                    "Es gibt ein Fehler. Die Anforderung kann nicht gestellt werden"
-                  );
-                  return;
-                }
-
-                einstellenErfolgNachricht(
-                  <div>
-                    Wir haben nach Ihr E-mail Adress {serverEmail} ein Link zum
-                    passwort zuruck setzen geschickt. Klicken Sie auf dem Link.
-                  </div>
-                );
-              } catch (fehler) {
-                einstellenGqlFehler(fehler);
-                setWirdGeladen(false);
-              }
-            }}
-          >
+          <Form onSubmit={einreichenAnfordernFormular}>
             <Form.Field error={hatFehler}>
               {andererFehlerNachrichte && (
                 <div className="email-error ">{andererFehlerNachrichte}</div>
+              )}
+
+              {emailGqlFehler && (
+                <Message
+                  negative={true}
+                  onDismiss={() => einstellenGqlFehler(undefined)}
+                >
+                  <div>{emailGqlFehler.graphQLErrors[0].message}</div>
+                </Message>
               )}
 
               <label htmlFor="passwort-zuruck-setzen-anfordern">
@@ -214,7 +229,7 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
                   }
                 }}
               />
-              {hatFehler && <div className="email-error ">{emailError}</div>}
+              {hatFehler && <div className="email-error">{emailError}</div>}
             </Form.Field>
 
             <Button
@@ -248,7 +263,7 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
 
       <BerechtigungHaupanwendung>
         {token === ZURUCK_SETZEN_PFAD_ANFORDERN ? (
-          rendenAnfordern()
+          rendenAnfordernFormular()
         ) : (
           <Formik
             initialValues={{
