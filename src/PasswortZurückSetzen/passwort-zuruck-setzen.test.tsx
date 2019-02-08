@@ -248,7 +248,7 @@ it("Anfordern formular is nicht rendert wenn token is falsch", () => {
   expect(nachgemachtemErsetzen).toBeCalledWith(LOGIN_URL);
 });
 
-it("eine apollo fehler rendert", async () => {
+it("eine apollo fehler rendert - anfordern Formular", async () => {
   const { Ui: ui } = renderWithRouter(PasswortZurückSetzenTeilweise);
   const { Ui } = renderWithApollo(ui);
   const email = "ich@du.com";
@@ -336,12 +336,7 @@ it("rendern andern - glücklich Pfad", async () => {
    */
   const { getByText, queryByText, getByLabelText, queryByLabelText } = render(
     <Ui
-      match={{
-        params: { token },
-        isExact: true,
-        path: "",
-        url: ""
-      }}
+      match={match(token)}
       passwortZuruckSetzenVeranderung={nachgemachtemPasswortZuruckVeranderung}
       pzsTokenKontrollieren={{} as PzsTokenkontrollieren_pzsTokenKontrollieren}
     />
@@ -442,6 +437,65 @@ it("rendern andern - glücklich Pfad", async () => {
    * Und dass die Formular ist versteckt
    */
   expect(queryByLabelText("Passwort")).not.toBeInTheDocument();
+});
+
+it("eine apollo fehler rendert - veranderung Formular", async () => {
+  const { Ui: ui1 } = renderWithRouter(PasswortZurückSetzenTeilweise);
+  const { Ui: ui2 } = renderWithApollo(ui1);
+  const Ui = withFormik(formikConfig)(ui2) as M;
+  const angelehntNachricht = `Es gibt ein Fehler`;
+
+  const gqlFehler = new ApolloError({
+    graphQLErrors: [new GraphQLError(angelehntNachricht)]
+  });
+
+  const nachgemachtemPzsVeranderung = jest.fn(() => Promise.reject(gqlFehler));
+
+  /**
+   * Wenn man ist an die Seite passwortzurücksetzen
+   */
+  const { getByText, queryByText, getByLabelText } = render(
+    <Ui
+      match={match("good token")}
+      passwortZuruckSetzenVeranderung={nachgemachtemPzsVeranderung}
+      pzsTokenKontrollieren={{} as PzsTokenkontrollieren_pzsTokenKontrollieren}
+    />
+  );
+
+  /**
+   * Er merkt dass kein Nachricht dass es gibt ein Fehler
+   */
+  expect(queryByText(angelehntNachricht)).not.toBeInTheDocument();
+
+  /**
+   * Wann die Formular ist richtige fühlen
+   */
+  fillField(getByLabelText("Passwort"), "passwort");
+  fillField(getByLabelText("Passwort Bestätigen"), "passwort");
+  /**
+   * Und er hat die Taste eingereicht
+   */
+
+  fireEvent.click(getByText(andernTasteMuster));
+
+  /**
+   * Dann erfordert die Nachricht dass es gibt ein Fehler
+   */
+  const angelehntNachrichtMuster = new RegExp(angelehntNachricht, "i");
+  const $el = await waitForElement(() => getByText(angelehntNachrichtMuster));
+  expect($el).toBeInTheDocument();
+
+  /**
+   * Wann klickt er die Taste das angelehntachricht
+   */
+  fireEvent.click(($el.parentNode as HTMLElement).querySelector(
+    ".close.icon"
+  ) as HTMLElement);
+
+  /**
+   * Dann die angelehntnachricht soll verschwinden
+   */
+  expect(queryByText(angelehntNachrichtMuster)).not.toBeInTheDocument();
 });
 
 it('anzeige "wird geladen" ', () => {

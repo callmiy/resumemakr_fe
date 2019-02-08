@@ -46,9 +46,9 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
     JSX.Element | undefined
   >(undefined);
 
-  const [emailGqlFehler, einstellenGqlFehler] = useState<
-    ApolloError | undefined
-  >(undefined);
+  const [gqlFehler, einstellenGqlFehler] = useState<ApolloError | undefined>(
+    undefined
+  );
 
   const [andererFehlerNachrichte, einstellenAndererFehlerNachrichte] = useState<
     string | undefined
@@ -79,85 +79,93 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
               Zuruck setzen Ihr Passwort
             </Card.Content>
 
-            {anfordernErfolgNachricht && anfordernErfolgNachricht}
-
             <Card.Content>
-              <Form
-                onSubmit={async () => {
-                  setSubmitting(true);
-                  estellenAndernFormikFehler(undefined);
+              <>
+                {gqlFehler && (
+                  <Message
+                    negative={true}
+                    onDismiss={() => einstellenGqlFehler(undefined)}
+                  >
+                    <div>{gqlFehler.graphQLErrors[0].message}</div>
+                  </Message>
+                )}
+                <Form
+                  onSubmit={async () => {
+                    setSubmitting(true);
+                    estellenAndernFormikFehler(undefined);
 
-                  const errors = await validateForm(values);
+                    const errors = await validateForm(values);
 
-                  if (!lodashIsEmpty(errors)) {
-                    estellenAndernFormikFehler(errors);
-                    setSubmitting(false);
+                    if (!lodashIsEmpty(errors)) {
+                      estellenAndernFormikFehler(errors);
+                      setSubmitting(false);
 
-                    return;
-                  }
-
-                  const { passwortZuruckSetzenVeranderung } = merkmale;
-
-                  if (!passwortZuruckSetzenVeranderung) {
-                    einstellenAndererFehlerNachrichte(
-                      "Es gibt ein Fehler. Die Anforderung kann nicht gestellt werden"
-                    );
-
-                    setSubmitting(false);
-                    return;
-                  }
-
-                  try {
-                    const erfolg = await passwortZuruckSetzenVeranderung({
-                      variables: {
-                        input: values
-                      }
-                    });
-
-                    const benutzer =
-                      erfolg &&
-                      erfolg.data &&
-                      erfolg.data.veranderungPasswortZuruckSetzen &&
-                      erfolg.data.veranderungPasswortZuruckSetzen.user;
-
-                    if (!benutzer) {
                       return;
                     }
 
-                    einstellenAndernErfolgNachricht(
-                      <div>Passwortzurücksetzen erfolgreich</div>
-                    );
-                  } catch (error) {
-                    einstellenGqlFehler(error);
-                    setSubmitting(false);
-                  }
-                }}
-              >
-                {Object.entries(FORMULAR_RENDERN_MARKMALE).map(
-                  ([name, [label, type]]) => {
-                    return (
-                      <FastField
-                        key={name}
-                        name={name}
-                        render={rendernEingabe(label, type)}
-                      />
-                    );
-                  }
-                )}
+                    const { passwortZuruckSetzenVeranderung } = merkmale;
 
-                <Button
-                  id="passwort-zuruck-einreichen"
-                  name="passwort-zuruck-einreichen"
-                  color="green"
-                  inverted={true}
-                  disabled={!schmutzig || istEinreichen}
-                  loading={istEinreichen}
-                  type="submit"
-                  fluid={true}
+                    if (!passwortZuruckSetzenVeranderung) {
+                      einstellenAndererFehlerNachrichte(
+                        "Es gibt ein Fehler. Die Anforderung kann nicht gestellt werden"
+                      );
+
+                      setSubmitting(false);
+                      return;
+                    }
+
+                    try {
+                      const erfolg = await passwortZuruckSetzenVeranderung({
+                        variables: {
+                          input: values
+                        }
+                      });
+
+                      const benutzer =
+                        erfolg &&
+                        erfolg.data &&
+                        erfolg.data.veranderungPasswortZuruckSetzen &&
+                        erfolg.data.veranderungPasswortZuruckSetzen.user;
+
+                      if (!benutzer) {
+                        return;
+                      }
+
+                      einstellenAndernErfolgNachricht(
+                        <div>Passwortzurücksetzen erfolgreich</div>
+                      );
+                    } catch (error) {
+                      einstellenGqlFehler(error);
+                      setSubmitting(false);
+                    }
+                  }}
                 >
-                  <Icon name="checkmark" /> Einreichen
-                </Button>
-              </Form>
+                  {Object.entries(FORMULAR_RENDERN_MARKMALE).map(
+                    ([name, [label, type]]) => {
+                      return (
+                        <FastField
+                          key={name}
+                          name={name}
+                          render={rendernEingabe(label, type)}
+                        />
+                      );
+                    }
+                  )}
+
+                  <Button
+                    id="passwort-zuruck-einreichen"
+                    name="passwort-zuruck-einreichen"
+                    color="green"
+                    inverted={true}
+                    disabled={!schmutzig || istEinreichen}
+                    loading={istEinreichen}
+                    type="submit"
+                    fluid={true}
+                  >
+                    <Icon name="checkmark" /> Einreichen
+                  </Button>
+                </Form>
+              </>
             </Card.Content>
 
             <Card.Content className="berechtigung-karte__intro" extra={true}>
@@ -240,7 +248,6 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
     } catch (error) {
       setEmailError(error.message);
       setWirdGeladen(false);
-      setEmailError(error.message);
       return;
     }
 
@@ -319,12 +326,12 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
                     </div>
                   )}
 
-                  {emailGqlFehler && (
+                  {gqlFehler && (
                     <Message
                       negative={true}
                       onDismiss={() => einstellenGqlFehler(undefined)}
                     >
-                      <div>{emailGqlFehler.graphQLErrors[0].message}</div>
+                      <div>{gqlFehler.graphQLErrors[0].message}</div>
                     </Message>
                   )}
 
