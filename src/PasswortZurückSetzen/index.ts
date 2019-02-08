@@ -40,7 +40,7 @@ const passwortZuruckSetzenGql = graphql<
   }
 });
 
-const aktualisierenGql = graphql<
+const tokenKontrollierenGql = graphql<
   EigenesMerkmale,
   PzsTokenkontrollieren,
   PzsTokenkontrollierenVariables,
@@ -53,7 +53,9 @@ const aktualisierenGql = graphql<
   options: ({ match }) => ({
     variables: {
       token: match.params.token
-    }
+    },
+
+    fetchPolicy: "no-cache"
   })
 });
 
@@ -72,6 +74,6 @@ const anfordernPasswortZuruckSetzenGql = graphql<
 export default compose(
   anfordernPasswortZuruckSetzenGql,
   passwortZuruckSetzenGql,
-  aktualisierenGql,
+  tokenKontrollierenGql,
   withFormik(formikConfig)
 )(PasswortZurückSetzen);

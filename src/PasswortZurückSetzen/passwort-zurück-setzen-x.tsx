@@ -38,7 +38,11 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
     undefined | FormikErrors<VeranderungPasswortZuruckSetzenInput>
   >(undefined);
 
-  const [erfolgNachricht, einstellenErfolgNachricht] = useState<
+  const [anfordernErfolgNachricht, einstellenErfolgNachricht] = useState<
+    JSX.Element | undefined
+  >(undefined);
+
+  const [andernErfolgNachricht, einstellenAndernErfolgNachricht] = useState<
     JSX.Element | undefined
   >(undefined);
 
@@ -60,7 +64,7 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
     } = merkmale;
 
     const { history: verlauf } = merkmale;
-    const istFormular = !erfolgNachricht;
+    const istFormular = !andernErfolgNachricht;
 
     return (
       <>
@@ -75,7 +79,7 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
               Zuruck setzen Ihr Passwort
             </Card.Content>
 
-            {erfolgNachricht && erfolgNachricht}
+            {anfordernErfolgNachricht && anfordernErfolgNachricht}
 
             <Card.Content>
               <Form
@@ -120,12 +124,8 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
                       return;
                     }
 
-                    einstellenErfolgNachricht(
-                      <Message success={true}>
-                        <Message.Header>
-                          Passwortzurücksetzen erfolgreich
-                        </Message.Header>
-                      </Message>
+                    einstellenAndernErfolgNachricht(
+                      <div>Passwortzurücksetzen erfolgreich</div>
                     );
                   } catch (error) {
                     einstellenGqlFehler(error);
@@ -183,16 +183,11 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
           >
             <div className="pzs__anfordern-nachricht anfordern">
               <Message
-                icon={true}
+                icon="checkmark"
                 success={true}
                 style={{ marginBottom: "60px" }}
-              >
-                <Icon name="checkmark" />
-
-                <Message.Content>
-                  <Message.Header>{erfolgNachricht}</Message.Header>
-                </Message.Content>
-              </Message>
+                header={andernErfolgNachricht}
+              />
 
               {einloggenTaste()}
             </div>
@@ -294,7 +289,7 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
 
   function rendenAnfordernFormular() {
     const hatFehler = !!email.trim() && !!emailError;
-    const istFormular = !erfolgNachricht;
+    const istFormular = !anfordernErfolgNachricht;
 
     return (
       <>
@@ -392,7 +387,7 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
                 <Icon name="checkmark" />
 
                 <Message.Content>
-                  <Message.Header>{erfolgNachricht}</Message.Header>
+                  <Message.Header>{anfordernErfolgNachricht}</Message.Header>
                 </Message.Content>
               </Message>
 
@@ -440,26 +435,32 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
 
       <BerechtigungHaupanwendung>
         {(function() {
-          if (merkmale.loading) {
-            return <Loading data-testid="pzs-pfad-loading" />;
+          if (andernErfolgNachricht) {
+            return rendernAndernFormular();
+          }
+
+          if (anfordernErfolgNachricht) {
+            return rendenAnfordernFormular();
           }
 
           const {
             match: {
               params: { token }
             },
-            pzsTokenKontrollieren
+            pzsTokenKontrollieren,
+            loading
           } = merkmale;
 
-          if (
-            token !== ZURUCK_SETZEN_PFAD_ANFORDERN &&
-            !pzsTokenKontrollieren
-          ) {
-            return falschTokenBehalter();
+          if (loading) {
+            return <Loading data-testid="pzs-pfad-loading" />;
           }
 
           if (token === ZURUCK_SETZEN_PFAD_ANFORDERN) {
             return rendenAnfordernFormular();
+          }
+
+          if (!pzsTokenKontrollieren) {
+            return falschTokenBehalter();
           }
 
           return rendernAndernFormular();
