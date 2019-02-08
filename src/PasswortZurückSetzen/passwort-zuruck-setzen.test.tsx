@@ -12,7 +12,7 @@ import {
   fillField,
   WithData
 } from "../test_utils";
-import { ZURUCK_SETZEN_PFAD_ANFORDERN } from "../routing";
+import { ZURUCK_SETZEN_PFAD_ANFORDERN, LOGIN_URL } from "../routing";
 import {
   AnfordernPasswortZuruckSetzen,
   PasswortZuruckSetzenVeranderung,
@@ -192,7 +192,10 @@ it("rendern anfordern erfolgreich gluck pfad", async () => {
 });
 
 it("Anfordern formular is nicht rendert wenn token is falsch", () => {
-  const { Ui: ui } = renderWithRouter(PasswortZurückSetzenTeilweise);
+  const nachgemachtemErsetzen = jest.fn();
+  const { Ui: ui } = renderWithRouter(PasswortZurückSetzenTeilweise, {
+    replace: nachgemachtemErsetzen
+  });
   const { Ui } = renderWithApollo(ui);
 
   /**
@@ -225,6 +228,16 @@ it("Anfordern formular is nicht rendert wenn token is falsch", () => {
    * Und er sieht ein nachricht dass die Token ist falsch
    */
   expect(getByText(/Die Token ist falsch/i)).toBeInTheDocument();
+
+  /**
+   * Wann er klickst die einloggen Taste
+   */
+  fireEvent.click(getByText(/Klicken Sie hier um sich anzumelden/));
+
+  /**
+   * Dann geht er ins einloggen Seite
+   */
+  expect(nachgemachtemErsetzen).toBeCalledWith(LOGIN_URL);
 });
 
 it("eine apollo fehler rendert", async () => {

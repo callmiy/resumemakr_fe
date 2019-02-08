@@ -360,19 +360,25 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
                 </Message.Content>
               </Message>
 
-              <div className="pzs__anfordern-nachricht__zu-einloggin">
-                <Button
-                  primary={true}
-                  type="button"
-                  onClick={() => merkmale.history.replace(LOGIN_URL)}
-                >
-                  Klicken Sie hier um sich anzumelden
-                </Button>
-              </div>
+              {einloggenTaste()}
             </div>
           </CSSTransition>
         )}
       </>
+    );
+  }
+
+  function einloggenTaste() {
+    return (
+      <div className="pzs__anfordern-nachricht__zu-einloggin">
+        <Button
+          primary={true}
+          type="button"
+          onClick={() => merkmale.history.replace(LOGIN_URL)}
+        >
+          Klicken Sie hier um sich anzumelden
+        </Button>
+      </div>
     );
   }
 
@@ -389,17 +395,21 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
         <Header />
 
         <BerechtigungHaupanwendung>
-          <Message
-            warning={true}
-            icon={true}
-            className="pzs__anfordern-nachricht"
-          >
-            <Icon name="ban" />
+          <div className="pzs__anfordern-nachricht anfordern">
+            <Message
+              warning={true}
+              icon={true}
+              style={{ marginBottom: "60px" }}
+            >
+              <Icon name="ban" />
 
-            <Message.Content>
-              <Message.Header> Die Token ist falsch </Message.Header>
-            </Message.Content>
-          </Message>
+              <Message.Content>
+                <Message.Header> Die Token ist falsch </Message.Header>
+              </Message.Content>
+            </Message>
+
+            {einloggenTaste()}
+          </div>
         </BerechtigungHaupanwendung>
       </Behalter>
     );
