@@ -380,10 +380,10 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
     match: {
       params: { token }
     },
-    refreshUser
+    pzsTokenKontrollieren
   } = merkmale;
 
-  if (token !== ZURUCK_SETZEN_PFAD_ANFORDERN && !refreshUser) {
+  if (token !== ZURUCK_SETZEN_PFAD_ANFORDERN && !pzsTokenKontrollieren) {
     return (
       <Behalter>
         <Header />

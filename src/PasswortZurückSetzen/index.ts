@@ -10,15 +10,15 @@ import {
 import {
   PasswortZuruckSetzenVeranderung,
   PasswortZuruckSetzenVeranderungVariables,
-  AktualisierenAbfrage,
-  AktualisierenAbfrageVariables,
+  PzsTokenkontrollieren,
+  PzsTokenkontrollierenVariables,
   AnfordernPasswortZuruckSetzen,
   AnfordernPasswortZuruckSetzenVariables
 } from "../graphql/apollo-gql";
 import {
-  AKTUALISIEREN_ABFRAGE,
-  AktualisierenAbfrageMerkmale
-} from "../graphql/aktualisieren.abfrage";
+  PZS_TOKEN_KONTROLLIEREN,
+  PzsTokenKontrollierenMerkmale
+} from "../graphql/pzs-token-kontrollieren.abfrage";
 import { ZURUCK_SETZEN_PFAD_ANFORDERN } from "../routing";
 import {
   ANFORDERN_PASSWORT_ZURUCK_SETZEN,
@@ -42,17 +42,17 @@ const passwortZuruckSetzenGql = graphql<
 
 const aktualisierenGql = graphql<
   EigenesMerkmale,
-  AktualisierenAbfrage,
-  AktualisierenAbfrageVariables,
-  AktualisierenAbfrageMerkmale | undefined
->(AKTUALISIEREN_ABFRAGE, {
+  PzsTokenkontrollieren,
+  PzsTokenkontrollierenVariables,
+  PzsTokenKontrollierenMerkmale | undefined
+>(PZS_TOKEN_KONTROLLIEREN, {
   props: ({ data }) => data,
 
   skip: ({ match }) => match.params.token === ZURUCK_SETZEN_PFAD_ANFORDERN,
 
   options: ({ match }) => ({
     variables: {
-      jwt: match.params.token
+      token: match.params.token
     }
   })
 });

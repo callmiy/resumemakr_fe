@@ -17,7 +17,7 @@ import {
   AnfordernPasswortZuruckSetzen,
   PasswortZuruckSetzenVeranderung,
   PasswortZuruckSetzenVeranderung_veranderungPasswortZuruckSetzen_user,
-  AktualisierenAbfrage_refreshUser
+  PzsTokenkontrollieren_pzsTokenKontrollieren
 } from "../graphql/apollo-gql";
 import { GraphQLError } from "graphql";
 import { ApolloError } from "apollo-client";
@@ -206,7 +206,7 @@ it("Anfordern formular is nicht rendert wenn token is falsch", () => {
         path: "",
         url: ""
       }}
-      refreshUser={null}
+      pzsTokenKontrollieren={null}
     />
   );
 
@@ -322,7 +322,7 @@ it("rendern andern - glücklich Pfad", async () => {
         url: ""
       }}
       passwortZuruckSetzenVeranderung={nachgemachtemPasswortZuruckVeranderung}
-      refreshUser={{} as AktualisierenAbfrage_refreshUser}
+      pzsTokenKontrollieren={{} as PzsTokenkontrollieren_pzsTokenKontrollieren}
     />
   );
 

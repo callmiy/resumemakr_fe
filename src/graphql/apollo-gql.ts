@@ -401,6 +401,26 @@ export interface PasswortZuruckSetzenVeranderungVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: PzsTokenkontrollieren
+// ====================================================
+
+export interface PzsTokenkontrollieren_pzsTokenKontrollieren {
+  token: string;
+}
+
+export interface PzsTokenkontrollieren {
+  pzsTokenKontrollieren: PzsTokenkontrollieren_pzsTokenKontrollieren | null;  // Kontrollieren dass Passwortzurücksetzen Token is nicht falsch
+}
+
+export interface PzsTokenkontrollierenVariables {
+  token: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: ResumeTitles
 // ====================================================
 

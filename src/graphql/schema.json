@@ -1474,6 +1474,33 @@
           "possibleTypes": null
         },
         {
+          "description": "PZS Token Kontrollieren Erfolgeich Nachricht",
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "token",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "PzsTokenKontrollierenNachricht",
+          "possibleTypes": null
+        },
+        {
           "description": "Variables for creating resume experience",
           "enumValues": null,
           "fields": null,
@@ -2330,6 +2357,33 @@
               "type": {
                 "kind": "INTERFACE",
                 "name": "Node",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "token",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": "Kontrollieren dass Passwortzurücksetzen Token is nicht falsch",
+              "isDeprecated": false,
+              "name": "pzsTokenKontrollieren",
+              "type": {
+                "kind": "OBJECT",
+                "name": "PzsTokenKontrollierenNachricht",
                 "ofType": null
               }
             },

@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import { WithFormikConfig, FormikProps } from "formik";
 
 import { PasswortZuruckSetzenVeranderungMerkmale } from "../graphql/passwort_zurück_setzen.veränderung";
-import { AktualisierenAbfrageMerkmale } from "../graphql/aktualisieren.abfrage";
+import { PzsTokenKontrollierenMerkmale } from "../graphql/pzs-token-kontrollieren.abfrage";
 import { VeranderungPasswortZuruckSetzenInput } from "../graphql/apollo-gql";
 import { FORMULAR_PASSWORT_RENDERN_MERKMALE } from "../SignUp/sign-up";
 import { PasswortGleichPrüfer } from "../SignUp/sign-up";
@@ -14,7 +14,7 @@ export interface EigenesMerkmale
 
 export type Merkmale = EigenesMerkmale &
   PasswortZuruckSetzenVeranderungMerkmale &
-  AktualisierenAbfrageMerkmale &
+  PzsTokenKontrollierenMerkmale &
   AnfordernPasswortZuruckSetzenMerkmale &
   FormikProps<VeranderungPasswortZuruckSetzenInput>;
 
