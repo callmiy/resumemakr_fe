@@ -16,7 +16,8 @@ import { ZURUCK_SETZEN_PFAD_ANFORDERN } from "../routing";
 import {
   AnfordernPasswortZuruckSetzen,
   PasswortZuruckSetzenVeranderung,
-  PasswortZuruckSetzenVeranderung_veranderungPasswortZuruckSetzen_user
+  PasswortZuruckSetzenVeranderung_veranderungPasswortZuruckSetzen_user,
+  AktualisierenAbfrage_refreshUser
 } from "../graphql/apollo-gql";
 import { GraphQLError } from "graphql";
 import { ApolloError } from "apollo-client";
@@ -76,7 +77,7 @@ it("rendern anfordern erfolgreich gluck pfad", async () => {
   expect($taste).toBeInTheDocument();
 
   /**
-   * Und das die Taste ist deaktiviert
+   * Und dass die Taste ist deaktiviert
    */
   expect($taste).toBeDisabled();
 
@@ -174,7 +175,7 @@ it("rendern anfordern erfolgreich gluck pfad", async () => {
   expect($taste).toBeDisabled();
 
   /**
-   * Dann kan er das erfolgereich Nachrichten sehen
+   * Dann kann er das erfolgereich Nachrichten sehen
    */
   expect(nachgemachtemAnfordernPasswortZuruckSetzen).toBeCalledWith({
     variables: { email }
@@ -188,6 +189,42 @@ it("rendern anfordern erfolgreich gluck pfad", async () => {
    * Und er kann nicht die Formular sehen
    */
   expect(queryByTestId("pzs__anfordern-formular")).not.toBeInTheDocument();
+});
+
+it("Anfordern formular is nicht rendert wenn token is falsch", () => {
+  const { Ui: ui } = renderWithRouter(PasswortZurückSetzenTeilweise);
+  const { Ui } = renderWithApollo(ui);
+
+  /**
+   * Wann man komm bei anfordern passwortzurücksetzen an
+   */
+  const { getByText, queryByText } = render(
+    <Ui
+      match={{
+        params: { token: "falsche Token" },
+        isExact: true,
+        path: "",
+        url: ""
+      }}
+      refreshUser={null}
+    />
+  );
+
+  /**
+   * Dann sieht er dass die Anfordernseite is versteckt
+   */
+
+  expect(queryByText(anfordernTasteMuster)).not.toBeInTheDocument();
+
+  /**
+   * Und kein Nachricht dass er kann passwortzurücksetzen machen
+   */
+  expect(queryByText(/Zuruck setzen Ihr Passwort/)).not.toBeInTheDocument();
+
+  /**
+   * Und er sieht ein nachricht dass die Token ist falsch
+   */
+  expect(getByText(/Die Token ist falsch/i)).toBeInTheDocument();
 });
 
 it("eine apollo fehler rendert", async () => {
@@ -285,6 +322,7 @@ it("rendern andern - glücklich Pfad", async () => {
         url: ""
       }}
       passwortZuruckSetzenVeranderung={nachgemachtemPasswortZuruckVeranderung}
+      refreshUser={{} as AktualisierenAbfrage_refreshUser}
     />
   );
 

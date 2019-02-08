@@ -379,8 +379,31 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
   const {
     match: {
       params: { token }
-    }
+    },
+    refreshUser
   } = merkmale;
+
+  if (token !== ZURUCK_SETZEN_PFAD_ANFORDERN && !refreshUser) {
+    return (
+      <Behalter>
+        <Header />
+
+        <BerechtigungHaupanwendung>
+          <Message
+            warning={true}
+            icon={true}
+            className="pzs__anfordern-nachricht"
+          >
+            <Icon name="ban" />
+
+            <Message.Content>
+              <Message.Header> Die Token ist falsch </Message.Header>
+            </Message.Content>
+          </Message>
+        </BerechtigungHaupanwendung>
+      </Behalter>
+    );
+  }
 
   return (
     <Behalter>
