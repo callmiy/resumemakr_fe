@@ -28,6 +28,7 @@ import {
 } from "./passwort-zurück-setzen.styles";
 import { VeranderungPasswortZuruckSetzenInput } from "../graphql/apollo-gql";
 import { ApolloError } from "apollo-client";
+import Loading from "../Loading";
 
 export function PasswortZurückSetzen(merkmale: Merkmale) {
   const [email, setEmail] = useState("");
@@ -49,7 +50,7 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
     string | undefined
   >(undefined);
 
-  function rendernAndern() {
+  function rendernAndernFormular() {
     const {
       dirty: schmutzig,
       isSubmitting: istEinreichen,
@@ -59,110 +60,145 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
     } = merkmale;
 
     const { history: verlauf } = merkmale;
+    const istFormular = !erfolgNachricht;
 
     return (
-      <BerechtigungKarte>
-        <Card.Content className="berechtigung-karte__intro" extra={true}>
-          Zuruck setzen Ihr Passwort
-        </Card.Content>
+      <>
+        <CSSTransition
+          timeout={anfordernFormularZeit}
+          classNames="pzs__anfordern-formular--animate"
+          in={istFormular}
+          unmountOnExit={true}
+        >
+          <BerechtigungKarte>
+            <Card.Content className="berechtigung-karte__intro" extra={true}>
+              Zuruck setzen Ihr Passwort
+            </Card.Content>
 
-        {erfolgNachricht && erfolgNachricht}
+            {erfolgNachricht && erfolgNachricht}
 
-        <Card.Content>
-          <Form
-            onSubmit={async () => {
-              setSubmitting(true);
-              estellenAndernFormikFehler(undefined);
+            <Card.Content>
+              <Form
+                onSubmit={async () => {
+                  setSubmitting(true);
+                  estellenAndernFormikFehler(undefined);
 
-              const errors = await validateForm(values);
+                  const errors = await validateForm(values);
 
-              if (!lodashIsEmpty(errors)) {
-                estellenAndernFormikFehler(errors);
-                setSubmitting(false);
+                  if (!lodashIsEmpty(errors)) {
+                    estellenAndernFormikFehler(errors);
+                    setSubmitting(false);
 
-                return;
-              }
-
-              const { passwortZuruckSetzenVeranderung } = merkmale;
-
-              if (!passwortZuruckSetzenVeranderung) {
-                einstellenAndererFehlerNachrichte(
-                  "Es gibt ein Fehler. Die Anforderung kann nicht gestellt werden"
-                );
-
-                setSubmitting(false);
-                return;
-              }
-
-              try {
-                const erfolg = await passwortZuruckSetzenVeranderung({
-                  variables: {
-                    input: values
+                    return;
                   }
-                });
 
-                const benutzer =
-                  erfolg &&
-                  erfolg.data &&
-                  erfolg.data.veranderungPasswortZuruckSetzen &&
-                  erfolg.data.veranderungPasswortZuruckSetzen.user;
+                  const { passwortZuruckSetzenVeranderung } = merkmale;
 
-                if (!benutzer) {
-                  return;
-                }
+                  if (!passwortZuruckSetzenVeranderung) {
+                    einstellenAndererFehlerNachrichte(
+                      "Es gibt ein Fehler. Die Anforderung kann nicht gestellt werden"
+                    );
 
-                einstellenErfolgNachricht(
-                  <Message success={true}>
-                    <Message.Header>
-                      Passwortzurücksetzen erfolgreich
-                    </Message.Header>
-                  </Message>
-                );
-              } catch (error) {
-                einstellenGqlFehler(error);
-                setSubmitting(false);
-              }
-            }}
+                    setSubmitting(false);
+                    return;
+                  }
+
+                  try {
+                    const erfolg = await passwortZuruckSetzenVeranderung({
+                      variables: {
+                        input: values
+                      }
+                    });
+
+                    const benutzer =
+                      erfolg &&
+                      erfolg.data &&
+                      erfolg.data.veranderungPasswortZuruckSetzen &&
+                      erfolg.data.veranderungPasswortZuruckSetzen.user;
+
+                    if (!benutzer) {
+                      return;
+                    }
+
+                    einstellenErfolgNachricht(
+                      <Message success={true}>
+                        <Message.Header>
+                          Passwortzurücksetzen erfolgreich
+                        </Message.Header>
+                      </Message>
+                    );
+                  } catch (error) {
+                    einstellenGqlFehler(error);
+                    setSubmitting(false);
+                  }
+                }}
+              >
+                {Object.entries(FORMULAR_RENDERN_MARKMALE).map(
+                  ([name, [label, type]]) => {
+                    return (
+                      <FastField
+                        key={name}
+                        name={name}
+                        render={rendernEingabe(label, type)}
+                      />
+                    );
+                  }
+                )}
+
+                <Button
+                  id="passwort-zuruck-einreichen"
+                  name="passwort-zuruck-einreichen"
+                  color="green"
+                  inverted={true}
+                  disabled={!schmutzig || istEinreichen}
+                  loading={istEinreichen}
+                  type="submit"
+                  fluid={true}
+                >
+                  <Icon name="checkmark" /> Einreichen
+                </Button>
+              </Form>
+            </Card.Content>
+
+            <Card.Content className="berechtigung-karte__intro" extra={true}>
+              <Button
+                className="to-login-button"
+                type="button"
+                fluid={true}
+                onClick={() => verlauf.replace(LOGIN_URL)}
+                disabled={istEinreichen}
+              >
+                Klicken Sie hier um sich anzumelden
+              </Button>
+            </Card.Content>
+          </BerechtigungKarte>
+        </CSSTransition>
+
+        {!istFormular && (
+          <CSSTransition
+            classNames="pzs__anfordern-nachricht--animate"
+            timeout={anfordernNachrichtZeit}
+            appear={true}
+            in={!istFormular}
           >
-            {Object.entries(FORMULAR_RENDERN_MARKMALE).map(
-              ([name, [label, type]]) => {
-                return (
-                  <FastField
-                    key={name}
-                    name={name}
-                    render={rendernEingabe(label, type)}
-                  />
-                );
-              }
-            )}
+            <div className="pzs__anfordern-nachricht anfordern">
+              <Message
+                icon={true}
+                success={true}
+                style={{ marginBottom: "60px" }}
+              >
+                <Icon name="checkmark" />
 
-            <Button
-              id="passwort-zuruck-einreichen"
-              name="passwort-zuruck-einreichen"
-              color="green"
-              inverted={true}
-              disabled={!schmutzig || istEinreichen}
-              loading={istEinreichen}
-              type="submit"
-              fluid={true}
-            >
-              <Icon name="checkmark" /> Einreichen
-            </Button>
-          </Form>
-        </Card.Content>
+                <Message.Content>
+                  <Message.Header>{erfolgNachricht}</Message.Header>
+                </Message.Content>
+              </Message>
 
-        <Card.Content className="berechtigung-karte__intro" extra={true}>
-          <Button
-            className="to-login-button"
-            type="button"
-            fluid={true}
-            onClick={() => verlauf.replace(LOGIN_URL)}
-            disabled={istEinreichen}
-          >
-            Klicken Sie hier um sich anzumelden
-          </Button>
-        </Card.Content>
-      </BerechtigungKarte>
+              {einloggenTaste()}
+            </div>
+          </CSSTransition>
+        )}
+      </>
     );
   }
 
@@ -382,36 +418,19 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
     );
   }
 
-  const {
-    match: {
-      params: { token }
-    },
-    pzsTokenKontrollieren
-  } = merkmale;
-
-  if (token !== ZURUCK_SETZEN_PFAD_ANFORDERN && !pzsTokenKontrollieren) {
+  function falschTokenBehalter() {
     return (
-      <Behalter>
-        <Header />
+      <div className="pzs__anfordern-nachricht anfordern">
+        <Message warning={true} icon={true} style={{ marginBottom: "60px" }}>
+          <Icon name="ban" />
 
-        <BerechtigungHaupanwendung>
-          <div className="pzs__anfordern-nachricht anfordern">
-            <Message
-              warning={true}
-              icon={true}
-              style={{ marginBottom: "60px" }}
-            >
-              <Icon name="ban" />
+          <Message.Content>
+            <Message.Header> Die Token ist falsch </Message.Header>
+          </Message.Content>
+        </Message>
 
-              <Message.Content>
-                <Message.Header> Die Token ist falsch </Message.Header>
-              </Message.Content>
-            </Message>
-
-            {einloggenTaste()}
-          </div>
-        </BerechtigungHaupanwendung>
-      </Behalter>
+        {einloggenTaste()}
+      </div>
     );
   }
 
@@ -420,9 +439,31 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
       <Header />
 
       <BerechtigungHaupanwendung>
-        {token === ZURUCK_SETZEN_PFAD_ANFORDERN
-          ? rendenAnfordernFormular()
-          : rendernAndern()}
+        {(function() {
+          if (merkmale.loading) {
+            return <Loading data-testid="pzs-pfad-loading" />;
+          }
+
+          const {
+            match: {
+              params: { token }
+            },
+            pzsTokenKontrollieren
+          } = merkmale;
+
+          if (
+            token !== ZURUCK_SETZEN_PFAD_ANFORDERN &&
+            !pzsTokenKontrollieren
+          ) {
+            return falschTokenBehalter();
+          }
+
+          if (token === ZURUCK_SETZEN_PFAD_ANFORDERN) {
+            return rendenAnfordernFormular();
+          }
+
+          return rendernAndernFormular();
+        })()}
       </BerechtigungHaupanwendung>
     </Behalter>
   );

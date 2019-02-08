@@ -37,7 +37,10 @@ jest.mock("react-transition-group", () => {
     props.in ? <FakeTransition>{props.children}</FakeTransition> : null
   );
 
-  return { CSSTransition: FakeCSSTransition, TransitionGroup: FakeTransition };
+  return {
+    CSSTransition: FakeCSSTransition,
+    TransitionGroup: FakeTransition
+  };
 });
 
 it("rendern anfordern erfolgreich gluck pfad", async () => {
@@ -91,6 +94,11 @@ it("rendern anfordern erfolgreich gluck pfad", async () => {
    */
   const ungültigeMuster = /E-Mail ist ungültig/i;
   expect(queryByText(ungültigeMuster)).not.toBeInTheDocument();
+
+  /**
+   * Und er kann nicht "wird geladen" sehen
+   */
+  expect(queryByTestId("pzs-pfad-loading")).not.toBeInTheDocument();
 
   /**
    * When he enters an invalid email
@@ -326,7 +334,7 @@ it("rendern andern - glücklich Pfad", async () => {
   /**
    * Wann man besucht das Andern Seite
    */
-  const { getByText, queryByText, getByLabelText } = render(
+  const { getByText, queryByText, getByLabelText, queryByLabelText } = render(
     <Ui
       match={{
         params: { token },
@@ -429,6 +437,23 @@ it("rendern andern - glücklich Pfad", async () => {
       }
     }
   });
+
+  /**
+   * Und dass die Formular ist versteckt
+   */
+  expect(queryByLabelText("Passwort")).not.toBeInTheDocument();
+});
+
+it('anzeige "wird geladen" ', () => {
+  const { Ui: ui1 } = renderWithRouter(PasswortZurückSetzenTeilweise);
+  const { Ui } = renderWithApollo(ui1);
+
+  /**
+   * Wann man besucht das Andern Seite
+   */
+  const { getByTestId } = render(<Ui match={match()} loading={true} />);
+
+  expect(getByTestId("pzs-pfad-loading")).toBeInTheDocument();
 });
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -436,3 +461,12 @@ it("rendern andern - glücklich Pfad", async () => {
 ////////////////////////// HELPER FUNCTIONS ///////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+function match(token: string = "") {
+  return {
+    params: { token },
+    isExact: true,
+    path: "",
+    url: ""
+  };
+}
