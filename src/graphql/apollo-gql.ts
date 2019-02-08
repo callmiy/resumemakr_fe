@@ -374,26 +374,26 @@ export interface LoginMutationVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: PasswortZuruckSetzen
+// GraphQL mutation operation: PasswortZuruckSetzenVeranderung
 // ====================================================
 
-export interface PasswortZuruckSetzen_passwortZuruckSetzen_user {
+export interface PasswortZuruckSetzenVeranderung_veranderungPasswortZuruckSetzen_user {
   id: string;  // The ID of an object
   name: string;
   email: string;
   jwt: string;
 }
 
-export interface PasswortZuruckSetzen_passwortZuruckSetzen {
-  user: PasswortZuruckSetzen_passwortZuruckSetzen_user | null;
+export interface PasswortZuruckSetzenVeranderung_veranderungPasswortZuruckSetzen {
+  user: PasswortZuruckSetzenVeranderung_veranderungPasswortZuruckSetzen_user | null;
 }
 
-export interface PasswortZuruckSetzen {
-  passwortZuruckSetzen: PasswortZuruckSetzen_passwortZuruckSetzen | null;
+export interface PasswortZuruckSetzenVeranderung {
+  veranderungPasswortZuruckSetzen: PasswortZuruckSetzenVeranderung_veranderungPasswortZuruckSetzen | null;
 }
 
-export interface PasswortZuruckSetzenVariables {
-  input: PasswortZuruckSetzenInput;
+export interface PasswortZuruckSetzenVeranderungVariables {
+  input: VeranderungPasswortZuruckSetzenInput;
 }
 
 
@@ -872,7 +872,7 @@ export interface LoginInput {
 }
 
 // null
-export interface PasswortZuruckSetzenInput {
+export interface VeranderungPasswortZuruckSetzenInput {
   password: string;
   passwordConfirmation: string;
   token: string;

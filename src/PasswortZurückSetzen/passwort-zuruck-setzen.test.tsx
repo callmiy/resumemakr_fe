@@ -2,9 +2,10 @@ import React from "react";
 import "jest-dom/extend-expect";
 import "react-testing-library/cleanup-after-each";
 import { render, fireEvent, waitForElement, act } from "react-testing-library";
+import { withFormik } from "formik";
 
 import { PasswortZurückSetzen } from "./passwort-zurück-setzen-x";
-import { Merkmale } from "./passwort-zurück-setzen";
+import { Merkmale, formikConfig } from "./passwort-zurück-setzen";
 import {
   renderWithRouter,
   renderWithApollo,
@@ -12,17 +13,33 @@ import {
   WithData
 } from "../test_utils";
 import { ZURUCK_SETZEN_PFAD_ANFORDERN } from "../routing";
-import { AnfordernPasswortZuruckSetzen } from "../graphql/apollo-gql";
+import {
+  AnfordernPasswortZuruckSetzen,
+  PasswortZuruckSetzenVeranderung,
+  PasswortZuruckSetzenVeranderung_veranderungPasswortZuruckSetzen_user
+} from "../graphql/apollo-gql";
 import { GraphQLError } from "graphql";
 import { ApolloError } from "apollo-client";
+import { passworteNichtGleich } from "../SignUp/sign-up";
 
-const PasswortZurückSetzenTeilweise = PasswortZurückSetzen as React.FunctionComponent<
-  Partial<Merkmale>
->;
+type M = React.FunctionComponent<Partial<Merkmale>>;
+const PasswortZurückSetzenTeilweise = PasswortZurückSetzen as M;
 
 const anfordernTasteMuster = /Passwortzurücksetzen Anfordern/i;
+const andernTasteMuster = /Einreichen/i;
+const passworteNichtGleichMuster = new RegExp(passworteNichtGleich, "i");
 
-it("rendern anfordern", async () => {
+jest.mock("react-transition-group", () => {
+  const FakeTransition = jest.fn(({ children }) => children);
+
+  const FakeCSSTransition = jest.fn(props =>
+    props.in ? <FakeTransition>{props.children}</FakeTransition> : null
+  );
+
+  return { CSSTransition: FakeCSSTransition, TransitionGroup: FakeTransition };
+});
+
+it("rendern anfordern erfolgreich gluck pfad", async () => {
   const { Ui: ui } = renderWithRouter(PasswortZurückSetzenTeilweise);
   const { Ui } = renderWithApollo(ui);
   const email = "ich@du.com";
@@ -40,7 +57,7 @@ it("rendern anfordern", async () => {
   /**
    * Given that user visits page to request password reset token
    */
-  const { getByText, queryByText, getByLabelText } = render(
+  const { getByText, queryByText, getByLabelText, queryByTestId } = render(
     <Ui
       match={{
         params: { token: ZURUCK_SETZEN_PFAD_ANFORDERN },
@@ -166,6 +183,11 @@ it("rendern anfordern", async () => {
   const $el = await waitForElement(() => getByText(erfolgNachrichtMuster));
 
   expect($el).toBeInTheDocument();
+
+  /**
+   * Und er kann nicht die Formular sehen
+   */
+  expect(queryByTestId("pzs__anfordern-formular")).not.toBeInTheDocument();
 });
 
 it("eine apollo fehler rendert", async () => {
@@ -232,24 +254,130 @@ it("eine apollo fehler rendert", async () => {
   expect(queryByText(angelehntNachrichtMuster)).not.toBeInTheDocument();
 });
 
-it("rendern andern", () => {
-  const { Ui: ui } = renderWithRouter(PasswortZurückSetzenTeilweise);
-  const { Ui } = renderWithApollo(ui);
+it("rendern andern - glücklich Pfad", async () => {
+  const { Ui: ui1 } = renderWithRouter(PasswortZurückSetzenTeilweise);
+  const { Ui: ui2 } = renderWithApollo(ui1);
+  const Ui = withFormik(formikConfig)(ui2) as M;
 
-  const { getByText, queryByText } = render(
+  const data: WithData<PasswortZuruckSetzenVeranderung> = {
+    data: {
+      veranderungPasswortZuruckSetzen: {
+        user: {} as PasswortZuruckSetzenVeranderung_veranderungPasswortZuruckSetzen_user
+      }
+    }
+  };
+
+  const nachgemachtemPasswortZuruckVeranderung = jest.fn(() =>
+    Promise.resolve(data)
+  );
+
+  const token = "valid token";
+
+  /**
+   * Wann man besucht das Andern Seite
+   */
+  const { getByText, queryByText, getByLabelText } = render(
     <Ui
       match={{
-        params: { token: "valid token" },
+        params: { token },
         isExact: true,
         path: "",
         url: ""
       }}
+      passwortZuruckSetzenVeranderung={nachgemachtemPasswortZuruckVeranderung}
     />
   );
 
+  /**
+   * Dann sieht er dass die Anfordernseite is versteckt
+   */
+
   expect(queryByText(anfordernTasteMuster)).not.toBeInTheDocument();
 
-  expect(getByText(/Zuruck setzen Ihr Passwort/)).toBeInTheDocument();
+  /**
+   * Und das die andern taste ist deaktiviert
+   */
+
+  const $taste = getByText(andernTasteMuster);
+  expect($taste).toBeDisabled();
+
+  /**
+   * Wann er gebt die Formular ein
+   */
+  const $passwortEingabe = getByLabelText("Passwort");
+  fillField($passwortEingabe, "passwort");
+
+  /**
+   * Dann er sieht dass the andern Taste ist aktiviert
+   */
+  expect($taste).not.toBeDisabled();
+
+  /**
+   * Wann er mach die Formular leer
+   */
+  fillField($passwortEingabe, "");
+
+  /**
+   * dann die andern taste ist deaktiviert
+   */
+  expect($taste).toBeDisabled();
+
+  /**
+   * Und das eine Nachricht dass passworte nicht gleich nicht aus die Seite
+   */
+  expect(queryByText(passworteNichtGleichMuster)).not.toBeInTheDocument();
+
+  /**
+   * Wann er gebt die Formular ein, aber passwort und bestätigen passwort nicht
+   * gleich
+   */
+  const passwort = "passwort";
+  fillField($passwortEingabe, passwort);
+  const $passwortBestätigen = getByLabelText("Passwort Bestätigen");
+  fillField($passwortBestätigen, "passwort1");
+
+  /**
+   * Und er hat die Taste eingereicht
+   */
+
+  fireEvent.click($taste);
+
+  /**
+   * Dann sieht er ein Nachricht dass passworte nicht gleich
+   */
+
+  let $el = await waitForElement(() => getByText(passworteNichtGleichMuster));
+  expect($el).toBeInTheDocument();
+
+  /**
+   * Wann die Formular ist richtige fühlen
+   */
+  fillField($passwortEingabe, passwort);
+  fillField($passwortBestätigen, passwort);
+
+  /**
+   * Und er hat die Taste eingereicht
+   */
+
+  fireEvent.click($taste);
+
+  /**
+   * Dann sieht er dass Nachrichte das alles ist erfolgreich
+   */
+  $el = await waitForElement(() =>
+    getByText(/Passwortzurücksetzen erfolgreich/i)
+  );
+  expect($el).toBeInTheDocument();
+
+  expect(nachgemachtemPasswortZuruckVeranderung).toBeCalledWith({
+    variables: {
+      input: {
+        password: passwort,
+        passwordConfirmation: passwort,
+        token
+      }
+    }
+  });
 });
 
 ///////////////////////////////////////////////////////////////////////////////

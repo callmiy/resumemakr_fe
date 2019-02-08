@@ -27,9 +27,11 @@ export const initialFormValues: RegistrationInput = {
   source: "password"
 };
 
+export const passworteNichtGleich = "Passworte nicht gleich";
+
 export const PasswortGleichPrüfer = Yup.string()
   .required("is required")
-  .test("passwords-match", "Passwords do not match", function(val) {
+  .test("passwords-match", passworteNichtGleich, function(val) {
     return this.parent.password === val;
   });
 

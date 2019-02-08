@@ -224,12 +224,16 @@ export const mediaQueries = Object.entries(mediaSizes).reduce(
   {} as { [k in keyof typeof mediaSizes]: string }
 );
 
+export const berechtigungBreiteCss = css`
+  min-width: 310px;
+  width: 95% !important;
+  max-width: 400px !important;
+`;
+
 const Card1 = wrapped(Card);
 export const BerechtigungKarte = styled(Card1)`
   overflow-y: auto;
   height: 45%;
-  min-width: 310px;
-  width: 95% !important;
-  max-width: 400px !important;
   min-height: 350px !important;
+  ${berechtigungBreiteCss}
 `;

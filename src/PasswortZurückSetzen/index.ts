@@ -1,14 +1,15 @@
 import { graphql, compose } from "react-apollo";
+import { withFormik } from "formik";
 
 import { PasswortZurückSetzen } from "./passwort-zurück-setzen-x";
-import { EigenesMerkmale } from "./passwort-zurück-setzen";
+import { EigenesMerkmale, formikConfig } from "./passwort-zurück-setzen";
 import {
-  PASSWORT_ZURÜCK_SETZEN,
-  PasswortZuruckSetzenMerkmale
+  PASSWORT_ZURÜCK_SETZEN_VERANDERUNG,
+  PasswortZuruckSetzenVeranderungMerkmale
 } from "../graphql/passwort_zurück_setzen.veränderung";
 import {
-  PasswortZuruckSetzen,
-  PasswortZuruckSetzenVariables,
+  PasswortZuruckSetzenVeranderung,
+  PasswortZuruckSetzenVeranderungVariables,
   AktualisierenAbfrage,
   AktualisierenAbfrageVariables,
   AnfordernPasswortZuruckSetzen,
@@ -26,14 +27,14 @@ import {
 
 const passwortZuruckSetzenGql = graphql<
   EigenesMerkmale,
-  PasswortZuruckSetzen,
-  PasswortZuruckSetzenVariables,
-  PasswortZuruckSetzenMerkmale | undefined
->(PASSWORT_ZURÜCK_SETZEN, {
+  PasswortZuruckSetzenVeranderung,
+  PasswortZuruckSetzenVeranderungVariables,
+  PasswortZuruckSetzenVeranderungMerkmale | undefined
+>(PASSWORT_ZURÜCK_SETZEN_VERANDERUNG, {
   props: ({ mutate }) => {
     return (
       mutate && {
-        passwortZuruckSetzen: mutate
+        passwortZuruckSetzenVeranderung: mutate
       }
     );
   }
@@ -71,5 +72,6 @@ const anfordernPasswortZuruckSetzenGql = graphql<
 export default compose(
   anfordernPasswortZuruckSetzenGql,
   passwortZuruckSetzenGql,
-  aktualisierenGql
+  aktualisierenGql,
+  withFormik(formikConfig)
 )(PasswortZurückSetzen);

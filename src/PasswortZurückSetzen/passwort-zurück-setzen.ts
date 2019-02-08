@@ -1,9 +1,10 @@
 import { RouteComponentProps } from "react-router-dom";
 import * as Yup from "yup";
+import { WithFormikConfig, FormikProps } from "formik";
 
-import { PasswortZuruckSetzenMerkmale } from "../graphql/passwort_zurück_setzen.veränderung";
+import { PasswortZuruckSetzenVeranderungMerkmale } from "../graphql/passwort_zurück_setzen.veränderung";
 import { AktualisierenAbfrageMerkmale } from "../graphql/aktualisieren.abfrage";
-import { PasswortZuruckSetzenInput } from "../graphql/apollo-gql";
+import { VeranderungPasswortZuruckSetzenInput } from "../graphql/apollo-gql";
 import { FORMULAR_PASSWORT_RENDERN_MERKMALE } from "../SignUp/sign-up";
 import { PasswortGleichPrüfer } from "../SignUp/sign-up";
 import { AnfordernPasswortZuruckSetzenMerkmale } from "../graphql/anfordern-passwort-zuruck-setzen.veranderung";
@@ -11,11 +12,11 @@ import { AnfordernPasswortZuruckSetzenMerkmale } from "../graphql/anfordern-pass
 export interface EigenesMerkmale
   extends RouteComponentProps<{ token: string }> {}
 
-export interface Merkmale
-  extends EigenesMerkmale,
-    PasswortZuruckSetzenMerkmale,
-    AktualisierenAbfrageMerkmale,
-    AnfordernPasswortZuruckSetzenMerkmale {}
+export type Merkmale = EigenesMerkmale &
+  PasswortZuruckSetzenVeranderungMerkmale &
+  AktualisierenAbfrageMerkmale &
+  AnfordernPasswortZuruckSetzenMerkmale &
+  FormikProps<VeranderungPasswortZuruckSetzenInput>;
 
 export interface Zustand {
   email: string;
@@ -24,25 +25,50 @@ export interface Zustand {
 }
 
 export const FORMULAR_RENDERN_MARKMALE: {
-  [k in keyof PasswortZuruckSetzenInput]: string[]
+  [k in keyof VeranderungPasswortZuruckSetzenInput]: string[]
 } = {
   ...FORMULAR_PASSWORT_RENDERN_MERKMALE,
   token: ["Token", "text"]
 };
 
-export const ValidationSchema = Yup.object<PasswortZuruckSetzenInput>().shape({
-  token: Yup.string()
-    .required()
-    .min(5),
-
-  password: Yup.string()
-    .min(4, "must be at least 4 characters")
-    .max(50, "is too Long!")
-    .required("is required"),
-
-  passwordConfirmation: PasswortGleichPrüfer
-});
-
 export const emailValidator = Yup.string()
   .required()
   .email("E-Mail ist ungültig");
+
+export const formikConfig: WithFormikConfig<
+  Merkmale,
+  VeranderungPasswortZuruckSetzenInput
+> = {
+  handleSubmit: () => null,
+
+  mapPropsToValues: ({
+    match: {
+      params: { token }
+    }
+  }) => {
+    return {
+      password: "",
+      passwordConfirmation: "",
+      token
+    };
+  },
+
+  validationSchema: Yup.object<VeranderungPasswortZuruckSetzenInput>().shape({
+    token: Yup.string()
+      .required()
+      .min(5),
+
+    password: Yup.string()
+      .min(4, "must be at least 4 characters")
+      .max(50, "is too Long!")
+      .required("is required"),
+
+    passwordConfirmation: PasswortGleichPrüfer
+  }),
+
+  enableReinitialize: true,
+
+  validateOnChange: false,
+
+  validateOnBlur: false
+};

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Formik, FormikProps, FastField, FieldProps } from "formik";
+import { FastField, FieldProps, FormikErrors } from "formik";
 import {
   Form,
   Card,
@@ -9,24 +9,33 @@ import {
   InputOnChangeData,
   Message
 } from "semantic-ui-react";
+import lodashIsEmpty from "lodash/isEmpty";
+import { CSSTransition } from "react-transition-group";
 
 import {
   Merkmale,
   FORMULAR_RENDERN_MARKMALE,
-  ValidationSchema,
   emailValidator
 } from "./passwort-zurück-setzen";
 import { LOGIN_URL, ZURUCK_SETZEN_PFAD_ANFORDERN } from "../routing";
 import Header from "../Header";
 import { BerechtigungHaupanwendung, BerechtigungKarte } from "../styles/mixins";
-import { Behälter, FormularBereich } from "./passwort-zurück-setzen.styles";
-import { PasswortZuruckSetzenInput } from "../graphql/apollo-gql";
+import {
+  Behalter,
+  FormularBereich,
+  anfordernFormularZeit,
+  anfordernNachrichtZeit
+} from "./passwort-zurück-setzen.styles";
+import { VeranderungPasswortZuruckSetzenInput } from "../graphql/apollo-gql";
 import { ApolloError } from "apollo-client";
 
 export function PasswortZurückSetzen(merkmale: Merkmale) {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string | undefined>(undefined);
   const [wirdGeladen, setWirdGeladen] = useState<boolean>(false);
+  const [andernFormikFehler, estellenAndernFormikFehler] = useState<
+    undefined | FormikErrors<VeranderungPasswortZuruckSetzenInput>
+  >(undefined);
 
   const [erfolgNachricht, einstellenErfolgNachricht] = useState<
     JSX.Element | undefined
@@ -40,10 +49,15 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
     string | undefined
   >(undefined);
 
-  function rendernAndern(
-    formularMerkmale: FormikProps<PasswortZuruckSetzenInput>
-  ) {
-    const { dirty: schmutzig, isSubmitting: istEinreichen } = formularMerkmale;
+  function rendernAndern() {
+    const {
+      dirty: schmutzig,
+      isSubmitting: istEinreichen,
+      setSubmitting,
+      values,
+      validateForm
+    } = merkmale;
+
     const { history: verlauf } = merkmale;
 
     return (
@@ -52,8 +66,64 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
           Zuruck setzen Ihr Passwort
         </Card.Content>
 
+        {erfolgNachricht && erfolgNachricht}
+
         <Card.Content>
-          <Form>
+          <Form
+            onSubmit={async () => {
+              setSubmitting(true);
+              estellenAndernFormikFehler(undefined);
+
+              const errors = await validateForm(values);
+
+              if (!lodashIsEmpty(errors)) {
+                estellenAndernFormikFehler(errors);
+                setSubmitting(false);
+
+                return;
+              }
+
+              const { passwortZuruckSetzenVeranderung } = merkmale;
+
+              if (!passwortZuruckSetzenVeranderung) {
+                einstellenAndererFehlerNachrichte(
+                  "Es gibt ein Fehler. Die Anforderung kann nicht gestellt werden"
+                );
+
+                setSubmitting(false);
+                return;
+              }
+
+              try {
+                const erfolg = await passwortZuruckSetzenVeranderung({
+                  variables: {
+                    input: values
+                  }
+                });
+
+                const benutzer =
+                  erfolg &&
+                  erfolg.data &&
+                  erfolg.data.veranderungPasswortZuruckSetzen &&
+                  erfolg.data.veranderungPasswortZuruckSetzen.user;
+
+                if (!benutzer) {
+                  return;
+                }
+
+                einstellenErfolgNachricht(
+                  <Message success={true}>
+                    <Message.Header>
+                      Passwortzurücksetzen erfolgreich
+                    </Message.Header>
+                  </Message>
+                );
+              } catch (error) {
+                einstellenGqlFehler(error);
+                setSubmitting(false);
+              }
+            }}
+          >
             {Object.entries(FORMULAR_RENDERN_MARKMALE).map(
               ([name, [label, type]]) => {
                 return (
@@ -98,22 +168,29 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
 
   function rendernEingabe(label: string, typ: string) {
     return function rendernEingabeDrinnen(
-      formularMarkmale: FieldProps<PasswortZuruckSetzenInput>
+      formularMarkmale: FieldProps<VeranderungPasswortZuruckSetzenInput>
     ) {
       const { field: bereich } = formularMarkmale;
       const { name } = bereich;
+      const istVersteckt = name === "token";
+      const fehler =
+        !istVersteckt && andernFormikFehler && andernFormikFehler[name];
 
       return (
-        <FormularBereich istVersteckt={name === "token"}>
-          <Form.Field
-            {...bereich}
-            control={Input}
-            autoComplete="off"
-            label={label}
-            type={typ}
-            id={name}
-            autoFocus={name === "password"}
-          />
+        <FormularBereich istVersteckt={istVersteckt}>
+          <Form.Field>
+            <label htmlFor={name}>{label}</label>
+
+            <Input
+              {...bereich}
+              autoComplete="off"
+              type={typ}
+              id={name}
+              autoFocus={name === "password"}
+            />
+
+            {fehler && <div className="email-error">{fehler}</div>}
+          </Form.Field>
         </FormularBereich>
       );
     };
@@ -181,73 +258,118 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
 
   function rendenAnfordernFormular() {
     const hatFehler = !!email.trim() && !!emailError;
+    const istFormular = !erfolgNachricht;
 
     return (
-      <BerechtigungKarte className="anfordern">
-        <Card.Content className="anfordern__intro" extra={true}>
-          {erfolgNachricht ? (
-            erfolgNachricht
-          ) : (
-            <span>
-              Geben Sie Ihr E-mail Adresse ein und Sie erhalten einen Link, um
-              das passwortzurücksetzen.
-            </span>
-          )}
-        </Card.Content>
+      <>
+        <CSSTransition
+          timeout={anfordernFormularZeit}
+          classNames="pzs__anfordern-formular--animate"
+          in={istFormular}
+          unmountOnExit={true}
+        >
+          <BerechtigungKarte
+            className="anfordern"
+            data-testid="pzs__anfordern-formular"
+          >
+            <Card.Content className="anfordern__intro" extra={true}>
+              <span>
+                Geben Sie Ihr E-mail Adresse ein und Sie erhalten einen Link, um
+                das passwortzurücksetzen.
+              </span>
+            </Card.Content>
 
-        <Card.Content>
-          <Form onSubmit={einreichenAnfordernFormular}>
-            <Form.Field error={hatFehler}>
-              {andererFehlerNachrichte && (
-                <div className="email-error ">{andererFehlerNachrichte}</div>
-              )}
+            <Card.Content>
+              <Form onSubmit={einreichenAnfordernFormular}>
+                <Form.Field error={hatFehler}>
+                  {andererFehlerNachrichte && (
+                    <div className="email-error ">
+                      {andererFehlerNachrichte}
+                    </div>
+                  )}
 
-              {emailGqlFehler && (
-                <Message
-                  negative={true}
-                  onDismiss={() => einstellenGqlFehler(undefined)}
+                  {emailGqlFehler && (
+                    <Message
+                      negative={true}
+                      onDismiss={() => einstellenGqlFehler(undefined)}
+                    >
+                      <div>{emailGqlFehler.graphQLErrors[0].message}</div>
+                    </Message>
+                  )}
+
+                  <label htmlFor="passwort-zuruck-setzen-anfordern">
+                    Geben Sie ihr E-mail Adresse
+                  </label>
+                  <Input
+                    name="passwort-zuruck-setzen-anfordern"
+                    id="passwort-zuruck-setzen-anfordern"
+                    autoComplete="off"
+                    onChange={(
+                      evt: React.ChangeEvent<HTMLInputElement>,
+                      data: InputOnChangeData
+                    ) => {
+                      const { value } = data;
+                      setEmail(value);
+                      if (emailError && !value.trim()) {
+                        setEmailError(undefined);
+                      }
+                    }}
+                    autoFocus={true}
+                  />
+                  {hatFehler && <div className="email-error">{emailError}</div>}
+                </Form.Field>
+
+                <Button
+                  className="anfordern__btn"
+                  id="passwort-zuruck-bitten"
+                  name="passwort-zuruck-bitten"
+                  color="green"
+                  inverted={true}
+                  disabled={wirdGeladen || !email.trim()}
+                  loading={wirdGeladen}
+                  type="submit"
+                  fluid={true}
                 >
-                  <div>{emailGqlFehler.graphQLErrors[0].message}</div>
-                </Message>
-              )}
+                  <Icon name="checkmark" /> Passwortzurücksetzen Anfordern
+                </Button>
+              </Form>
+            </Card.Content>
+          </BerechtigungKarte>
+        </CSSTransition>
 
-              <label htmlFor="passwort-zuruck-setzen-anfordern">
-                Geben Sie ihr E-mail Adresse
-              </label>
-              <Input
-                name="passwort-zuruck-setzen-anfordern"
-                id="passwort-zuruck-setzen-anfordern"
-                autoComplete="off"
-                onChange={(
-                  evt: React.ChangeEvent<HTMLInputElement>,
-                  data: InputOnChangeData
-                ) => {
-                  const { value } = data;
-                  setEmail(value);
-                  if (emailError && !value.trim()) {
-                    setEmailError(undefined);
-                  }
-                }}
-              />
-              {hatFehler && <div className="email-error">{emailError}</div>}
-            </Form.Field>
+        {!istFormular && (
+          <CSSTransition
+            classNames="pzs__anfordern-nachricht--animate"
+            timeout={anfordernNachrichtZeit}
+            appear={true}
+            in={!istFormular}
+          >
+            <div className="pzs__anfordern-nachricht anfordern">
+              <Message
+                icon={true}
+                success={true}
+                style={{ marginBottom: "60px" }}
+              >
+                <Icon name="checkmark" />
 
-            <Button
-              className="anfordern__btn"
-              id="passwort-zuruck-bitten"
-              name="passwort-zuruck-bitten"
-              color="green"
-              inverted={true}
-              disabled={wirdGeladen || !email.trim()}
-              loading={wirdGeladen}
-              type="submit"
-              fluid={true}
-            >
-              <Icon name="checkmark" /> Passwortzurücksetzen Anfordern
-            </Button>
-          </Form>
-        </Card.Content>
-      </BerechtigungKarte>
+                <Message.Content>
+                  <Message.Header>{erfolgNachricht}</Message.Header>
+                </Message.Content>
+              </Message>
+
+              <div className="pzs__anfordern-nachricht__zu-einloggin">
+                <Button
+                  primary={true}
+                  type="button"
+                  onClick={() => merkmale.history.replace(LOGIN_URL)}
+                >
+                  Klicken Sie hier um sich anzumelden
+                </Button>
+              </div>
+            </div>
+          </CSSTransition>
+        )}
+      </>
     );
   }
 
@@ -258,28 +380,15 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
   } = merkmale;
 
   return (
-    <Behälter>
+    <Behalter>
       <Header />
 
       <BerechtigungHaupanwendung>
-        {token === ZURUCK_SETZEN_PFAD_ANFORDERN ? (
-          rendenAnfordernFormular()
-        ) : (
-          <Formik
-            initialValues={{
-              email: "",
-              password: "",
-              passwordConfirmation: "",
-              token: ""
-            }}
-            onSubmit={() => null}
-            render={rendernAndern}
-            validationSchema={ValidationSchema}
-            validateOnChange={false}
-          />
-        )}
+        {token === ZURUCK_SETZEN_PFAD_ANFORDERN
+          ? rendenAnfordernFormular()
+          : rendernAndern()}
       </BerechtigungHaupanwendung>
-    </Behälter>
+    </Behalter>
   );
 }
 
