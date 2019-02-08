@@ -28,6 +28,7 @@ export class PwdInput<T> extends React.PureComponent<Props<T>, State> {
     return (
       <Form.Field>
         <label
+          data-testid="pass-input-comp"
           htmlFor={id}
           css={`
             display: flex !important;

@@ -6,11 +6,12 @@ import { Formik, Field } from "formik";
 
 import PwdInput from ".";
 import { makeId } from "./pwd-input-x";
+import { renderWithRouter } from "../test_utils";
 
 it("renders correctly", () => {
   const name = "pwd";
 
-  function App() {
+  const { Ui } = renderWithRouter(function App() {
     return (
       <Formik
         onSubmit={() => null}
@@ -19,22 +20,21 @@ it("renders correctly", () => {
         render={() => <Field name={name} component={PwdInput} />}
       />
     );
-  }
+  });
 
   const id = makeId(name);
-  const {
-    container,
-    getByText,
-    queryByTestId,
-    getByLabelText,
-    getByTestId
-  } = render(<App />);
+  const { container, queryByTestId, getByLabelText, getByTestId } = render(
+    <Ui />
+  );
+
   const $comp = container.firstChild as HTMLDivElement;
-  expect(getByText(/Password/).getAttribute("for")).toBe(id);
+
+  expect(getByTestId("pass-input-comp")).toHaveAttribute("for", id);
+
   expect($comp).not.toContainElement(queryByTestId("password-unmask"));
   expect($comp).not.toContainElement(queryByTestId("password-mask"));
 
-  const $pwd = getByLabelText("Password");
+  const $pwd = getByLabelText(/Passwort/i);
   const pwd = "awesome pass";
 
   fireEvent.change($pwd, {
