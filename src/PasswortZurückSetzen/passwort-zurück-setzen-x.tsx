@@ -297,7 +297,10 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
                     </Message>
                   )}
 
-                  <label htmlFor="passwort-zuruck-setzen-anfordern">
+                  <label
+                    htmlFor="passwort-zuruck-setzen-anfordern"
+                    className="pzs__anfordern-etikett"
+                  >
                     Geben Sie ihr E-mail Adresse
                   </label>
                   <Input

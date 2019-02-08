@@ -2,8 +2,8 @@ import styled from "styled-components/macro";
 
 import {
   AppContainer,
-  visuallyHidden,
-  berechtigungBreiteCss
+  berechtigungBreiteCss,
+  visuallyHidden
 } from "../styles/mixins";
 
 export const anfordernFormularZeit = 500;
@@ -70,6 +70,10 @@ export const Behalter = styled(AppContainer)`
     left: 0;
     text-align: center;
     width: 100%;
+  }
+
+  .pzs__anfordern-etikett {
+    ${visuallyHidden}
   }
 `;
 
