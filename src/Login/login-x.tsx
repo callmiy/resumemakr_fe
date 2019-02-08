@@ -1,7 +1,6 @@
 import React from "react";
 import { Button, Card, Input, Message, Icon, Form } from "semantic-ui-react";
 import { ApolloError } from "apollo-client";
-import "styled-components/macro";
 
 import {
   Formik,
@@ -79,12 +78,7 @@ export class Login extends React.Component<Props, State> {
           handleErrorsDismissed={this.handleErrorsDismissed}
         />
 
-        <Card.Content
-          css={`
-            flex-shrink: 0;
-          `}
-          extra={true}
-        >
+        <Card.Content style={{ flexShrink: "0" }} extra={true}>
           ins konto einloggen
         </Card.Content>
 
@@ -109,12 +103,7 @@ export class Login extends React.Component<Props, State> {
           </Form>
         </Card.Content>
 
-        <Card.Content
-          css={`
-            flex-shrink: 0;
-          `}
-          extra={true}
-        >
+        <Card.Content style={{ flexShrink: "0" }} extra={true}>
           <Button
             type="button"
             fluid={true}
@@ -180,23 +169,22 @@ export class Login extends React.Component<Props, State> {
         }
       });
 
-      if (result && result.data) {
-        const loggedInUser = result.data.login;
+      const user =
+        result && result.data && result.data.login && result.data.login.user;
 
-        if (!loggedInUser) {
-          return;
-        }
-
-        const { user } = loggedInUser;
-
-        if (updateLocalUser) {
-          await updateLocalUser({
-            variables: { user }
-          });
-        }
-
-        refreshToHome();
+      if (!user) {
+        setSubmitting(false);
+        this.setState({ otherErrors: "There is a problem logging you in." });
+        return;
       }
+
+      if (updateLocalUser) {
+        await updateLocalUser({
+          variables: { user }
+        });
+      }
+
+      refreshToHome();
     } catch (error) {
       setSubmitting(false);
       this.setState({ graphQlErrors: error });
