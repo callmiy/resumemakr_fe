@@ -1,6 +1,5 @@
 import React from "react";
 import { Button, Card, Input, Message, Icon, Form } from "semantic-ui-react";
-import "styled-components/macro";
 
 import {
   Formik,
@@ -103,6 +102,7 @@ export class SignUp extends React.Component<Props, State> {
     if (!(await getConn(client))) {
       setSubmitting(false);
       this.setState({ otherErrors: "You are not connected" });
+      scrollToTop();
       return;
     }
 
@@ -111,21 +111,24 @@ export class SignUp extends React.Component<Props, State> {
         variables: { input: values }
       });
 
-      if (result && result.data) {
-        const { registration } = result.data;
+      const user =
+        result &&
+        result.data &&
+        result.data.registration &&
+        result.data.registration.user;
 
-        if (!registration) {
-          return;
-        }
-
-        const { user } = registration;
-
-        if (updateLocalUser) {
-          await updateLocalUser({ variables: { user } });
-        }
-
-        refreshToHome();
+      if (!user) {
+        setSubmitting(false);
+        this.setState({ otherErrors: "Account creation has failed." });
+        scrollToTop();
+        return;
       }
+
+      if (updateLocalUser) {
+        await updateLocalUser({ variables: { user } });
+      }
+
+      refreshToHome();
     } catch (error) {
       setSubmitting(false);
       this.setState({ graphQlErrors: error });
@@ -141,12 +144,7 @@ export class SignUp extends React.Component<Props, State> {
       <BerechtigungKarte>
         {this.renderFormErrors()}
 
-        <Card.Content
-          css={`
-            flex-shrink: 0;
-          `}
-          extra={true}
-        >
+        <Card.Content style={{ flexShrink: "0" }} extra={true}>
           Sign up to create your resume
         </Card.Content>
 
@@ -177,12 +175,7 @@ export class SignUp extends React.Component<Props, State> {
           </Form>
         </Card.Content>
 
-        <Card.Content
-          css={`
-            flex-shrink: 0;
-          `}
-          extra={true}
-        >
+        <Card.Content style={{ flexShrink: "0" }} extra={true}>
           <Button
             className="to-login-button"
             type="button"

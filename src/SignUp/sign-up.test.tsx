@@ -4,15 +4,19 @@ import "react-testing-library/cleanup-after-each";
 import { render, fireEvent, wait, waitForElement } from "react-testing-library";
 
 import { SignUp } from "./sign-up-x";
-import { Props } from "./sign-up";
-import { ROOT_URL, LOGIN_URL } from "../routing";
+import { Props, passworteNichtGleich } from "./sign-up";
+import { LOGIN_URL } from "../routing";
 
 import {
-  makeClient,
   renderWithRouter,
   fillField,
-  WithData
+  WithData,
+  renderWithApollo
 } from "../test_utils";
+
+const SignUpM = SignUp as React.ComponentClass<Partial<Props>>;
+const passwortMuster = new RegExp("Passwort");
+const passBestMuster = new RegExp("Passwort Bestätigen");
 
 import {
   UserRegMutation,
@@ -30,10 +34,13 @@ it("renders correctly and submits", async () => {
 
   const mockRegUser = makeRegUserFunc(result);
   const mockUpdateLocalUser = jest.fn();
+  const nachgemachtemAktualisierenZuHause = jest.fn();
 
-  const { ui, mockPush } = makeComp({
+  const { ui } = makeComp({
     regUser: mockRegUser,
-    updateLocalUser: mockUpdateLocalUser
+    updateLocalUser: mockUpdateLocalUser,
+    getConn: jest.fn(() => true),
+    refreshToHome: nachgemachtemAktualisierenZuHause
   });
 
   const { container, getByText, getByLabelText } = render(ui);
@@ -60,10 +67,10 @@ it("renders correctly and submits", async () => {
   const $email = getByLabelText("Email");
   expect($email.getAttribute("type")).toBe("email");
 
-  const $pwd = getByLabelText("Password");
+  const $pwd = getByLabelText(passwortMuster);
   expect($pwd.getAttribute("type")).toBe("password");
 
-  const $pwdConfirm = getByLabelText("Password Confirm");
+  const $pwdConfirm = getByLabelText(passBestMuster);
   expect($pwdConfirm.getAttribute("type")).toBe("password");
 
   fillField($name, "Kanmii");
@@ -77,7 +84,7 @@ it("renders correctly and submits", async () => {
     expect(mockUpdateLocalUser).toHaveBeenCalledWith({ variables: { user } })
   );
 
-  expect(mockPush).toBeCalledWith(ROOT_URL);
+  expect(nachgemachtemAktualisierenZuHause).toBeCalled();
 });
 
 it("renders error if regUser function is null", async () => {
@@ -96,12 +103,12 @@ it("renders error if password and password confirm are not same", async () => {
 
   fillField(getByLabelText("Name"), "Kanmii");
   fillField(getByLabelText("Email"), "me@me.com");
-  fillField(getByLabelText("Password"), "awesome pass");
-  fillField(getByLabelText("Password Confirm"), "awesome pass1");
+  fillField(getByLabelText(passwortMuster), "awesome pass");
+  fillField(getByLabelText(passBestMuster), "awesome pass1");
   fireEvent.click(getByText(/Submit/));
 
   const $error = await waitForElement(() => getByTestId("sign-up-form-error"));
-  expect($error).toContainElement(getByText(/Passwords do not match/i));
+  expect($error).toContainElement(getByText(new RegExp(passworteNichtGleich)));
   expect(mockScrollToTop).toBeCalled();
 });
 
@@ -114,7 +121,8 @@ it("renders error if server returns error", async () => {
 
   const { ui, mockScrollToTop } = makeComp({
     regUser: mockRegUser,
-    updateLocalUser: jest.fn()
+    updateLocalUser: jest.fn(),
+    getConn: jest.fn(() => true)
   });
 
   const { getByText, getByLabelText, getByTestId } = render(ui);
@@ -130,6 +138,44 @@ it("redirects to login", () => {
   const { getByText } = render(ui);
   fireEvent.click(getByText(/Already have an account\? Login/));
   expect(mockReplace).toBeCalledWith(LOGIN_URL);
+});
+
+it("renders error if nicht verbinden", async () => {
+  const { ui, mockScrollToTop } = makeComp({
+    regUser: jest.fn(),
+    getConn: jest.fn(() => false)
+  });
+
+  const { getByText, getByLabelText, queryByText } = render(ui);
+  expect(queryByText(/You are not connected/)).not.toBeInTheDocument();
+
+  fillForm(getByLabelText, getByText);
+  const $error = await waitForElement(() => getByText(/You are not connected/));
+  expect($error).toBeInTheDocument();
+  expect(mockScrollToTop).toBeCalled();
+});
+
+it("renders error if user von Server ist falsch", async () => {
+  const { ui, mockScrollToTop } = makeComp({
+    regUser: jest.fn(() =>
+      Promise.resolve({
+        data: {
+          registration: { user: null }
+        }
+      })
+    ),
+    getConn: jest.fn(() => true)
+  });
+
+  const { getByText, getByLabelText, queryByText } = render(ui);
+  expect(queryByText(/Account creation has failed/)).not.toBeInTheDocument();
+
+  fillForm(getByLabelText, getByText);
+  const $error = await waitForElement(() =>
+    getByText(/Account creation has failed/)
+  );
+  expect($error).toBeInTheDocument();
+  expect(mockScrollToTop).toBeCalled();
 });
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -151,8 +197,8 @@ function makeRegUserFunc(data?: any) {
 function fillForm(getByLabelText: any, getByText: any) {
   fillField(getByLabelText("Name"), "Kanmii");
   fillField(getByLabelText("Email"), "me@me.com");
-  fillField(getByLabelText("Password"), "awesome pass");
-  fillField(getByLabelText("Password Confirm"), "awesome pass");
+  fillField(getByLabelText(passwortMuster), "awesome pass");
+  fillField(getByLabelText(passBestMuster), "awesome pass");
   fireEvent.click(getByText(/Submit/));
 }
 
@@ -160,17 +206,18 @@ function makeComp(params: Props | {} = {}) {
   const mockScrollToTop = jest.fn();
   const mockPush = jest.fn();
   const mockReplace = jest.fn();
-  const client = makeClient();
-  const { Ui, ...rest } = renderWithRouter(SignUp, {
+
+  const { Ui: ui, ...rest } = renderWithRouter(SignUpM, {
     push: mockPush,
     replace: mockReplace
   });
-  // tslint:disable-next-line:no-any
-  const Ui1 = Ui as any;
+
+  const { Ui, ...rest1 } = renderWithApollo(ui);
 
   return {
     ...rest,
-    ui: <Ui1 scrollToTop={mockScrollToTop} client={client} {...params} />,
+    ...rest1,
+    ui: <Ui scrollToTop={mockScrollToTop} {...params} />,
     mockScrollToTop,
     mockPush,
     mockReplace
