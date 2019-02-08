@@ -84,7 +84,8 @@
       "!src/Login/index.ts",
       "!src/SignUp/index.ts",
       "!src/State/**",
-      "!src/graphql/**"
+      "!src/graphql/**",
+      "!src/PasswortZurückSetzen/index.ts"
     ],
     "coverageReporters": [
       "json",
