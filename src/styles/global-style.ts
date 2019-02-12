@@ -31,7 +31,7 @@ const global = css`
       format("woff");
   }
 
-  
+
 
   @font-face {
     font-family: "Open Sans";
@@ -93,8 +93,8 @@ const global = css`
 
   body ::-webkit-scrollbar {
     -webkit-appearance: none;
-    width: 5px;
-    height: 5px;
+    width: 2px;
+    height: 2px;
   }
 
   ul {
