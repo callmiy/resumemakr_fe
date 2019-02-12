@@ -66,7 +66,7 @@ export const Behalter = styled(AppContainer)`
 
   .pzs__anfordern-nachricht__zu-einloggin {
     position: absolute;
-    bottom: 0;
+    bottom: 10px;
     left: 0;
     text-align: center;
     width: 100%;

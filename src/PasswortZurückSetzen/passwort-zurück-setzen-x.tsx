@@ -193,7 +193,7 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
               <Message
                 icon="checkmark"
                 success={true}
-                style={{ marginBottom: "60px" }}
+                style={{ paddingBottom: "60px" }}
                 header={andernErfolgNachricht}
               />
 
@@ -389,7 +389,7 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
               <Message
                 icon={true}
                 success={true}
-                style={{ marginBottom: "60px" }}
+                style={{ paddingBottom: "60px" }}
               >
                 <Icon name="checkmark" />
 

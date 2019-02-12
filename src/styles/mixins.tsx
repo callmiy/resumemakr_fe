@@ -120,15 +120,6 @@ export const EpicBtnIcon = styled.i`
   margin-right: 0.5em;
 `;
 
-export const AppMain = styled.div`
-  flex: 1;
-  width: 1180px;
-  max-width: 1180px;
-  margin-left: auto;
-  margin-right: auto;
-  position: relative;
-`;
-
 export const AppMain1 = styled.div`
   flex: 1;
   width: 100%;
@@ -139,9 +130,8 @@ export const AppMain1 = styled.div`
 `;
 
 export const BerechtigungHaupanwendung = styled(AppMain1)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow-x: hidden;
+  overflow-y: auto;
 `;
 
 export const appBgColor = "#f4f4f4";
@@ -228,12 +218,10 @@ export const berechtigungBreiteCss = css`
   min-width: 310px;
   width: 95% !important;
   max-width: 400px !important;
+  margin: 10px auto !important;
 `;
 
 const Card1 = wrapped(Card);
 export const BerechtigungKarte = styled(Card1)`
-  overflow-y: auto;
-  height: 45%;
-  min-height: 350px !important;
   ${berechtigungBreiteCss}
 `;
