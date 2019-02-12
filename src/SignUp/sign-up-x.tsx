@@ -41,7 +41,7 @@ const FORM_RENDER_PROPS = {
 interface State {
   otherErrors?: string;
   formErrors?: FormikErrors<RegistrationInput>;
-  graphQlErrors?: ApolloError;
+  gqlFehler?: ApolloError;
 }
 
 export class SignUp extends React.Component<Props, State> {
@@ -131,7 +131,7 @@ export class SignUp extends React.Component<Props, State> {
       refreshToHome();
     } catch (error) {
       setSubmitting(false);
-      this.setState({ graphQlErrors: error });
+      this.setState({ gqlFehler: error });
       scrollToTop();
     }
   };
@@ -197,7 +197,7 @@ export class SignUp extends React.Component<Props, State> {
   };
 
   private renderFormErrors = () => {
-    const { formErrors, graphQlErrors, otherErrors } = this.state;
+    const { formErrors, gqlFehler, otherErrors } = this.state;
 
     let content = null;
 
@@ -222,8 +222,22 @@ export class SignUp extends React.Component<Props, State> {
       );
     }
 
-    if (graphQlErrors) {
-      content = graphQlErrors.message;
+    if (gqlFehler) {
+      const errors: Array<{
+        [k: string]: string;
+      }> = gqlFehler.graphQLErrors.map(
+        ({ message }) => JSON.parse(message).errors
+      );
+
+      content = errors.map(err => {
+        const [[k, v]] = Object.entries(err);
+
+        return (
+          <div key={k}>
+            {k.charAt(0).toUpperCase() + k.slice(1)}: {v}
+          </div>
+        );
+      });
     }
 
     if (content) {
@@ -242,7 +256,7 @@ export class SignUp extends React.Component<Props, State> {
   private handleErrorsDismissed = () => {
     this.setState({
       formErrors: undefined,
-      graphQlErrors: undefined,
+      gqlFehler: undefined,
       otherErrors: undefined
     });
   };
