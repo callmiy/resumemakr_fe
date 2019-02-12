@@ -265,6 +265,7 @@ export class SignUp extends React.Component<Props, State> {
         id={name}
         autoFocus={name === "name"}
         readOnly={isSourceField}
+        tabIndex={isSourceField ? -1 : 0}
       />
     );
   };
