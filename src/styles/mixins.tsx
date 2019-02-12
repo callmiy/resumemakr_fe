@@ -196,24 +196,6 @@ export const withControls = css`
   align-items: center;
 `;
 
-export const mediaSizes = {
-  mobileS: "320px",
-  mobileM: "375px",
-  mobileL: "425px",
-  tablet: "768px",
-  laptop: "1024px",
-  laptopL: "1440px",
-  desktop: "2560px"
-};
-
-export const mediaQueries = Object.entries(mediaSizes).reduce(
-  (acc, [k, v]) => {
-    acc[k] = `@media (min-width: ${v})`;
-    return acc;
-  },
-  {} as { [k in keyof typeof mediaSizes]: string }
-);
-
 export const berechtigungBreiteCss = css`
   min-width: 310px;
   width: 95% !important;
