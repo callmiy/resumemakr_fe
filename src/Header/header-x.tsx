@@ -56,6 +56,7 @@ export class Header extends React.Component<Props, {}> {
                 </Label>
               }
               simple={true}
+              style={{ marginRight: 0, paddingRight: "5px" }}
             >
               <Dropdown.Menu>
                 {user && (
