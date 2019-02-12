@@ -422,8 +422,8 @@ export function PasswortZurückSetzen(merkmale: Merkmale) {
 
   function falschTokenBehalter() {
     return (
-      <div className="pzs__anfordern-nachricht anfordern">
-        <Message warning={true} icon={true} style={{ marginBottom: "60px" }}>
+      <div className="pzs__anfordern-nachricht anfordern pzs__anfordern-nachricht--falsch-token">
+        <Message warning={true} icon={true} style={{ paddingBottom: "60px" }}>
           <Icon name="ban" />
 
           <Message.Content>

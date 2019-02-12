@@ -47,6 +47,10 @@ export const Behalter = styled(AppContainer)`
     position: relative;
   }
 
+  .pzs__anfordern-nachricht--falsch-token {
+    max-width: 200px !important;
+  }
+
   .pzs__anfordern-nachricht--animate-enter,
   .pzs__anfordern-nachricht--animate-appear {
     transform: translateX(100%);
