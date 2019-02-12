@@ -37,7 +37,9 @@ export class PwdInput<T> extends React.PureComponent<Props<T>, State> {
         >
           <span>Passwort</span>
 
-          <Link to={createResetRoute()}>Passwort Vergessen?</Link>
+          <Link to={createResetRoute()} tabIndex={-1}>
+            Passwort Vergessen?
+          </Link>
         </label>
 
         <Input icon={true} placeholder="" data-testid={id}>
