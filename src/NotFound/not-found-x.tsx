@@ -1,6 +1,6 @@
 import React from "react";
 
-import { AppContainer, AppMain } from "../styles/mixins";
+import { AppContainer, AppMain1 } from "../styles/mixins";
 import Header from "../Header";
 
 export function NotFound() {
@@ -8,9 +8,7 @@ export function NotFound() {
     <AppContainer>
       <Header />
 
-      <AppMain style={{ textAlign: "center", marginTop: "60px" }}>
-        The page you requested does not exist
-      </AppMain>
+      <AppMain1>The page you requested does not exist</AppMain1>
     </AppContainer>
   );
 }

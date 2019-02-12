@@ -15,13 +15,13 @@ export class Header extends React.Component<Props, {}> {
       leftMenuItems = [],
       rightMenuItems = [],
       user,
-      match,
+      location: { pathname },
       updateLocalUser,
       history
     } = this.props;
 
     let homeLinkProps = {};
-    if (user && match.path !== ROOT_URL) {
+    if (user && pathname !== ROOT_URL) {
       homeLinkProps = { as: NavLink, to: ROOT_URL };
     } else {
       homeLinkProps = { as: "span" };
@@ -84,13 +84,13 @@ export class Header extends React.Component<Props, {}> {
                   </>
                 )}
 
-                {match.path === LOGIN_URL && (
+                {pathname === LOGIN_URL && (
                   <Dropdown.Item as={NavLink} to={SIGN_UP_URL}>
                     Sign up
                   </Dropdown.Item>
                 )}
 
-                {match.path === SIGN_UP_URL && (
+                {pathname === SIGN_UP_URL && (
                   <Dropdown.Item as={NavLink} to={LOGIN_URL}>
                     Login
                   </Dropdown.Item>
