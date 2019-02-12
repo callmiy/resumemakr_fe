@@ -281,7 +281,7 @@ function ErrorsComp(props: ErrorsProps) {
     }
 
     if (graphQlErrors) {
-      return graphQlErrors.message;
+      return graphQlErrors.graphQLErrors[0].message;
     }
 
     return null;
