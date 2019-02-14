@@ -16,3 +16,5 @@ Top 10 Free Resume Builder Online Reviews
 11. Make the app manage the entire application process including a place to store research about companies being applied to, interview tips, store video links etc.
 
 # JETZT
+
+5. Wenn Benutzer ist auf Anmelden Seite und auf Anmeldung Taste klicken und spater zu Anmelden Seite wieder gehen, dann die information sollt nicht loschen sein
