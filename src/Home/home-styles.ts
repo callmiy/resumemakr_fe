@@ -34,6 +34,12 @@ export const HomeContainer = styled(AppContainer)`
     overflow: hidden;
   }
 
+  .no-resume {
+    display: block;
+    padding: 10px;
+    cursor: pointer;
+  }
+
   .new {
     position: absolute;
     right: 20px;

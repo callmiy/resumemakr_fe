@@ -1,10 +1,8 @@
-import React from "react";
-
+import React, { useState, useRef } from "react";
 import { Modal, Button, Label, Icon, Popup } from "semantic-ui-react";
-import { ApolloError, MutationUpdaterFn } from "apollo-client";
+import { MutationUpdaterFn, ApolloError } from "apollo-client";
 import dateFormat from "date-fns/format";
 import { Formik, FastField, FormikProps, FormikErrors } from "formik";
-import * as Yup from "yup";
 import lodashIsEmpty from "lodash/isEmpty";
 import "styled-components/macro";
 
@@ -21,102 +19,254 @@ import {
 
 import { AppModal, CircularLabel, AppMain1 } from "../styles/mixins";
 import { makeResumeRoute } from "../routing";
-import { Props } from "./home";
+import { Props, validationSchema, Action, emptyVal } from "./home";
 import Loading from "../Loading";
 import Header from "../Header";
 import RESUME_TITLES_QUERY from "../graphql/resume-titles.query";
 import { initialFormValues } from "../ResumeForm/resume-form";
 import { Mode as PreviewMode } from "../Preview/preview";
 
-const validationSchema = Yup.object<CreateResumeInput>().shape({
-  title: Yup.string()
-    .required()
-    .min(2),
-  description: Yup.string()
-});
+export function Home(merkmale: Props) {
+  const {
+    history: verlauf,
+    deleteResume,
+    loading,
+    error,
+    listResumes,
+    createResume,
+    cloneResume
+  } = merkmale;
+  const edges = listResumes && listResumes.edges;
 
-enum Action {
-  createResume = "CreateResume",
-  cloneResume = "CloneResume"
-}
+  const [offnenModal, einstellenOffnenModal] = useState(false);
 
-const emptyVal = { title: "", description: "" };
+  const [bestatigenLoschenId, einstellenBestatigenLoschenId] = useState<
+    string | undefined
+  >(undefined);
 
-interface State {
-  openModal?: boolean;
-  graphQlError?: ApolloError;
-  deleteError?: {
-    id: string;
-    errors: string[];
-  };
-  deletedResume?: string;
-  deletingResume?: string;
-  confirmDeleteId?: string;
-  formErrors?: FormikErrors<CreateResumeInput>;
-}
+  const [loschenFehler, einstellenLoschenFehler] = useState<
+    | undefined
+    | {
+        id: string;
+        errors: string[];
+      }
+  >(undefined);
 
-export class Home extends React.Component<Props, State> {
-  state: State = {};
+  const [lebenslaufGeloscht, einstellenLebenslaufGeloscht] = useState<
+    string | undefined
+  >(undefined);
 
-  deleteTriggerRefs: { id?: undefined | HTMLElement } = {};
-  initialValues = emptyVal;
-  action = Action.createResume;
-  idToClone = "0";
-  titleToClone = "";
+  const [geloschtLebenslauf, einstellenGeloschtLebenslauf] = useState<
+    string | undefined
+  >(undefined);
 
-  render() {
-    const { loading, error } = this.props;
+  const [formularFehler, einstellenFormularFehler] = useState<
+    undefined | FormikErrors<CreateResumeInput>
+  >(undefined);
 
-    if (loading) {
-      return (
-        <HomeContainer>
-          <Header />
-          <Loading data-testid="loading resume titles" />
-        </HomeContainer>
-      );
-    }
+  const [gqlFehler, einstellenGqlFehler] = useState<undefined | ApolloError>(
+    undefined
+  );
 
-    return (
-      <HomeContainer>
-        <Header />
+  const deleteTriggerRefs = useRef<{ id?: undefined | HTMLElement }>({});
+  let initialValues = emptyVal;
+  let action = Action.createResume;
+  let idToClone = "0";
+  let titleToClone = "";
 
-        <AppMain1>
-          <div className="main-content">
-            {error && <div>{error.message}</div>}
-
-            {this.renderTitles()}
-          </div>
-
-          <div className="new" onClick={this.openModalForCreate}>
-            <span>+</span>
-          </div>
-        </AppMain1>
-
-        {this.renderModal()}
-      </HomeContainer>
-    );
+  function handleConfirmDeletePopup() {
+    einstellenBestatigenLoschenId(undefined);
   }
 
-  private renderModal = () => {
+  function setConfirmDeleteTriggerRef(id: string) {
+    return function(ref: HTMLElement) {
+      deleteTriggerRefs.current[id] = ref;
+    };
+  }
+
+  function openModal() {
+    einstellenOffnenModal(true);
+    einstellenFormularFehler(undefined);
+  }
+
+  function openModalForCreate() {
+    initialValues = emptyVal;
+    action = Action.createResume;
+    openModal();
+  }
+
+  function goToResume(title: string) {
+    verlauf.push(makeResumeRoute(title));
+  }
+
+  function handleDeleteErrorPopup() {
+    einstellenLoschenFehler(undefined);
+  }
+
+  function erstellenResume({
+    values,
+    validateForm
+  }: FormikProps<CreateResumeInput>) {
+    return async function erstellenResumeDrinnen() {
+      einstellenFormularFehler(undefined);
+
+      const errors = await validateForm(values);
+
+      if (!lodashIsEmpty(errors)) {
+        einstellenFormularFehler(errors);
+        return;
+      }
+
+      let input;
+      // tslint:disable-next-line:no-any
+      let fun: any;
+      let path;
+
+      if (action === Action.createResume) {
+        input = { ...initialFormValues, ...values };
+        fun = createResume;
+        path = "createResume";
+      } else {
+        input = { ...values, id: idToClone };
+        fun = cloneResume;
+        path = "cloneResume";
+      }
+
+      try {
+        const result = await fun({
+          variables: {
+            input
+          }
+        });
+
+        const resume =
+          result &&
+          result.data &&
+          result.data[path] &&
+          result.data[path].resume;
+
+        if (!resume) {
+          return;
+        }
+
+        goToResume(resume.title);
+      } catch (error) {
+        einstellenGqlFehler(error);
+      }
+    };
+  }
+
+  function herunterladenLebenslauf(title: string) {
+    verlauf.push(makeResumeRoute(title, "") + "#" + PreviewMode.preview);
+  }
+
+  async function loschenLebenslauf(id: string) {
+    if (!deleteResume) {
+      einstellenLoschenFehler({
+        id,
+        errors: ["Something is wrong:", "unable to delete resume"]
+      });
+
+      return;
+    }
+
+    const result = await deleteResume({
+      variables: {
+        input: { id }
+      },
+
+      update: updateAfterDelete
+    });
+
+    const resume =
+      result &&
+      result.data &&
+      result.data.deleteResume &&
+      result.data.deleteResume.resume;
+
+    if (!resume) {
+      return;
+    }
+
+    einstellenLebenslaufGeloscht(id);
+
+    setTimeout(() => {
+      einstellenGeloschtLebenslauf(resume.title);
+      einstellenLebenslaufGeloscht(undefined);
+    });
+
+    setTimeout(() => {
+      einstellenGeloschtLebenslauf(undefined);
+    }, 7000);
+  }
+
+  const updateAfterDelete: MutationUpdaterFn<DeleteResume> = function(
+    cache,
+    { data: newData }
+  ) {
+    if (!newData) {
+      return;
+    }
+
+    const { deleteResume: resumeToBeRemoved } = newData;
+
+    const readData = cache.readQuery<ResumeTitles, ResumeTitlesVariables>({
+      query: RESUME_TITLES_QUERY,
+
+      variables: {
+        howMany: 10
+      }
+    });
+
+    const neueEdges =
+      readData && readData.listResumes && readData.listResumes.edges;
+
+    const resumeToBeRemovedId =
+      (resumeToBeRemoved &&
+        resumeToBeRemoved.resume &&
+        resumeToBeRemoved.resume.id) ||
+      "";
+
+    cache.writeQuery<ResumeTitles, ResumeTitlesVariables>({
+      query: RESUME_TITLES_QUERY,
+
+      variables: {
+        howMany: 10
+      },
+
+      data: {
+        listResumes: {
+          edges: (neueEdges || []).filter(e => {
+            return e && e.node && e.node.id !== resumeToBeRemovedId;
+          }),
+
+          __typename: "ResumeConnection"
+        }
+      }
+    });
+  };
+
+  function renderModal() {
     return (
-      <AppModal open={this.state.openModal}>
+      <AppModal open={offnenModal} onClose={() => einstellenOffnenModal(false)}>
         <Modal.Header>
-          {this.action === Action.createResume
+          {action === Action.createResume
             ? "Create new resume"
-            : `Clone from: "${this.titleToClone}"?`}
+            : `Clone from: "${titleToClone}"?`}
         </Modal.Header>
 
         <Formik<CreateResumeInput>
           validationSchema={validationSchema}
           onSubmit={() => null}
-          initialValues={this.initialValues}
+          initialValues={initialValues}
           render={formikProps => {
-            const { formErrors } = this.state;
-            const titleError = (formErrors && formErrors.title) || "";
+            const titleError = (formularFehler && formularFehler.title) || "";
 
             return (
               <>
                 <Modal.Content>
+                  {gqlFehler && gqlFehler.graphQLErrors[0].message}
+
                   <Modal.Description>
                     <FormField className={`field ${titleError ? "error" : ""}`}>
                       <label htmlFor="resume-title">
@@ -155,7 +305,7 @@ export class Home extends React.Component<Props, State> {
                     labelPosition="right"
                     content="No"
                     onClick={() => {
-                      this.setState({ openModal: false });
+                      einstellenOffnenModal(false);
                     }}
                   />
 
@@ -165,7 +315,7 @@ export class Home extends React.Component<Props, State> {
                     icon="checkmark"
                     labelPosition="right"
                     content="Yes"
-                    onClick={() => this.createResume(formikProps)}
+                    onClick={erstellenResume(formikProps)}
                   />
                 </Modal.Actions>
               </>
@@ -174,32 +324,36 @@ export class Home extends React.Component<Props, State> {
         />
       </AppModal>
     );
-  };
+  }
 
-  private renderTitles = () => {
-    const { listResumes } = this.props;
-
-    const edges = listResumes && listResumes.edges;
-
+  function renderTitles() {
     if (!edges) {
       return null;
     }
 
     if (!edges.length) {
-      return <div onClick={this.openModalForCreate}>You have no resumes</div>;
+      return (
+        <a
+          className="no-resume"
+          onClick={evt => {
+            evt.preventDefault();
+            openModalForCreate();
+          }}
+        >
+          You have no resumes. Click here to create your first resume.
+        </a>
+      );
     }
-
-    const { deletedResume } = this.state;
 
     return (
       <div className="titles">
         <div className="header">
           <div>My resumes</div>
 
-          {deletedResume && (
+          {geloschtLebenslauf && (
             <div
               className="deleted-resume-success"
-              onClick={this.resetDeletedResume}
+              onClick={() => einstellenGeloschtLebenslauf(undefined)}
             >
               <div>
                 <Label horizontal={true}>Dismiss</Label>
@@ -208,7 +362,7 @@ export class Home extends React.Component<Props, State> {
                     font-weight: bolder;
                   `}
                 >
-                  {deletedResume}
+                  {geloschtLebenslauf}
                 </span>
                 deleted successfully
               </div>
@@ -231,11 +385,10 @@ export class Home extends React.Component<Props, State> {
               edge && (edge.node as ResumeTitles_listResumes_edges_node);
 
             const { id, title, updatedAt, description } = node;
-            const { deletingResume } = this.state;
 
             return (
               <div className="row" key={id} data-testid={`${title} row`}>
-                {deletingResume === id && (
+                {lebenslaufGeloscht === id && (
                   <Loading data-testid={`deleting ${title}`} />
                 )}
 
@@ -243,15 +396,15 @@ export class Home extends React.Component<Props, State> {
                   <CircularLabel
                     color="teal"
                     onClick={() => {
-                      this.initialValues = {
+                      initialValues = {
                         title,
                         description: description || ""
                       };
 
-                      this.idToClone = id;
-                      this.titleToClone = title;
-                      this.action = Action.cloneResume;
-                      this.openModal();
+                      idToClone = id;
+                      titleToClone = title;
+                      action = Action.cloneResume;
+                      openModal();
                     }}
                   >
                     <Icon name="copy outline" />
@@ -261,16 +414,13 @@ export class Home extends React.Component<Props, State> {
                     </span>
                   </CircularLabel>
 
-                  <CircularLabel
-                    color="blue"
-                    onClick={() => this.goToResume(title)}
-                  >
+                  <CircularLabel color="blue" onClick={() => goToResume(title)}>
                     <Icon name="pencil" />
                   </CircularLabel>
 
                   <CircularLabel
                     color="green"
-                    onClick={() => this.downloadResume(title)}
+                    onClick={() => herunterladenLebenslauf(title)}
                   >
                     <Icon name="cloud download" />
                   </CircularLabel>
@@ -278,34 +428,34 @@ export class Home extends React.Component<Props, State> {
                   <CircularLabel
                     color="red"
                     onClick={() => {
-                      this.setState({ confirmDeleteId: id });
+                      einstellenBestatigenLoschenId(id);
                     }}
                   >
                     <Icon name="delete" />
 
                     <span
                       className="control-label-text"
-                      ref={this.setConfirmDeleteTriggerRef(id)}
+                      ref={setConfirmDeleteTriggerRef(id)}
                     >
                       {`delete ${title}`}
                     </span>
 
-                    {this.renderConfirmDelete(node)}
+                    {renderConfirmDelete(node)}
 
-                    {this.renderDeleteError(node)}
+                    {renderDeleteError(node)}
                   </CircularLabel>
                 </div>
 
                 <div
                   className="clickable title"
-                  onClick={() => this.goToResume(title)}
+                  onClick={() => goToResume(title)}
                 >
                   {title}
                 </div>
 
                 <div
                   className="column modified-date"
-                  onClick={() => this.goToResume(title)}
+                  onClick={() => goToResume(title)}
                 >
                   {dateFormat(updatedAt, "Do MMM, YYYY H:mm A")}
                 </div>
@@ -315,52 +465,48 @@ export class Home extends React.Component<Props, State> {
         </div>
       </div>
     );
-  };
+  }
 
-  private renderDeleteError = ({
+  function renderDeleteError({
     id,
     title
-  }: ResumeTitles_listResumes_edges_node) => {
-    const { deleteError } = this.state;
-
-    if (!(deleteError && deleteError.id === id)) {
+  }: ResumeTitles_listResumes_edges_node) {
+    if (!(loschenFehler && loschenFehler.id === id)) {
       return null;
     }
 
     return (
       <Popup
-        context={this.deleteTriggerRefs[id]}
+        context={deleteTriggerRefs.current[id]}
         position="top center"
         verticalOffset={10}
-        open={deleteError.id === id}
-        onClose={this.handleDeleteErrorPopup}
+        open={loschenFehler.id === id}
+        onClose={handleDeleteErrorPopup}
       >
         <div style={{ color: "red" }}>
-          {deleteError.errors.map((t, index) => (
+          {loschenFehler.errors.map((t, index) => (
             <div key={index}>{t}</div>
           ))}
         </div>
       </Popup>
     );
-  };
+  }
 
-  private renderConfirmDelete = ({
+  function renderConfirmDelete({
     id,
     title
-  }: ResumeTitles_listResumes_edges_node) => {
-    const { confirmDeleteId } = this.state;
-
-    if (confirmDeleteId !== id) {
+  }: ResumeTitles_listResumes_edges_node) {
+    if (bestatigenLoschenId !== id) {
       return null;
     }
 
     return (
       <Popup
-        context={this.deleteTriggerRefs[id]}
+        context={deleteTriggerRefs.current[id]}
         position="top center"
         verticalOffset={10}
-        open={confirmDeleteId === id}
-        onClose={this.handleConfirmDeletePopup}
+        open={bestatigenLoschenId === id}
+        onClose={handleConfirmDeletePopup}
       >
         Sure to delete:
         <span
@@ -384,8 +530,8 @@ export class Home extends React.Component<Props, State> {
             color="red"
             onClick={evt => {
               evt.stopPropagation();
-              this.handleConfirmDeletePopup();
-              this.deleteResume(id);
+              handleConfirmDeletePopup();
+              loschenLebenslauf(id);
             }}
           >
             Yes
@@ -397,186 +543,44 @@ export class Home extends React.Component<Props, State> {
             content="No"
             onClick={evt => {
               evt.stopPropagation();
-              this.handleConfirmDeletePopup();
+              handleConfirmDeletePopup();
             }}
           />
         </div>
       </Popup>
     );
-  };
+  }
 
-  private handleConfirmDeletePopup = () => {
-    this.setState({
-      confirmDeleteId: undefined
-    });
-  };
-
-  private openModal = () => {
-    this.setState({ openModal: true, formErrors: undefined });
-  };
-
-  private openModalForCreate = () => {
-    this.initialValues = emptyVal;
-    this.action = Action.createResume;
-    this.openModal();
-  };
-
-  private createResume = async ({
-    values,
-    validateForm
-  }: FormikProps<CreateResumeInput>) => {
-    this.setState({ formErrors: undefined });
-
-    const errors = await validateForm(values);
-
-    if (!lodashIsEmpty(errors)) {
-      this.setState({ formErrors: errors });
-
-      return;
-    }
-
-    const { createResume, cloneResume } = this.props;
-
-    let input;
-    // tslint:disable-next-line:no-any
-    let fun: any;
-    let path;
-
-    if (this.action === Action.createResume) {
-      input = { ...initialFormValues, ...values };
-      fun = createResume;
-      path = "createResume";
-    } else {
-      input = { ...values, id: this.idToClone };
-      fun = cloneResume;
-      path = "cloneResume";
-    }
-
-    try {
-      const result = await fun({
-        variables: {
-          input
-        }
-      });
-
-      const resume =
-        result && result.data && result.data[path] && result.data[path].resume;
-
-      if (!resume) {
-        return;
-      }
-
-      this.goToResume(resume.title);
-    } catch (error) {
-      this.setState({ graphQlError: error });
-    }
-  };
-
-  private goToResume = (title: string) =>
-    this.props.history.push(makeResumeRoute(title));
-
-  private downloadResume = (title: string) =>
-    this.props.history.push(
-      makeResumeRoute(title, "") + "#" + PreviewMode.preview
+  if (loading) {
+    return (
+      <HomeContainer>
+        <Header />
+        <Loading data-testid="loading resume titles" />
+      </HomeContainer>
     );
+  }
 
-  private deleteResume = async (id: string) => {
-    const { deleteResume } = this.props;
+  return (
+    <HomeContainer>
+      <Header />
 
-    if (!deleteResume) {
-      this.setState({
-        deleteError: {
-          id,
-          errors: ["Something is wrong:", "unable to delete resume"]
-        }
-      });
-      return;
-    }
+      <AppMain1>
+        <div className="main-content">
+          {error && <div>{error.message}</div>}
 
-    const result = await deleteResume({
-      variables: {
-        input: { id }
-      },
+          {renderTitles()}
+        </div>
 
-      update: this.updateAfterDelete
-    });
+        {edges && !!edges.length && (
+          <div className="new" onClick={openModalForCreate}>
+            <span>+</span>
+          </div>
+        )}
+      </AppMain1>
 
-    const resume =
-      result &&
-      result.data &&
-      result.data.deleteResume &&
-      result.data.deleteResume.resume;
-
-    if (!resume) {
-      return;
-    }
-
-    this.setState({ deletingResume: id }, () => {
-      this.setState({ deletedResume: resume.title, deletingResume: undefined });
-    });
-
-    setTimeout(() => {
-      this.setState({ deletedResume: undefined });
-    }, 7000);
-  };
-
-  private handleDeleteErrorPopup = () => {
-    this.setState({ deleteError: undefined });
-  };
-
-  private resetDeletedResume = () => {
-    this.setState({ deletedResume: undefined });
-  };
-
-  private updateAfterDelete: MutationUpdaterFn<DeleteResume> = (
-    cache,
-    { data: newData }
-  ) => {
-    if (!newData) {
-      return;
-    }
-
-    const { deleteResume: resumeToBeRemoved } = newData;
-
-    const readData = cache.readQuery<ResumeTitles, ResumeTitlesVariables>({
-      query: RESUME_TITLES_QUERY,
-
-      variables: {
-        howMany: 10
-      }
-    });
-
-    const edges =
-      readData && readData.listResumes && readData.listResumes.edges;
-
-    const resumeToBeRemovedId =
-      (resumeToBeRemoved &&
-        resumeToBeRemoved.resume &&
-        resumeToBeRemoved.resume.id) ||
-      "";
-
-    cache.writeQuery<ResumeTitles, ResumeTitlesVariables>({
-      query: RESUME_TITLES_QUERY,
-
-      variables: {
-        howMany: 10
-      },
-
-      data: {
-        listResumes: {
-          edges: (edges || []).filter(e => {
-            return e && e.node && e.node.id !== resumeToBeRemovedId;
-          }),
-
-          __typename: "ResumeConnection"
-        }
-      }
-    });
-  };
-
-  private setConfirmDeleteTriggerRef = (id: string) => (ref: HTMLElement) => {
-    this.deleteTriggerRefs[id] = ref;
-  };
+      {renderModal()}
+    </HomeContainer>
+  );
 }
 
 export default Home;

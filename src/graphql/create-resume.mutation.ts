@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { MutationFn } from "react-apollo";
+import { MutationFn, MutationOptions } from "react-apollo";
 
 import { resumeFullFrag } from "./resume_full.fragment";
 import { CreateResume, CreateResumeVariables } from "./apollo-gql";
@@ -17,6 +17,11 @@ export const createResume = gql`
 `;
 
 export default createResume;
+
+export type ErstellenLebenslaufFnArgs = MutationOptions<
+  CreateResume,
+  CreateResumeVariables
+>;
 
 export type CreateResumeFn = MutationFn<CreateResume, CreateResumeVariables>;
 
