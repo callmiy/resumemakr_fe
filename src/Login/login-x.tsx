@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Card, Input, Message, Icon, Form } from "semantic-ui-react";
 import { ApolloError } from "apollo-client";
 
@@ -26,56 +26,115 @@ import getConnDefault from "../State/get-conn-status";
 
 const Errors = React.memo(ErrorsComp, ErrorsCompEqual);
 
-interface State {
-  otherErrors?: string;
-  formErrors?: FormikErrors<LoginInput>;
-  graphQlErrors?: ApolloError;
-  pwdType?: "password" | "text";
-}
+export function Login(merkmale: Props) {
+  const {
+    user,
+    updateLocalUser,
+    loggedOutUser,
+    history,
+    client,
+    getConn = getConnDefault,
+    refreshToHome = refreshToHomeDefault,
+    login
+  } = merkmale;
 
-export class Login extends React.Component<Props, State> {
-  state: State = {};
+  const [graphQlErrors, setGraphQlErrors] = useState<ApolloError | undefined>(
+    undefined
+  );
 
-  componentDidMount() {
-    this.logoutUser();
+  const [otherErrors, setOtherErrors] = useState<undefined | string>(undefined);
+
+  const [formErrors, setFormErrors] = useState<
+    undefined | FormikErrors<LoginInput>
+  >(undefined);
+
+  useEffect(function logoutUser() {
+    if (!user) {
+      return;
+    }
+
+    if (updateLocalUser) {
+      updateLocalUser({
+        variables: {
+          user: null
+        }
+      });
+    }
+  }, []);
+
+  function onSubmit({
+    values,
+    setSubmitting,
+    validateForm
+  }: FormikProps<LoginInput>) {
+    return async function() {
+      setSubmitting(true);
+      handleErrorsDismissed();
+
+      if (!login) {
+        setSubmitting(false);
+        setOtherErrors("Unknown error");
+        return;
+      }
+
+      const errors = await validateForm(values);
+
+      if (errors.email || errors.password) {
+        setSubmitting(false);
+        setFormErrors(errors);
+        return;
+      }
+
+      if (!(await getConn(client))) {
+        setSubmitting(false);
+        setOtherErrors("You are not connected");
+        return;
+      }
+
+      try {
+        const result = await login({
+          variables: {
+            input: values
+          }
+        });
+
+        const resultUser =
+          result && result.data && result.data.login && result.data.login.user;
+
+        if (!resultUser) {
+          setSubmitting(false);
+          setOtherErrors("There is a problem logging you in.");
+          return;
+        }
+
+        if (updateLocalUser) {
+          await updateLocalUser({
+            variables: { user: resultUser }
+          });
+        }
+
+        refreshToHome();
+      } catch (error) {
+        setSubmitting(false);
+        setGraphQlErrors(error);
+      }
+    };
   }
 
-  render() {
-    const { loggedOutUser, user } = this.props;
-
-    return (
-      <AppContainer>
-        <Header />
-
-        <BerechtigungHaupanwendung>
-          <Formik
-            initialValues={{
-              email:
-                (user && user.email) ||
-                (loggedOutUser && loggedOutUser.email) ||
-                "",
-              password: ""
-            }}
-            onSubmit={() => null}
-            render={this.renderForm}
-            validationSchema={ValidationSchema}
-            validateOnChange={false}
-          />
-        </BerechtigungHaupanwendung>
-      </AppContainer>
-    );
+  function handleErrorsDismissed() {
+    setOtherErrors(undefined);
+    setFormErrors(undefined);
+    setGraphQlErrors(undefined);
   }
 
-  private renderForm = (props: FormikProps<LoginInput>) => {
-    const { history } = this.props;
-    const { graphQlErrors, otherErrors, formErrors } = this.state;
+  function renderForm(props: FormikProps<LoginInput>) {
     const { dirty, isSubmitting } = props;
 
     return (
       <BerechtigungKarte>
         <Errors
           errors={{ graphQlErrors, otherErrors, formErrors }}
-          handleErrorsDismissed={this.handleErrorsDismissed}
+          handleErrorsDismissed={handleErrorsDismissed}
         />
 
         <Card.Content style={{ flexShrink: "0" }} extra={true}>
@@ -83,7 +142,7 @@ export class Login extends React.Component<Props, State> {
         </Card.Content>
 
         <Card.Content>
-          <Form onSubmit={this.onSubmit(props)}>
+          <Form onSubmit={onSubmit(props)}>
             <FastField name="email" component={EmailInput} />
 
             <Field name="password" component={PwdInput} />
@@ -116,96 +175,29 @@ export class Login extends React.Component<Props, State> {
         </Card.Content>
       </BerechtigungKarte>
     );
-  };
+  }
 
-  private handleErrorsDismissed = () => {
-    this.setState({
-      formErrors: undefined,
-      graphQlErrors: undefined,
-      otherErrors: undefined
-    });
-  };
+  return (
+    <AppContainer>
+      <Header />
 
-  private onSubmit = ({
-    values,
-    setSubmitting,
-    validateForm
-  }: FormikProps<LoginInput>) => async () => {
-    setSubmitting(true);
-    this.handleErrorsDismissed();
-
-    const {
-      login,
-      updateLocalUser,
-      client,
-      getConn = getConnDefault,
-      refreshToHome = refreshToHomeDefault
-    } = this.props;
-
-    if (!login) {
-      setSubmitting(false);
-      this.setState({ otherErrors: "Unknown error" });
-      return;
-    }
-
-    const errors = await validateForm(values);
-
-    if (errors.email || errors.password) {
-      setSubmitting(false);
-      this.setState({ formErrors: errors });
-      return;
-    }
-
-    if (!(await getConn(client))) {
-      setSubmitting(false);
-      this.setState({ otherErrors: "You are not connected" });
-      return;
-    }
-
-    try {
-      const result = await login({
-        variables: {
-          input: values
-        }
-      });
-
-      const user =
-        result && result.data && result.data.login && result.data.login.user;
-
-      if (!user) {
-        setSubmitting(false);
-        this.setState({ otherErrors: "There is a problem logging you in." });
-        return;
-      }
-
-      if (updateLocalUser) {
-        await updateLocalUser({
-          variables: { user }
-        });
-      }
-
-      refreshToHome();
-    } catch (error) {
-      setSubmitting(false);
-      this.setState({ graphQlErrors: error });
-    }
-  };
-
-  private logoutUser = () => {
-    const { user, updateLocalUser } = this.props;
-
-    if (!user) {
-      return;
-    }
-
-    if (updateLocalUser) {
-      updateLocalUser({
-        variables: {
-          user: null
-        }
-      });
-    }
-  };
+      <BerechtigungHaupanwendung>
+        <Formik
+          initialValues={{
+            email:
+              (user && user.email) ||
+              (loggedOutUser && loggedOutUser.email) ||
+              "",
+            password: ""
+          }}
+          onSubmit={() => null}
+          render={renderForm}
+          validationSchema={ValidationSchema}
+          validateOnChange={false}
+        />
+      </BerechtigungHaupanwendung>
+    </AppContainer>
+  );
 }
 
 export default Login;
@@ -228,7 +220,11 @@ function EmailInput(props: FieldProps<LoginInput>) {
 }
 
 interface ErrorsProps {
-  errors: Exclude<State, "pwdType">;
+  errors: {
+    otherErrors?: string;
+    formErrors?: FormikErrors<LoginInput>;
+    graphQlErrors?: ApolloError;
+  };
   handleErrorsDismissed: () => void;
 }
 

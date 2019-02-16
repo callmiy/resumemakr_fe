@@ -18,8 +18,10 @@ import {
   LoginMutation_login_user,
   UserFragment
 } from "../graphql/apollo-gql";
+import { ApolloError } from "apollo-client";
+import { GraphQLError } from "graphql";
 
-const LoginP = Login as React.ComponentClass<Partial<Props>>;
+const LoginP = Login as React.FunctionComponent<Partial<Props>>;
 const passwortMuster = new RegExp("Passwort");
 
 it("renders correctly and submits", async () => {
@@ -101,9 +103,11 @@ it("renders error if password is invalid", async () => {
 
 it("renders error if server returns error", async () => {
   const mockLogin = jest.fn(() =>
-    Promise.reject({
-      message: "Invalid email/password"
-    })
+    Promise.reject(
+      new ApolloError({
+        graphQLErrors: [new GraphQLError("Invalid email/password")]
+      })
+    )
   );
 
   const { ui } = makeComp({
