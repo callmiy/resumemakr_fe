@@ -9,7 +9,13 @@ import {
 } from "semantic-ui-react";
 import { NavLink } from "react-router-dom";
 
-import { LOGIN_URL, ROOT_URL, SIGN_UP_URL } from "../routing";
+import {
+  LOGIN_URL,
+  ROOT_URL,
+  SIGN_UP_URL,
+  createLoginRoute,
+  createSignUpRoute
+} from "../routing";
 import { Container } from "./header-styles";
 import { Props } from "./header";
 
@@ -22,7 +28,10 @@ export function Header(merkmale: Props) {
     user,
     location: { pathname },
     updateLocalUser,
-    history
+    history,
+    match: {
+      params: { auth }
+    }
   } = merkmale;
 
   let homeLinkProps = {};
@@ -104,14 +113,14 @@ export function Header(merkmale: Props) {
                 </>
               )}
 
-              {pathname === LOGIN_URL && (
-                <Dropdown.Item as={NavLink} to={SIGN_UP_URL}>
+              {auth === LOGIN_URL && (
+                <Dropdown.Item as={NavLink} to={createSignUpRoute()}>
                   Sign up
                 </Dropdown.Item>
               )}
 
-              {pathname === SIGN_UP_URL && (
-                <Dropdown.Item as={NavLink} to={LOGIN_URL}>
+              {auth === SIGN_UP_URL && (
+                <Dropdown.Item as={NavLink} to={createLoginRoute()}>
                   Login
                 </Dropdown.Item>
               )}

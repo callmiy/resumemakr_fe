@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Card, Input, Message, Icon, Form } from "semantic-ui-react";
 import { ApolloError } from "apollo-client";
-
 import {
   Formik,
   FastField,
@@ -13,14 +12,9 @@ import {
 
 import { Props, ValidationSchema } from "./login";
 import { LoginInput } from "../graphql/apollo-gql";
-import { SIGN_UP_URL } from "../routing";
+import { createSignUpRoute } from "../routing";
 import PwdInput from "../PwdInput";
-import Header from "../Header";
-import {
-  AppContainer,
-  BerechtigungHaupanwendung,
-  BerechtigungKarte
-} from "../styles/mixins";
+import { BerechtigungKarte, BerechtigungHaupanwendung } from "../styles/mixins";
 import refreshToHomeDefault from "../refresh-to-home";
 import getConnDefault from "../State/get-conn-status";
 
@@ -166,7 +160,7 @@ export function Login(merkmale: Props) {
           <Button
             type="button"
             fluid={true}
-            onClick={() => history.replace(SIGN_UP_URL)}
+            onClick={() => history.replace(createSignUpRoute())}
             disabled={isSubmitting}
             name="to-sign-up"
           >
@@ -178,25 +172,21 @@ export function Login(merkmale: Props) {
   }
 
   return (
-    <AppContainer>
-      <Header />
-
-      <BerechtigungHaupanwendung>
-        <Formik
-          initialValues={{
-            email:
-              (user && user.email) ||
-              (loggedOutUser && loggedOutUser.email) ||
-              "",
-            password: ""
-          }}
-          onSubmit={() => null}
-          render={renderForm}
-          validationSchema={ValidationSchema}
-          validateOnChange={false}
-        />
-      </BerechtigungHaupanwendung>
-    </AppContainer>
+    <BerechtigungHaupanwendung>
+      <Formik
+        initialValues={{
+          email:
+            (user && user.email) ||
+            (loggedOutUser && loggedOutUser.email) ||
+            "",
+          password: ""
+        }}
+        onSubmit={() => null}
+        render={renderForm}
+        validationSchema={ValidationSchema}
+        validateOnChange={false}
+      />{" "}
+    </BerechtigungHaupanwendung>
   );
 }
 

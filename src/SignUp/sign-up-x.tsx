@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
 import { Button, Card, Input, Message, Icon, Form } from "semantic-ui-react";
-
 import {
   Formik,
   FastField,
@@ -8,7 +7,6 @@ import {
   FormikProps,
   FormikErrors
 } from "formik";
-
 import loIsEmpty from "lodash/isEmpty";
 import { ApolloError } from "apollo-client";
 
@@ -19,15 +17,9 @@ import {
   FormValuesKey,
   FORMULAR_PASSWORT_RENDERN_MERKMALE
 } from "./sign-up";
-
 import { RegistrationInput } from "../graphql/apollo-gql";
-import { LOGIN_URL } from "../routing";
-import Header from "../Header";
-import {
-  AppContainer,
-  BerechtigungHaupanwendung,
-  BerechtigungKarte
-} from "../styles/mixins";
+import { createLoginRoute } from "../routing";
+import { BerechtigungKarte, BerechtigungHaupanwendung } from "../styles/mixins";
 import refreshToHomeDefault from "../refresh-to-home";
 import getConnDefault from "../State/get-conn-status";
 
@@ -234,7 +226,7 @@ export function SignUp(merkmale: Props) {
             className="to-login-button"
             type="button"
             fluid={true}
-            onClick={() => history.replace(LOGIN_URL)}
+            onClick={() => history.replace(createLoginRoute())}
             disabled={isSubmitting}
           >
             Already have an account? Login
@@ -268,19 +260,15 @@ export function SignUp(merkmale: Props) {
   }
 
   return (
-    <AppContainer>
-      <Header />
-
-      <BerechtigungHaupanwendung ref={mainRef}>
-        <Formik
-          initialValues={initialFormValues}
-          onSubmit={() => null}
-          render={renderForm}
-          validationSchema={ValidationSchema}
-          validateOnChange={false}
-        />
-      </BerechtigungHaupanwendung>
-    </AppContainer>
+    <BerechtigungHaupanwendung ref={mainRef}>
+      <Formik
+        initialValues={initialFormValues}
+        onSubmit={() => null}
+        render={renderForm}
+        validationSchema={ValidationSchema}
+        validateOnChange={false}
+      />
+    </BerechtigungHaupanwendung>
   );
 }
 

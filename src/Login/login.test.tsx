@@ -5,7 +5,7 @@ import { render, fireEvent, wait, waitForElement } from "react-testing-library";
 
 import { Login } from "./login-x";
 import { Props } from "./login";
-import { SIGN_UP_URL } from "../routing";
+import { createSignUpRoute } from "../routing";
 import {
   renderWithRouter,
   fillField,
@@ -127,7 +127,7 @@ it("redirects to sign up", () => {
   const { ui, mockReplace } = makeComp();
   const { getByText } = render(ui);
   fireEvent.click(getByText(/Don't have an account\? Sign Up/));
-  expect(mockReplace).toBeCalledWith(SIGN_UP_URL);
+  expect(mockReplace).toBeCalledWith(createSignUpRoute());
 });
 
 it("logs out user if logged in", async () => {

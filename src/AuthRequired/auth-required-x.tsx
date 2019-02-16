@@ -1,7 +1,7 @@
 import React from "react";
 import { RouteProps, Route, Redirect } from "react-router-dom";
 
-import { LOGIN_URL } from "../routing";
+import { createLoginRoute } from "../routing";
 import { UserLocalGqlData } from "../State/auth.local.query";
 
 interface Props extends RouteProps, UserLocalGqlData {
@@ -20,7 +20,7 @@ export function AuthRequired({ component: AuthComponent, ...rest }: Props) {
     );
   }
 
-  return <Redirect to={LOGIN_URL} />;
+  return <Redirect to={createLoginRoute()} />;
 }
 
 export default AuthRequired;

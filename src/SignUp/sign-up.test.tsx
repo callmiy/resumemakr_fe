@@ -5,7 +5,7 @@ import { render, fireEvent, wait, waitForElement } from "react-testing-library";
 
 import { SignUp } from "./sign-up-x";
 import { Props, passworteNichtGleich } from "./sign-up";
-import { LOGIN_URL } from "../routing";
+import { createLoginRoute } from "../routing";
 
 import {
   renderWithRouter,
@@ -147,7 +147,7 @@ it("redirects to login", () => {
   const { ui, mockReplace } = makeComp();
   const { getByText } = render(ui);
   fireEvent.click(getByText(/Already have an account\? Login/));
-  expect(mockReplace).toBeCalledWith(LOGIN_URL);
+  expect(mockReplace).toBeCalledWith(createLoginRoute());
 });
 
 it("renders error if nicht verbinden", async () => {

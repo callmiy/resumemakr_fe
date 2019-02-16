@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useState, useEffect } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 
 import logger from "../logger";
 import Loading from "../Loading";
@@ -8,7 +8,9 @@ import {
   ROOT_URL,
   LOGIN_URL,
   SIGN_UP_URL,
-  RESET_PATH
+  RESET_PATH,
+  AUTH_PATH,
+  createLoginRoute
 } from "../routing";
 import AuthRequired from "../AuthRequired";
 import { AppContainer } from "../styles/mixins";
@@ -27,9 +29,8 @@ function Root() {
 
 const Resume = lazy(() => import("../Resume"));
 const Home = lazy(() => import("../Home"));
-const Login = lazy(() => import("../Login"));
-const SignUp = lazy(() => import("../SignUp"));
 const PasswortZurückSetzen = lazy(() => import("../PasswortZurückSetzen"));
+const Auth = lazy(() => import("../Auth"));
 
 export function App({ persistCache }: Props) {
   const [
@@ -65,17 +66,27 @@ export function App({ persistCache }: Props) {
 
             <Route
               exact={true}
-              path={LOGIN_URL}
-              render={function renderLogin(childProps) {
-                return <Login {...childProps} />;
-              }}
-            />
+              path={AUTH_PATH}
+              render={function renderAuth(childProps) {
+                const {
+                  match: {
+                    params: { auth }
+                  }
+                } = childProps;
 
-            <Route
-              exact={true}
-              path={SIGN_UP_URL}
-              render={function renderSignUp(childProps) {
-                return <SignUp {...childProps} />;
+                let component;
+
+                if (auth === LOGIN_URL) {
+                  component = lazy(() => import("../Login"));
+                } else if (auth === SIGN_UP_URL) {
+                  component = lazy(() => import("../SignUp"));
+                }
+
+                if (!component) {
+                  return <Redirect to={createLoginRoute()} />;
+                }
+
+                return <Auth {...childProps} component={component} />;
               }}
             />
 
