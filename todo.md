@@ -18,3 +18,4 @@ Top 10 Free Resume Builder Online Reviews
 # JETZT
 
 5. Wenn Benutzer ist auf Anmelden Seite und auf Anmeldung Taste klicken und spater zu Anmelden Seite wieder gehen, dann die information sollt nicht loschen sein
+6. Wenn die Verbindung zu server dauert lang, dann schliessen die Anschluss
