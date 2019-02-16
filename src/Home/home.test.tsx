@@ -1,7 +1,13 @@
 import React from "react";
 import "jest-dom/extend-expect";
 import "react-testing-library/cleanup-after-each";
-import { render, fireEvent, wait } from "react-testing-library";
+import {
+  render,
+  fireEvent,
+  wait,
+  waitForElement,
+  act
+} from "react-testing-library";
 import { ApolloError } from "apollo-client";
 
 import { Home } from "./home-x";
@@ -25,6 +31,7 @@ import {
   CloneResume_cloneResume_resume
 } from "../graphql/apollo-gql";
 import { ErstellenLebenslaufFnArgs } from "../graphql/create-resume.mutation";
+import { CloneLebensLaufFnArgs } from "../graphql/clone-resume.mutation";
 
 const HomeP = Home as React.FunctionComponent<Partial<Props>>;
 
@@ -178,10 +185,10 @@ it("creates resume", async () => {
     }
   };
 
-  const mockCreateResume: jest.Mock<
+  const mockCreateResume = jest.fn<
     Promise<WithData<CreateResume>>,
-    []
-  > = jest.fn(() => Promise.resolve(result));
+    [ErstellenLebenslaufFnArgs | undefined]
+  >(() => Promise.resolve(result));
 
   const { Ui } = setUp({ historyProps: { push: mockPush } });
 
@@ -226,14 +233,14 @@ it("creates resume", async () => {
    * She is redirected to the page where she can fill her resume
    */
   await wait(() => {
-    const args = mockCreateResume.mock.calls[0][0];
-    expect(args.variables.input.title).toBe(title);
+    const args = mockCreateResume.mock.calls[0][0] as ErstellenLebenslaufFnArgs;
+    expect(args.variables && args.variables.input.title).toBe(title);
   });
 
   expect(mockPush).toBeCalledWith(makeResumeRoute(title));
 });
 
-xit("renders error if deleteResume prop not injected", async () => {
+it("renders error if deleteResume prop not injected", async () => {
   /**
    * Given there are resumes in the system
    */
@@ -276,7 +283,7 @@ xit("renders error if deleteResume prop not injected", async () => {
   expect(getByText(/unable to delete resume/i)).toBeInTheDocument();
 });
 
-xit("deletes resume", async () => {
+it("deletes resume", async () => {
   /**
    * Given there are resumes in the system
    */
@@ -372,29 +379,31 @@ xit("deletes resume", async () => {
   /**
    * When she confirms to delete resume
    */
-  fireEvent.click(getByTestId(`yes to delete ${titles[1]}`));
+
+  act(() => {
+    fireEvent.click(getByTestId(`yes to delete ${titles[1]}`));
+  });
 
   /**
    * Then she sees a UI showing her action succeeded
    */
 
-  await wait(() => {
-    const $successMsg = getByText(successRegexp);
-    expect($successMsg).toBeInTheDocument();
+  const $successMsg = await waitForElement(() => getByText(successRegexp));
 
-    /**
-     * When she clicks on the success message
-     */
-    fireEvent.click($successMsg);
+  expect($successMsg).toBeInTheDocument();
 
-    /**
-     * Then she sees that the message has disappeared
-     */
-    expect(queryByText(successRegexp)).not.toBeInTheDocument();
-  });
+  /**
+   * When she clicks on the success message
+   */
+  fireEvent.click($successMsg);
+
+  /**
+   * Then she sees that the message has disappeared
+   */
+  expect(queryByText(successRegexp)).not.toBeInTheDocument();
 });
 
-xit("clones resume", async () => {
+it("clones resume", async () => {
   const clonedTitle = "My awesome title cloned";
 
   const result: WithData<CloneResume> = {
@@ -407,7 +416,10 @@ xit("clones resume", async () => {
     }
   };
 
-  const mockCloneResume = jest.fn(() => Promise.resolve(result));
+  const mockCloneResume = jest.fn<
+    Promise<WithData<CloneResume>>,
+    [CloneLebensLaufFnArgs | undefined]
+  >(() => Promise.resolve(result));
 
   /**
    * Given there is resume in the system
@@ -475,8 +487,8 @@ xit("clones resume", async () => {
    * She is redirected to the page where she can continue filling her resume
    */
   await wait(() => {
-    const args = mockCloneResume.mock.calls[0][0];
-    expect(args.variables.input.title).toBe(clonedTitle);
+    const args = mockCloneResume.mock.calls[0][0] as CloneLebensLaufFnArgs;
+    expect(args.variables && args.variables.input.title).toBe(clonedTitle);
   });
 
   expect(mockPush).toBeCalledWith(makeResumeRoute(clonedTitle));

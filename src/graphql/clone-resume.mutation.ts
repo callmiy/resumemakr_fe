@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { MutationFn } from "react-apollo";
+import { MutationFn, MutationOptions } from "react-apollo";
 
 import { resumeFullFrag } from "./resume_full.fragment";
 import { CloneResume, CloneResumeVariables } from "./apollo-gql";
@@ -23,3 +23,8 @@ export type CloneResumeFn = MutationFn<CloneResume, CloneResumeVariables>;
 export interface CloneResumeProps {
   cloneResume?: CloneResumeFn;
 }
+
+export type CloneLebensLaufFnArgs = MutationOptions<
+  CloneResume,
+  CloneResumeVariables
+>;

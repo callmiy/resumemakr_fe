@@ -26,6 +26,11 @@ import RESUME_TITLES_QUERY from "../graphql/resume-titles.query";
 import { initialFormValues } from "../ResumeForm/resume-form";
 import { Mode as PreviewMode } from "../Preview/preview";
 
+let initialValues = emptyVal;
+let action = Action.createResume;
+let idToClone = "0";
+let titleToClone = "";
+
 export function Home(merkmale: Props) {
   const {
     history: verlauf,
@@ -69,10 +74,6 @@ export function Home(merkmale: Props) {
   );
 
   const deleteTriggerRefs = useRef<{ id?: undefined | HTMLElement }>({});
-  let initialValues = emptyVal;
-  let action = Action.createResume;
-  let idToClone = "0";
-  let titleToClone = "";
 
   function handleConfirmDeletePopup() {
     einstellenBestatigenLoschenId(undefined);
@@ -246,6 +247,31 @@ export function Home(merkmale: Props) {
     });
   };
 
+  function rendernLoschenLebenslaufErfolgreichNachricht(nachricht?: string) {
+    if (!nachricht) {
+      return null;
+    }
+
+    return (
+      <div
+        className="deleted-resume-success"
+        onClick={() => einstellenGeloschtLebenslauf(undefined)}
+      >
+        <div>
+          <Label horizontal={true}>Dismiss</Label>
+          <span
+            css={`
+              font-weight: bolder;
+            `}
+          >
+            {nachricht}
+          </span>
+          deleted successfully
+        </div>
+      </div>
+    );
+  }
+
   function renderModal() {
     return (
       <AppModal open={offnenModal} onClose={() => einstellenOffnenModal(false)}>
@@ -350,24 +376,7 @@ export function Home(merkmale: Props) {
         <div className="header">
           <div>My resumes</div>
 
-          {geloschtLebenslauf && (
-            <div
-              className="deleted-resume-success"
-              onClick={() => einstellenGeloschtLebenslauf(undefined)}
-            >
-              <div>
-                <Label horizontal={true}>Dismiss</Label>
-                <span
-                  css={`
-                    font-weight: bolder;
-                  `}
-                >
-                  {geloschtLebenslauf}
-                </span>
-                deleted successfully
-              </div>
-            </div>
-          )}
+          {rendernLoschenLebenslaufErfolgreichNachricht(geloschtLebenslauf)}
         </div>
 
         <div className="columns">
