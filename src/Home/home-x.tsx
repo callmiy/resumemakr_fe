@@ -25,6 +25,7 @@ import Header from "../Header";
 import RESUME_TITLES_QUERY from "../graphql/resume-titles.query";
 import { initialFormValues } from "../ResumeForm/resume-form";
 import { Mode as PreviewMode } from "../Preview/preview";
+import AutoTextarea from "../AutoTextarea";
 
 let initialValues = emptyVal;
 let action = Action.createResume;
@@ -123,6 +124,7 @@ export function Home(merkmale: Props) {
 
       if (action === Action.createResume) {
         input = { ...initialFormValues, ...values };
+
         fun = createResume;
         path = "createResume";
       } else {
@@ -289,7 +291,7 @@ export function Home(merkmale: Props) {
 
             return (
               <>
-                <Modal.Content>
+                <Modal.Content scrolling={true}>
                   {gqlFehler && gqlFehler.graphQLErrors[0].message}
 
                   <Modal.Description>
@@ -314,9 +316,16 @@ export function Home(merkmale: Props) {
                       </label>
 
                       <FastField
-                        component={"textarea"}
+                        component={AutoTextarea}
                         id="resume-description"
                         name="description"
+                        onTextChanged={(text: string) => {
+                          formikProps.setFieldValue("description", text);
+                        }}
+                        value={formikProps.values.description || ""}
+                        hiddenStyles={
+                          { maxHeight: "400px" } as React.CSSProperties
+                        }
                       />
                     </FormField>
                   </Modal.Description>
