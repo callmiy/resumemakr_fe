@@ -14,7 +14,7 @@ import { Props, ValidationSchema } from "./login";
 import { LoginInput } from "../graphql/apollo-gql";
 import { createSignUpRoute } from "../routing";
 import PwdInput from "../PwdInput";
-import { BerechtigungKarte, BerechtigungHaupanwendung } from "../styles/mixins";
+import { BerechtigungKarte } from "../styles/mixins";
 import refreshToHomeDefault from "../refresh-to-home";
 import getConnDefault from "../State/get-conn-status";
 
@@ -29,7 +29,8 @@ export function Login(merkmale: Props) {
     client,
     getConn = getConnDefault,
     refreshToHome = refreshToHomeDefault,
-    login
+    login,
+    flipClassName
   } = merkmale;
 
   const [graphQlErrors, setGraphQlErrors] = useState<ApolloError | undefined>(
@@ -125,7 +126,7 @@ export function Login(merkmale: Props) {
     const { dirty, isSubmitting } = props;
 
     return (
-      <BerechtigungKarte>
+      <BerechtigungKarte className={flipClassName}>
         <Errors
           errors={{ graphQlErrors, otherErrors, formErrors }}
           handleErrorsDismissed={handleErrorsDismissed}
@@ -172,21 +173,17 @@ export function Login(merkmale: Props) {
   }
 
   return (
-    <BerechtigungHaupanwendung>
-      <Formik
-        initialValues={{
-          email:
-            (user && user.email) ||
-            (loggedOutUser && loggedOutUser.email) ||
-            "",
-          password: ""
-        }}
-        onSubmit={() => null}
-        render={renderForm}
-        validationSchema={ValidationSchema}
-        validateOnChange={false}
-      />{" "}
-    </BerechtigungHaupanwendung>
+    <Formik
+      initialValues={{
+        email:
+          (user && user.email) || (loggedOutUser && loggedOutUser.email) || "",
+        password: ""
+      }}
+      onSubmit={() => null}
+      render={renderForm}
+      validationSchema={ValidationSchema}
+      validateOnChange={false}
+    />
   );
 }
 

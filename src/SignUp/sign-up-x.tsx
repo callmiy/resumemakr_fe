@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Button, Card, Input, Message, Icon, Form } from "semantic-ui-react";
 import {
   Formik,
@@ -19,7 +19,7 @@ import {
 } from "./sign-up";
 import { RegistrationInput } from "../graphql/apollo-gql";
 import { createLoginRoute } from "../routing";
-import { BerechtigungKarte, BerechtigungHaupanwendung } from "../styles/mixins";
+import { BerechtigungKarte } from "../styles/mixins";
 import refreshToHomeDefault from "../refresh-to-home";
 import getConnDefault from "../State/get-conn-status";
 
@@ -38,7 +38,9 @@ export function SignUp(merkmale: Props) {
     scrollToTop = defaultScrollToTop,
     getConn = getConnDefault,
     refreshToHome = refreshToHomeDefault,
-    client
+    client,
+    mainRef,
+    flipClassName
   } = merkmale;
 
   const [otherErrors, setOtherErrors] = useState<undefined | string>(undefined);
@@ -50,8 +52,6 @@ export function SignUp(merkmale: Props) {
   const [gqlFehler, setGqlFehler] = useState<undefined | ApolloError>(
     undefined
   );
-
-  const mainRef = useRef<HTMLDivElement>(null);
 
   function defaultScrollToTop() {
     if (mainRef.current) {
@@ -187,7 +187,7 @@ export function SignUp(merkmale: Props) {
     const { dirty, isSubmitting } = props;
 
     return (
-      <BerechtigungKarte>
+      <BerechtigungKarte className={flipClassName}>
         {renderFormErrors()}
 
         <Card.Content style={{ flexShrink: "0" }} extra={true}>
@@ -260,15 +260,13 @@ export function SignUp(merkmale: Props) {
   }
 
   return (
-    <BerechtigungHaupanwendung ref={mainRef}>
-      <Formik
-        initialValues={initialFormValues}
-        onSubmit={() => null}
-        render={renderForm}
-        validationSchema={ValidationSchema}
-        validateOnChange={false}
-      />
-    </BerechtigungHaupanwendung>
+    <Formik
+      initialValues={initialFormValues}
+      onSubmit={() => null}
+      render={renderForm}
+      validationSchema={ValidationSchema}
+      validateOnChange={false}
+    />
   );
 }
 

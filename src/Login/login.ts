@@ -9,10 +9,12 @@ import { LoginMutationProps } from "../graphql/login.mutation";
 import { UserLocalMutationProps } from "../State/user.local.mutation";
 import { UserLocalGqlProps } from "../State/auth.local.query";
 import { LoggedOutUserProps } from "../State/logged-out-user.local.query";
+import { FlipProps } from "../Auth/auth";
 
 export interface OwnProps
   extends RouteComponentProps<{}>,
-    WithApolloClient<{}> {
+    WithApolloClient<{}>,
+    FlipProps {
   refreshToHome?: () => void;
   getConn?: (client: ApolloClient<{}>) => Promise<boolean>;
 }

@@ -6,15 +6,18 @@ import { ApolloClient } from "apollo-client";
 import { RegMutationProps } from "../graphql/user-reg.mutation";
 import { UserLocalMutationProps } from "../State/user.local.mutation";
 import { RegistrationInput } from "../graphql/apollo-gql";
+import { FlipProps } from "../Auth/auth";
 
 export interface Props
   extends RouteComponentProps,
     RegMutationProps,
     UserLocalMutationProps,
-    WithApolloClient<{}> {
+    WithApolloClient<{}>,
+    FlipProps {
   scrollToTop?: () => void;
   refreshToHome?: () => void;
   getConn?: (client: ApolloClient<{}>) => Promise<boolean>;
+  mainRef: React.RefObject<HTMLDivElement>;
 }
 
 export type FormValuesKey = keyof RegistrationInput;
