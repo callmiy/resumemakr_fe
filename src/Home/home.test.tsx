@@ -19,8 +19,7 @@ import {
   HistoryProps
 } from "../test_utils";
 import { makeResumeRoute } from "../routing";
-import { Props } from "./home";
-
+import { Props, ResumeTitlesProps } from "./home";
 import {
   CreateResume,
   CreateResume_createResume_resume,
@@ -32,6 +31,7 @@ import {
 } from "../graphql/apollo-gql";
 import { ErstellenLebenslaufFnArgs } from "../graphql/create-resume.mutation";
 import { CloneLebensLaufFnArgs } from "../graphql/clone-resume.mutation";
+import { ResumeTitlesProps as RTP } from "../graphql/resume-titles.query";
 
 const HomeP = Home as React.FunctionComponent<Partial<Props>>;
 
@@ -42,7 +42,7 @@ it("renders loading indicator", () => {
   const { Ui } = setUp();
 
   const { getByTestId, queryByText, rerender, queryByTestId } = render(
-    <Ui loading={true} />
+    <Ui {...resumeTitlesGql({ loading: true })} />
   );
 
   /**
@@ -55,7 +55,7 @@ it("renders loading indicator", () => {
    */
   expect(queryByText("+")).not.toBeInTheDocument();
 
-  rerender(<Ui loading={false} />);
+  rerender(<Ui {...resumeTitlesGql({ loading: false })} />);
 
   /**
    * And she sees that loading indicator is gone
@@ -72,7 +72,9 @@ it("renders error", () => {
    * Given a user is on the home page
    */
   const { Ui } = setUp();
-  const { queryByTestId, getByText } = render(<Ui error={error} />);
+  const { queryByTestId, getByText } = render(
+    <Ui {...resumeTitlesGql({ error })} />
+  );
 
   /**
    * She sees no loading indicator on the page
@@ -100,7 +102,9 @@ it("renders message if user has not created resume", () => {
    */
   const { Ui } = setUp();
 
-  const { getByText, queryByText } = render(<Ui listResumes={resumes} />);
+  const { getByText, queryByText } = render(
+    <Ui {...resumeTitlesGql({ listResumes: resumes })} />
+  );
 
   /**
    * Sie kann nicht ein Nachricht "erstellen neue lebenslauf" sehen
@@ -153,7 +157,10 @@ it("renders resume titles", () => {
    */
   const mockPush = jest.fn();
   const { Ui } = setUp({ historyProps: { push: mockPush } });
-  const { getByText } = render(<Ui listResumes={resumes} />);
+
+  const { getByText } = render(
+    <Ui {...resumeTitlesGql({ listResumes: resumes })} />
+  );
 
   /**
    * Then she should see her resumes' titles
@@ -198,7 +205,9 @@ it("creates resume", async () => {
   const { getByLabelText, queryByLabelText, getByText, queryByText } = render(
     <Ui
       createResume={mockCreateResume}
-      listResumes={{ edges: [], __typename: "ResumeConnection" }}
+      {...resumeTitlesGql({
+        listResumes: { edges: [], __typename: "ResumeConnection" }
+      })}
     />
   );
 
@@ -263,7 +272,7 @@ it("renders error if deleteResume prop not injected", async () => {
   const { Ui } = setUp();
 
   const { getByText, queryByText, getByTestId } = render(
-    <Ui listResumes={resumes} />
+    <Ui {...resumeTitlesGql({ listResumes: resumes })} />
   );
 
   /**
@@ -329,7 +338,10 @@ it("deletes resume", async () => {
   const { Ui } = setUp();
 
   const { getByText, queryByText, getByTestId } = render(
-    <Ui listResumes={resumes} deleteResume={deleteResume} />
+    <Ui
+      {...resumeTitlesGql({ listResumes: resumes })}
+      deleteResume={deleteResume}
+    />
   );
 
   const successRegexp = new RegExp(`deleted successfully`, "i");
@@ -446,7 +458,10 @@ it("clones resume", async () => {
 
   const { Ui } = setUp({ historyProps: { push: mockPush } });
   const { queryByText, getByText, getByLabelText } = render(
-    <Ui listResumes={resumes} cloneResume={mockCloneResume} />
+    <Ui
+      {...resumeTitlesGql({ listResumes: resumes })}
+      cloneResume={mockCloneResume}
+    />
   );
 
   /**
@@ -509,4 +524,10 @@ function setUp(props: SetUpProps = {}) {
   const { Ui, ...apollo } = renderWithApollo(ui);
 
   return { Ui, ...routers, ...apollo };
+}
+
+function resumeTitlesGql(params: Partial<RTP>): ResumeTitlesProps {
+  return {
+    resumeTitlesGql: params as RTP
+  };
 }

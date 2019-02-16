@@ -4,10 +4,14 @@ import { ApolloError } from "apollo-client";
 import { FormikErrors } from "formik";
 
 import { CreateResumeProps } from "../graphql/create-resume.mutation";
-import { ResumeTitlesProps } from "../graphql/resume-titles.query";
+import { ResumeTitlesProps as RTP } from "../graphql/resume-titles.query";
 import { DeleteResumeProps } from "../graphql/delete-resume.mutation";
 import { CloneResumeProps } from "../graphql/clone-resume.mutation";
 import { CreateResumeInput } from "../graphql/apollo-gql";
+
+export interface ResumeTitlesProps {
+  resumeTitlesGql: RTP;
+}
 
 export interface OwnProps extends RouteComponentProps<{}> {}
 

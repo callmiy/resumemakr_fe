@@ -35,9 +35,7 @@ export function Home(merkmale: Props) {
   const {
     history: verlauf,
     deleteResume,
-    loading,
-    error,
-    listResumes,
+    resumeTitlesGql: { loading, error, listResumes },
     createResume,
     cloneResume
   } = merkmale;

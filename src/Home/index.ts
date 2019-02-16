@@ -9,7 +9,6 @@ import CREATE_RESUME_TITLE, {
 import CLONE_RESUME, {
   CloneResumeProps
 } from "../graphql/clone-resume.mutation";
-
 import {
   CreateResume,
   CreateResumeVariables,
@@ -18,12 +17,9 @@ import {
   CloneResume,
   CloneResumeVariables
 } from "../graphql/apollo-gql";
-
-import RESUME_TITLES_QUERY, {
-  ResumeTitlesProps
-} from "../graphql/resume-titles.query";
-
+import RESUME_TITLES_QUERY from "../graphql/resume-titles.query";
 import { deleteResumeGql } from "../graphql/delete-resume.mutation";
+import { ResumeTitlesProps } from "./home";
 
 const createResumeGql = graphql<
   {},
@@ -48,7 +44,10 @@ const resumeTitlesGql = graphql<
   ResumeTitlesVariables,
   ResumeTitlesProps | undefined
 >(RESUME_TITLES_QUERY, {
-  props: ({ data }) => data,
+  props: ({ data }) =>
+    data && {
+      resumeTitlesGql: data
+    },
 
   options: () => ({
     variables: {
