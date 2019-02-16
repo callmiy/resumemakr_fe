@@ -260,6 +260,7 @@ export function Home(merkmale: Props) {
           <span
             css={`
               font-weight: bolder;
+              margin-right: 5px;
             `}
           >
             {nachricht}
