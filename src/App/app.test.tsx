@@ -5,7 +5,7 @@ import App from "./app-x";
 import { renderWithApollo } from "../test_utils";
 import { Props } from "./app";
 
-const AppP = App as React.ComponentClass<Partial<Props>>;
+const AppP = App as React.FunctionComponent<Partial<Props>>;
 
 /**
  * Mock out the Login component because for some odd reasons it is throwing

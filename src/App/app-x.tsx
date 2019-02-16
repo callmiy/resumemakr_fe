@@ -1,4 +1,4 @@
-import React, { Component, Suspense, lazy } from "react";
+import React, { Suspense, lazy, useState, useEffect } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import logger from "../logger";
@@ -31,73 +31,70 @@ const Login = lazy(() => import("../Login"));
 const SignUp = lazy(() => import("../SignUp"));
 const PasswortZurückSetzen = lazy(() => import("../PasswortZurückSetzen"));
 
-export class App extends Component<Props> {
-  state: { cacheLoaded: boolean } = { cacheLoaded: false };
+export function App({ persistCache }: Props) {
+  const [
+    zwischenspeicherHatGeladen,
+    einstellenZwischenspeicherHatGeladen
+  ] = useState(false);
 
-  async componentDidMount() {
-    try {
-      await this.props.persistCache();
-      this.setState({ cacheLoaded: true });
-    } catch (error) {
-      logger("error", "Error restoring Apollo cache", error);
-    }
-  }
+  useEffect(function zwischenspeicherWirdSpeichert() {
+    (async function() {
+      try {
+        await persistCache();
+        einstellenZwischenspeicherHatGeladen(true);
+      } catch (error) {
+        logger("error", "Error restoring Apollo cache", error);
+      }
+    })();
+  }, []);
 
-  render() {
-    const { cacheLoaded } = this.state;
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<Root />}>
+        {zwischenspeicherHatGeladen ? (
+          <Switch>
+            <AuthRequired exact={true} path={RESUME_PATH} component={Resume} />
 
-    return (
-      <BrowserRouter>
-        <Suspense fallback={<Root />}>
-          {cacheLoaded ? (
-            <Switch>
-              <AuthRequired
-                exact={true}
-                path={RESUME_PATH}
-                component={Resume}
-              />
+            <AuthRequired exact={true} path={ROOT_URL} component={Home} />
 
-              <AuthRequired exact={true} path={ROOT_URL} component={Home} />
+            {/* we are using render props because react router 4 is not yet
+            compatible with react >= 16.7. React router throws invalid props
+            error (only in dev) for component prop, but otherwise it
+            renders ok
+         */}
 
-              {/* we are using render props because react router 4 is not yet
-              compatible with react >= 16.7. React router throws invalid props
-              error (only in dev) for component prop, but otherwise it
-              renders ok
-           */}
+            <Route
+              exact={true}
+              path={LOGIN_URL}
+              render={function renderLogin(childProps) {
+                return <Login {...childProps} />;
+              }}
+            />
 
-              <Route
-                exact={true}
-                path={LOGIN_URL}
-                render={function renderLogin(childProps) {
-                  return <Login {...childProps} />;
-                }}
-              />
+            <Route
+              exact={true}
+              path={SIGN_UP_URL}
+              render={function renderSignUp(childProps) {
+                return <SignUp {...childProps} />;
+              }}
+            />
 
-              <Route
-                exact={true}
-                path={SIGN_UP_URL}
-                render={function renderSignUp(childProps) {
-                  return <SignUp {...childProps} />;
-                }}
-              />
+            <Route
+              exact={true}
+              path={RESET_PATH}
+              render={function renderReset(childProps) {
+                return <PasswortZurückSetzen {...childProps} />;
+              }}
+            />
 
-              <Route
-                exact={true}
-                path={RESET_PATH}
-                render={function renderReset(childProps) {
-                  return <PasswortZurückSetzen {...childProps} />;
-                }}
-              />
-
-              <Route component={NotFound} />
-            </Switch>
-          ) : (
-            <Root />
-          )}
-        </Suspense>
-      </BrowserRouter>
-    );
-  }
+            <Route component={NotFound} />
+          </Switch>
+        ) : (
+          <Root />
+        )}
+      </Suspense>
+    </BrowserRouter>
+  );
 }
 
 export default App;
