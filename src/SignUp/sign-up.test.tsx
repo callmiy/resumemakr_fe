@@ -22,6 +22,8 @@ import {
   UserRegMutation,
   UserRegMutation_registration_user
 } from "../graphql/apollo-gql";
+import { ApolloError } from "apollo-client";
+import { GraphQLError } from "graphql";
 
 it("renders correctly and submits", async () => {
   const user = {} as UserRegMutation_registration_user;
@@ -114,9 +116,17 @@ it("renders error if password and password confirm are not same", async () => {
 
 it("renders error if server returns error", async () => {
   const mockRegUser = jest.fn(() =>
-    Promise.reject({
-      message: "email"
-    })
+    Promise.reject(
+      new ApolloError({
+        graphQLErrors: [
+          new GraphQLError(
+            JSON.stringify({
+              errors: { email: "email" }
+            })
+          )
+        ]
+      })
+    )
   );
 
   const { ui, mockScrollToTop } = makeComp({
