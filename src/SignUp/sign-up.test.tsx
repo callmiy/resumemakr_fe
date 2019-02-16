@@ -14,7 +14,7 @@ import {
   renderWithApollo
 } from "../test_utils";
 
-const SignUpM = SignUp as React.ComponentClass<Partial<Props>>;
+const SignUpM = SignUp as React.FunctionComponent<Partial<Props>>;
 const passwortMuster = new RegExp("Passwort");
 const passBestMuster = new RegExp("Passwort Bestätigen");
 
