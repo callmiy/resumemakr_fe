@@ -4,7 +4,7 @@ import getBackendUrls from "./State/get-backend-urls";
 
 let socket: Socket;
 
-export const defineSocket = (props: DefineParams) => {
+function defineSocket  (props: DefineParams) {
   // if we are disconnected, phoenix will keep trying to connect which means
   // we will keep dispatching disconnect.  So we track if we already dispatched
   // disconnect (socketDisconnectedCount = 1) and if so we do not send another
