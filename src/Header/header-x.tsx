@@ -93,7 +93,7 @@ export function Header(merkmale: Props) {
 
                   <Dropdown.Item
                     as={NavLink}
-                    to={LOGIN_URL}
+                    to={createLoginRoute()}
                     onClick={async evt => {
                       evt.preventDefault();
 
@@ -105,7 +105,7 @@ export function Header(merkmale: Props) {
                         });
                       }
 
-                      history.replace(LOGIN_URL);
+                      history.replace(createLoginRoute());
                     }}
                   >
                     Logout
