@@ -38,7 +38,8 @@
   },
   "scripts": {
     "start": "cross-env PORT=4024 BROWSER=none REACT_APP_API_URL=http://localhost:4025/api yarn react-scripts start",
-    "build-prod": "cross-env REACT_APP_API_URL=https://resumemakr.herokuapp.com/api  react-scripts build",
+    "start-e2e-test-prod": "yarn build-local-prod && serve --single --listen 4027 build",
+    "build-prod": "cross-env REACT_APP_API_URL=https://resumemakr.herokuapp.com/api react-scripts build",
     "build-local-prod": "cross-env REACT_APP_API_URL=http://localhost:4026/api  react-scripts build",
     "test": "cross-env REACT_APP_API_URL=http://localhost:4025/api yarn react-scripts test --runInBand",
     "test-cover": "yarn test --coverage --coverageDirectory=./coverage",
@@ -66,6 +67,7 @@
     "@types/yup": "^0.26.3",
     "jest-dom": "^3.1.2",
     "react-testing-library": "5.5.3",
+    "serve": "10.1.1",
     "tslint": "^5.12.0",
     "tslint-config-prettier": "^1.17.0",
     "tslint-react": "^3.6.0",
